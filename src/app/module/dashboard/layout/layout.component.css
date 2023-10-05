@@ -1,0 +1,19 @@
+header {
+    height: 8vh;
+}
+
+.body {
+    height: 80vh;
+}
+
+.h-md-body {
+    height: 82vh;
+}
+
+footer {
+    height: 12vh;
+}
+
+.h-md-footer {
+    height: 10vh;
+}

@@ -1,0 +1,49 @@
+<div class="card">
+    <p-dataView #dv [value]="objects" [layout]="layout" [rows]="12" [rowsPerPageOptions]="[12, 20, 40, 100]" [paginator]="true">
+        <ng-template pTemplate="header">
+            <div class="flex h-2rem justify-content-between md:justify-content-center align-items-center px-4">
+                <p class="md:pr-5">Cambiar vista</p>
+                <p-dataViewLayoutOptions></p-dataViewLayoutOptions>
+            </div>
+        </ng-template>
+        <ng-template let-product pTemplate="listItem">
+            <div class="w-12 grid grid-nogutter w-full h-9rem justify-content-evenly align-items-center">
+                <div class="col-3 sm:w-6rem md:w-7rem pl-2">
+                    <img class="w-12" src="assets/img/product.jpg" [alt]="product.name" />
+                </div>
+                <div class="col-6 pl-3 h-full flex flex-column justify-content-start align-content-start">
+                    <p class="text-2xl font-bold text-900">{{ product.name }}</p>
+                    <div class="flex align-items-center gap-2 margin">
+                        <p-tag [value]="product.inventory" [severity]="getSeverity(product)"></p-tag>
+                        <i class="pi pi-tag"></i>
+                        <p class="font-semibold">{{ product.category }}</p>
+                    </div>
+                    <app-input-rating class="w-fit" [value]="product.rating" [disabled]="true" [cancel]="false"></app-input-rating>
+                </div>
+                <div class="col-3 pr-3 h-full flex flex-column justify-content-evenly align-items-end">
+                    <span class="text-xl font-semibold">{{ '$' + product.price }}</span>
+                    <p-button icon="pi pi-shopping-cart" styleClass="w-3rem h-3rem p-button-rounded" [disabled]="product.inventory == 0"></p-button>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template let-product pTemplate="gridItem">
+            <div class="col-6 md:col-4 lg:col-3 p-1 m-auto">
+                <div class="p-4 border-1 surface-border surface-card border-round">
+                    <div class="flex flex-wrap align-items-center justify-content-center gap-1">
+                        <p-tag class="text-sm" [value]="product.inventory" [severity]="getSeverity(product)"></p-tag>
+                        <i class="pi pi-tag"></i>
+                        <span class="font-semibold text-sm">{{ product.category }}</span>
+                    </div>
+                    <div class="flex flex-column align-items-center gap-2 py-3">
+                        <img class="w-5 shadow-2 border-round" src="assets/img/product.jpg" [alt]="product.name" />
+                        <div class="text-xl font-bold">{{ product.name }}</div>
+                        <app-input-rating class="w-fit" [value]="product.rating" [disabled]="true" [cancel]="false"></app-input-rating>
+                        <span class="text-xl font-semibold">{{ '$' + product.price }}</span>
+                        <p-button icon="pi pi-shopping-cart" [disabled]="product.inventory == 0"></p-button>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </p-dataView>
+</div>

@@ -1,0 +1,27 @@
+<div class="h-full w-full">
+  <p-carousel
+    [value]="items"
+    [numVisible]="3"
+    [numScroll]="1"
+    [responsiveOptions]="responsiveOptions"
+  >
+    <ng-template let-item pTemplate="item">
+      <a
+        class="item w-11 h-28rem m-auto item text-center flex flex-column justify-content-center align-items-center"
+        [routerLink]="'/dashboard/' + item.value"
+      >
+        <div class="mb-3 text-2xl">
+          <p>{{ item.title }}</p>
+        </div>
+        <div>
+          <img class="w-3 sm:w-4" [src]="item.img" alt="image" />
+        </div>
+        <div class="w-12">
+          <div class="w-10 m-auto text-lg">
+            <p>{{ item.body }}</p>
+          </div>
+        </div>
+      </a>
+    </ng-template>
+  </p-carousel>
+</div>

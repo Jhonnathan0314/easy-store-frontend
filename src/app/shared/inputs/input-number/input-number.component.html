@@ -1,0 +1,15 @@
+<div class="card flex justify-content-center w-full h-full">
+  <span class="p-float-label w-full h-full">
+    <p-inputNumber
+      styleClass="w-full h-full"
+      [formControl]="controlValue"
+      mode="decimal"
+      [min]="0"
+      currency="USD"
+      [prefix]="prefix"
+      [suffix]="suffix"
+      (ngModelChange)="sendValue()"
+    />
+    <label>{{ label }}</label>
+  </span>
+</div>

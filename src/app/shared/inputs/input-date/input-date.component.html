@@ -1,0 +1,14 @@
+<div class="card flex justify-content-center w-full h-full">
+  <span class="p-float-label w-full h-full">
+    <p-calendar
+      styleClass="w-full h-full"
+      [formControl]="controlValue"
+      [showButtonBar]="showButtonBar"
+      [dateFormat]="dateFormat"
+      [showIcon]="showIcon"
+      [selectionMode]="selectionMode"
+      (ngModelChange)="sendValue()"
+    ></p-calendar>
+    <label>{{ label }}</label>
+  </span>
+</div>

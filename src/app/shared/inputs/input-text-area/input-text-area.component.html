@@ -1,0 +1,14 @@
+<div class="card flex justify-content-center w-full h-full">
+  <span class="p-float-label w-full h-full">
+    <textarea
+      pInputTextarea
+      class="w-full h-full"
+      [formControl]="controlValue"
+      [rows]="rows"
+      [cols]="cols"
+      [autoResize]="autoResize"
+      (ngModelChange)="sendValue()"
+    ></textarea>
+    <label>{{ label }}</label>
+  </span>
+</div>

@@ -1,0 +1,17 @@
+<div class="card flex justify-content-center w-full h-full">
+  <span class="p-float-label w-full h-full">
+    <p-dropdown
+      styleClass="w-full h-full"
+      [options]="options"
+      [formControl]="controlValue"
+      [placeholder]="label"
+      [showClear]="showClear"
+      [filter]="filter"
+      filterBy="name"
+      optionLabel="name"
+      optionValue="value"
+      (ngModelChange)="sendValue()"
+    ></p-dropdown>
+    <label>{{ label }}</label>
+  </span>
+</div>

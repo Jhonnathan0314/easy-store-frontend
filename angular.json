@@ -25,7 +25,49 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/primeng/resources/primeng.min.css",
+              {
+                "input": "src/assets/themes/arya-blue.css",
+                "bundleName": "arya-blue",
+                "inject": false
+              },
+              {
+                "input": "src/assets/themes/arya-green.css",
+                "bundleName": "arya-green",
+                "inject": false
+              },
+              {
+                "input": "src/assets/themes/arya-orange.css",
+                "bundleName": "arya-orange",
+                "inject": false
+              },
+              {
+                "input": "src/assets/themes/arya-purple.css",
+                "bundleName": "arya-purple",
+                "inject": false
+              },
+              {
+                "input": "src/assets/themes/saga-blue.css",
+                "bundleName": "saga-blue",
+                "inject": false
+              },
+              {
+                "input": "src/assets/themes/saga-green.css",
+                "bundleName": "saga-green",
+                "inject": false
+              },
+              {
+                "input": "src/assets/themes/saga-orange.css",
+                "bundleName": "saga-orange",
+                "inject": false
+              },
+              {
+                "input": "src/assets/themes/saga-purple.css",
+                "bundleName": "saga-purple",
+                "inject": false
+              }
             ],
             "scripts": []
           },
@@ -87,7 +129,49 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/primeng/resources/primeng.min.css",
+              {
+                "input": "src/assets/themes/arya-blue.css",
+                "bundleName": "arya-blue",
+                "inject": false
+              },
+              {
+                "input": "src/assets/themes/arya-green.css",
+                "bundleName": "arya-green",
+                "inject": false
+              },
+              {
+                "input": "src/assets/themes/arya-orange.css",
+                "bundleName": "arya-orange",
+                "inject": false
+              },
+              {
+                "input": "src/assets/themes/arya-purple.css",
+                "bundleName": "arya-purple",
+                "inject": false
+              },
+              {
+                "input": "src/assets/themes/saga-blue.css",
+                "bundleName": "saga-blue",
+                "inject": false
+              },
+              {
+                "input": "src/assets/themes/saga-green.css",
+                "bundleName": "saga-green",
+                "inject": false
+              },
+              {
+                "input": "src/assets/themes/saga-orange.css",
+                "bundleName": "saga-orange",
+                "inject": false
+              },
+              {
+                "input": "src/assets/themes/saga-purple.css",
+                "bundleName": "saga-purple",
+                "inject": false
+              }
             ],
             "scripts": []
           }

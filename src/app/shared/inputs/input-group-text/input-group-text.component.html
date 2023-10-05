@@ -1,0 +1,16 @@
+<div class="card flex justify-content-center w-full h-full">
+  <div class="p-inputgroup w-full h-full">
+    <span class="p-float-label w-full h-full">
+      <input
+        class="w-full h-full"
+        pInputText
+        [formControl]="controlValue"
+        [type]="type"
+        [disabled]="loading"
+        (ngModelChange)="sendValue()"
+      />
+      <label>{{ label }}</label>
+    </span>
+    <button pButton type="button" [icon]="icon" [loading]="loading"></button>
+  </div>
+</div>

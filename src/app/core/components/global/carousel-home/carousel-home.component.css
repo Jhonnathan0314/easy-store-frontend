@@ -1,0 +1,14 @@
+.item {
+    border: 2px solid var(--surface-d);
+    border-radius: 7px;
+    transition: border .5s;
+}
+
+.item:hover {
+    border: 2px solid var(--primary-color);
+}
+
+a {
+    color: var(--text-color-primary);
+    text-decoration: none;
+}
