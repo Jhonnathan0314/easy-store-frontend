@@ -1,8 +1,9 @@
 <div class="card">
-    <p-dataView #dv [value]="objects" [layout]="layout" [rows]="12" [rowsPerPageOptions]="[12, 20, 40, 100]" [paginator]="true">
+    <p-dataView #dv [value]="objects" [layout]="layout" [rows]="5" [rowsPerPageOptions]="[5, 10, 20, 40, 100]" [paginator]="true">
         <ng-template pTemplate="header">
             <div class="flex h-2rem justify-content-between md:justify-content-center align-items-center px-4">
-                <p class="md:pr-5">Cambiar vista</p>
+                <i class="w-2 pi pi-percentage pr-4 text-primary-500" *ngIf="isOffer">OFF</i>
+                <p class="w-3 md:pr-5">Cambiar vista</p>
                 <p-dataViewLayoutOptions></p-dataViewLayoutOptions>
             </div>
         </ng-template>

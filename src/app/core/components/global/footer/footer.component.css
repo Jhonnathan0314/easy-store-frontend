@@ -2,11 +2,3 @@ a {
     color: var(--surface-b);
     text-decoration: underline;
 }
-
-.h-footer {
-    height: 12vh;
-}
-
-.h-md-footer {
-    height: 10vh;
-}

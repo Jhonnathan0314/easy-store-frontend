@@ -6,6 +6,7 @@ import { OffersProductsComponent } from './offers-products/offers-products.compo
 import { OffersCreateProductComponent } from './offers-create-product/offers-create-product.component';
 import { OffersUpdateProductComponent } from './offers-update-product/offers-update-product.component';
 import { OffersCartComponent } from './offers-cart/offers-cart.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { OffersCartComponent } from './offers-cart/offers-cart.component';
   ],
   imports: [
     CommonModule,
-    SophieOffersRoutingModule
+    SophieOffersRoutingModule,
+    SharedModule
   ]
 })
 export class SophieOffersModule { }

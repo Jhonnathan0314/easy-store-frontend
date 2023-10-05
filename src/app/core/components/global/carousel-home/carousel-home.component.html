@@ -1,27 +1,20 @@
-<div class="h-full w-full">
-  <p-carousel
-    [value]="items"
-    [numVisible]="3"
-    [numScroll]="1"
-    [responsiveOptions]="responsiveOptions"
-  >
-    <ng-template let-item pTemplate="item">
-      <a
-        class="item w-11 h-28rem m-auto item text-center flex flex-column justify-content-center align-items-center"
-        [routerLink]="'/dashboard/' + item.value"
-      >
-        <div class="mb-3 text-2xl">
-          <p>{{ item.title }}</p>
+<section #section class="p-5 md:p-8 w-full container flex align-content-center justify-content-center">
+  <div *ngFor="let item of items" class="w-12 my-3 xl:my-0">
+    <a
+      [class]="'px-3 md:px-0 ' + itemClass"
+      [routerLink]="'/dashboard/' + item.value"
+    >
+      <div class="md:mb-3 md:text-2xl">
+        <p>{{ item.title }}</p>
+      </div>
+      <div class="text-center">
+        <img class="w-6 md:w-3" [src]="item.img" alt="image" />
+      </div>
+      <div class="md:w-12">
+        <div class="md:w-10 md:m-auto md:text-lg">
+          <p>{{ item.body }}</p>
         </div>
-        <div>
-          <img class="w-3 sm:w-4" [src]="item.img" alt="image" />
-        </div>
-        <div class="w-12">
-          <div class="w-10 m-auto text-lg">
-            <p>{{ item.body }}</p>
-          </div>
-        </div>
-      </a>
-    </ng-template>
-  </p-carousel>
-</div>
+      </div>
+    </a>
+  </div>
+</section>

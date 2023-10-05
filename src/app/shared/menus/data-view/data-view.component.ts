@@ -9,6 +9,7 @@ import { Product } from 'src/app/core/models/data-types/primeng-object.model';
 export class DataViewComponent {
 
   @Input() objects: Product[] = [];
+  @Input() isOffer: boolean = false;
 
   layout: string = 'list';
 

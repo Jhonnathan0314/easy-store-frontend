@@ -1,0 +1,9 @@
+.container {
+    height: calc(100vh - 160px);
+}
+
+@media screen and (max-width: 700px) {
+    .container {
+        height: calc(92.8vh - 160px);
+    }
+}

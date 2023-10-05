@@ -15,7 +15,6 @@ export class InputGroupTextComponent implements OnChanges {
   @Input() label: string = '';
   @Input() icon: string = '';
   @Input() loading: boolean = false;
-  @Input() disabled: boolean = false;
 
   @Output() valueEvent = new EventEmitter<string | number>();
 
@@ -27,7 +26,7 @@ export class InputGroupTextComponent implements OnChanges {
   }
 
   validateState() {
-    if (this.disabled) {
+    if (this.loading) {
       this.controlValue.disable();
     } else {
       this.controlValue.enable();

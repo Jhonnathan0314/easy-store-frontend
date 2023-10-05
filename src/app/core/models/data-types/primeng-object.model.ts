@@ -8,6 +8,8 @@ export class CarouselHomeObject {
     img: string;
     body: string;
     value: string;
+    hidden: 'hidden' | '';
+    classes: string;
 }
 
 export class Product {

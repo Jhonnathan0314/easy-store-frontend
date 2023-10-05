@@ -1,3 +1,7 @@
+.container {
+    height: calc(100vh - 160px);
+}
+
 .item {
     border: 2px solid var(--surface-d);
     border-radius: 7px;
@@ -11,4 +15,11 @@
 a {
     color: var(--text-color-primary);
     text-decoration: none;
+}
+
+@media screen and (max-width: 1150px) {
+    .container {
+        height: calc(92.8vh - 160px);
+        flex-direction: column;
+    }
 }
