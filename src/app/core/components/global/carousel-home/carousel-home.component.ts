@@ -68,7 +68,7 @@ export class CarouselHomeComponent implements OnInit, AfterViewInit {
   validateActualItem() {
     this.screenWidth = window.innerWidth;
     if(this.screenWidth <= 1150) {
-      this.itemClass = 'item w-12 flex justify-content-center align-items-center';
+      this.itemClass = 'item w-12 flex justify-content-start align-items-center';
     } else {
       this.itemClass = 'item w-11 h-full m-auto text-center flex flex-column justify-content-center align-items-center';
     }

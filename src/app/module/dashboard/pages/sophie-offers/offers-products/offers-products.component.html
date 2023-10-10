@@ -1,11 +1,17 @@
-<div class="container w-full">
+<div class="sm:hidden md:hidden lg:w-3 lg:container">
+    fggjhkl
+</div>
+<div class="container w-full lg:w-9">
     <div class="surface-card w-full h-6rem px-5 grid grid-nogutter justify-content-between align-items-center border-bottom-1 border-primary-800">
-        <div class="col-9 h-3rem">
+        <div class="col-7 h-3rem">
             <app-input-group-text label="Buscar" icon="pi pi-search"></app-input-group-text>
         </div>
-        <div class="col-2 h-full flex flex-column justify-content-center text-center">
+        <div class="col-2 h-full flex flex-column align-items-center justify-content-center">
             <p class="p-0 m-0">Filtros</p>
-            <i class="pi pi-sliders-h text-2xl cursor-pointer"></i>
+            <i class="pi pi-sliders-h text-2xl w-fit cursor-pointer hover:text-primary"></i>
+        </div>
+        <div class="col-2 h-full flex flex-column justify-content-center text-center">
+            <i routerLink="/dashboard/offers/cart" class="pi pi-shopping-cart text-2xl w-fit cursor-pointer hover:text-primary"></i>
         </div>
     </div>
     <div class="surface-card border-bottom-1 border-primary-800 w-full h-3rem grid grid-nogutter align-items-center">
