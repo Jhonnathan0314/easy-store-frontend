@@ -21,6 +21,7 @@ import { TabMenuComponent } from './menus/tab-menu/tab-menu.component';
 import { MenuBarComponent } from './menus/menu-bar/menu-bar.component';
 import { DataViewComponent } from './menus/data-view/data-view.component';
 import { DataViewLayoutOptions } from 'primeng/dataview';
+import { FiltersMenuComponent } from './menus/filters-menu/filters-menu.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { DataViewLayoutOptions } from 'primeng/dataview';
     SplitButtonComponent,
     TabMenuComponent,
     MenuBarComponent,
-    DataViewComponent
+    DataViewComponent,
+    FiltersMenuComponent
   ],
   imports: [
     CommonModule,
@@ -64,7 +66,8 @@ import { DataViewLayoutOptions } from 'primeng/dataview';
     SplitButtonComponent,
     TabMenuComponent,
     MenuBarComponent,
-    DataViewComponent
+    DataViewComponent,
+    FiltersMenuComponent
   ],
   bootstrap: [ DataViewLayoutOptions ]
 })

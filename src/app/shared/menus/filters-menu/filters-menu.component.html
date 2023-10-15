@@ -1,0 +1,47 @@
+<div class="surface-card w-full h-full px-4">
+    <div class="w-full flex justify-content-end pt-3 md:hidden">
+        <i class="pi pi-times" (click)="hideFiltersEvent()"></i>
+    </div>
+    <h3 class="pt-4 m-0 text-center">Filtros</h3>
+    <h4><i class="pi pi-th-large"></i> Categorias</h4>
+    <div class="pl-4">
+        <h5 class="cursor-pointer hover:text-primary" (click)="showCategory('shoes')"><i class="pi pi-chevron-right"></i> Calzado familiar</h5>
+        <div #shoesRef class="hidden pl-4">
+            <h6>Dama</h6>
+            <h6>Caballero</h6>
+            <h6>Niños</h6>
+        </div>
+
+        <h5 class="cursor-pointer hover:text-primary" (click)="showCategory('lingerie')"><i class="pi pi-chevron-right"></i> Lenceria de hogar</h5>
+        <div #lingerieRef class="hidden pl-4">
+            <h6>Sabanas</h6>
+            <h6>Cobijas y colchones</h6>
+            <h6>Cortinas</h6>
+            <h6>Tapetes</h6>
+        </div>
+
+        <h5 class="cursor-pointer hover:text-primary" (click)="showCategory('clothes')"><i class="pi pi-chevron-right"></i> Ropa familiar</h5>
+        <div #clothesRef class="hidden pl-4">
+            <h6>Dama</h6>
+            <h6>Caballero</h6>
+            <h6>Niños</h6>
+        </div>
+
+        <h5 class="cursor-pointer hover:text-primary" (click)="showCategory('accesories')"><i class="pi pi-chevron-right"></i> Accesorios y bisuteria</h5>
+        <div #accesoriesRef class="hidden pl-4">
+            <h6>Perfumeria</h6>
+            <h6>Joyas</h6>
+            <h6>Accesorios</h6>
+        </div>
+    </div>
+    <h4><i class="pi pi-dollar"></i> Precio</h4>
+    <div class="pl-4 py-2">
+        <app-input-number label="min" [value]="0" prefix="$ "></app-input-number>
+        <p class="pr-4 py-3 m-0 text-center">-</p>
+        <app-input-number label="max" [value]="0" prefix="$"></app-input-number>
+    </div>
+    <div class="w-12 h-2rem py-3 flex flex-wrap justify-content-between align-items-center">
+        <app-button label="Limpiar" icon="pi pi-eraser" [disabled]="!canCleanFilter"></app-button>
+        <app-button label="Aplicar" icon="pi pi-send" [loading]="isLoading" [disabled]="!canFilter"></app-button>
+    </div>
+</div>
