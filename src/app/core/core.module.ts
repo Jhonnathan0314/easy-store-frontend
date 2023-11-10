@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 
 import { TopbarComponent } from './components/global/topbar/topbar.component';
 import { FooterComponent } from './components/global/footer/footer.component';
@@ -22,6 +23,7 @@ import { PrimengModule } from '../shared/primeng.module';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    HttpClientModule,
     SharedModule,
 
     PrimengModule

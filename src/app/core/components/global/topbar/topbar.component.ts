@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
-import { SecurityService } from 'src/app/core/services/security/security.service';
+import { SessionService } from 'src/app/core/services/session/session.service';
 import { ThemeService } from 'src/app/core/services/theme/theme.service';
 
 @Component({
@@ -13,7 +13,7 @@ export class TopbarComponent {
 
   items: MenuItem[] = [];
 
-  constructor(private themeService: ThemeService, private router: Router, private securityService: SecurityService) {
+  constructor(private themeService: ThemeService, private router: Router, private sessionService: SessionService) {
     this.itemsOptions();
   }
 
@@ -70,7 +70,7 @@ export class TopbarComponent {
           }
         ]
       },
-      { label: 'Salir', icon: 'pi pi-fw pi-sign-out', command: () => { this.securityService.logout(); } },
+      { label: 'Salir', icon: 'pi pi-fw pi-sign-out', command: () => { this.sessionService.logout(); } },
     ];
   }
 

@@ -1,31 +1,27 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
+import { LoginRequest, RegisterRequest } from '../../models/data-types/security/security-request.model';
+import { Observable } from 'rxjs';
+import { ApiResponse, AuthResponse } from '../../models/data-types/security/security-response.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SecurityService {
 
-  email: string = '';
+  apiUrl: string = '';
 
-  constructor(private router: Router) { }
-
-  isLogged() {
-    return true;
+  constructor(private http: HttpClient) {
+    this.apiUrl = environment.BACKEND_URL;
   }
 
-  register() { }
-  
-  login() {
-    this.router.navigateByUrl('/dashboard/home');
+  register(registerRequest: RegisterRequest): Observable<ApiResponse<AuthResponse>> {
+    return this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/auth/register`, registerRequest);
   }
 
-  logout() {
-    this.router.navigateByUrl('/security');
-  }
-
-  getEmail() {
-    return this.email;
+  login(loginRequest: LoginRequest): Observable<ApiResponse<AuthResponse>> {
+    return this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/auth/login`, loginRequest);
   }
 
 }

@@ -1,6 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LoginRequest } from 'src/app/core/models/data-types/security/security-request.model';
 import { SecurityService } from 'src/app/core/services/security/security.service';
+import { SessionService } from 'src/app/core/services/session/session.service';
 import { ThemeService } from 'src/app/core/services/theme/theme.service';
 
 @Component({
@@ -11,6 +13,7 @@ import { ThemeService } from 'src/app/core/services/theme/theme.service';
 export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
+  loginRequest: LoginRequest = new LoginRequest();
   
   @Output() changeViewEvent = new EventEmitter();
   @Output() loginEvent = new EventEmitter();
@@ -18,7 +21,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     public themeService: ThemeService,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private sessionService: SessionService
   ) {}
 
   ngOnInit(): void {
@@ -27,19 +31,23 @@ export class LoginComponent implements OnInit {
 
   initializeForm() {
     this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(12), Validators.maxLength(24)]]
+      username: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]]
     });
   }
 
   validateForm() {
-    /* if(!this.loginForm.valid){
-      console.log("FORMULARIO LOGIN INVALIDO");
-      return;
-    }
+    if(!this.loginForm.valid) return;
 
-    console.log("VALID LOGIN FORM"); */
-    this.securityService.login();
+    this.loginRequest = this.loginForm.value;
+    this.login();
+  }
+
+  login() {
+    this.securityService.login(this.loginRequest).subscribe({
+      next: (res) => this.sessionService.saveSession(this.loginRequest, res.data.token),
+      error: (error) => console.log("Error en login: ", error)
+    });
   }
 
   changeView() {

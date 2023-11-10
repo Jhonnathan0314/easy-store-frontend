@@ -93,13 +93,7 @@
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.quality.ts"
-                }
-              ]
+              "namedChunks": true
             },
             "development": {
               "buildOptimizer": false,
@@ -107,13 +101,7 @@
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.development.ts"
-                }
-              ]
+              "namedChunks": true
             }
           },
           "defaultConfiguration": "production"
@@ -123,6 +111,9 @@
           "configurations": {
             "production": {
               "browserTarget": "sophie-store-frontend:build:production"
+            },
+            "quality": {
+              "browserTarget": "sophie-store-frontend:build:quality"
             },
             "development": {
               "browserTarget": "sophie-store-frontend:build:development"
