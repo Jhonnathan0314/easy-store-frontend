@@ -5,6 +5,7 @@ import { SecurityRoutingModule } from './security-routing.module';
 import { SecurityComponent } from './security.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CoreModule } from 'src/app/core/core.module';
+import { ToastModule } from 'primeng/toast';
 
 
 @NgModule({
@@ -15,7 +16,9 @@ import { CoreModule } from 'src/app/core/core.module';
     CommonModule,
     SecurityRoutingModule,
     SharedModule,
-    CoreModule
+    CoreModule,
+    
+    ToastModule
   ]
 })
 export class SecurityModule { }

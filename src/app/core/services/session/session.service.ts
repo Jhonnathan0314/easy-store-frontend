@@ -17,24 +17,32 @@ export class SessionService {
     this.validateSession();
   }
 
-  logout() {
-    localStorage.clear();
-    this.validateSession();
-  }
-
   saveSession(loginRequest: LoginRequest, token: string) {
     localStorage.setItem("token", token);
     localStorage.setItem("username", loginRequest.username);
+    if(this.isTokenExpired()) this.logout();
     this.validateSession();
   }
 
+  logout() {
+    localStorage.clear();
+    this.redirect('/security');
+  }
+
   validateSession() {
-    const goPath = this.isLogged() ? '/dashboard' : '/security' ; 
-    this.router.navigateByUrl(goPath);
+    if(this.isLogged()){
+      this.redirect('/dashboard');
+    } else {
+      this.logout();
+    }
   }
 
   isLogged(): boolean {
     return localStorage.getItem("token") != null && localStorage.getItem("token") != undefined;
+  }
+
+  redirect(path: string) {
+    this.router.navigateByUrl(path);
   }
 
   isTokenExpired(): boolean {

@@ -23,6 +23,8 @@ import { DataViewComponent } from './menus/data-view/data-view.component';
 import { DataViewLayoutOptions } from 'primeng/dataview';
 import { FiltersMenuComponent } from './menus/filters-menu/filters-menu.component';
 
+import { MessageComponent } from './informative/message/message.component';
+
 @NgModule({
   declarations: [
     ButtonComponent,
@@ -42,12 +44,14 @@ import { FiltersMenuComponent } from './menus/filters-menu/filters-menu.componen
     TabMenuComponent,
     MenuBarComponent,
     DataViewComponent,
-    FiltersMenuComponent
+    FiltersMenuComponent,
+
+    MessageComponent
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    PrimengModule
+        PrimengModule
   ],
   exports: [
     ButtonComponent,
@@ -67,7 +71,9 @@ import { FiltersMenuComponent } from './menus/filters-menu/filters-menu.componen
     TabMenuComponent,
     MenuBarComponent,
     DataViewComponent,
-    FiltersMenuComponent
+    FiltersMenuComponent,
+
+    MessageComponent
   ],
   bootstrap: [ DataViewLayoutOptions ]
 })

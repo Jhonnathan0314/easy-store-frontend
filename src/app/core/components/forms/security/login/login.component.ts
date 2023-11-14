@@ -1,5 +1,6 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormErrors } from 'src/app/core/models/data-types/security/security-error.model';
 import { LoginRequest } from 'src/app/core/models/data-types/security/security-request.model';
 import { SecurityService } from 'src/app/core/services/security/security.service';
 import { SessionService } from 'src/app/core/services/session/session.service';
@@ -14,9 +15,10 @@ export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
   loginRequest: LoginRequest = new LoginRequest();
+  formErrors: FormErrors;
   
   @Output() changeViewEvent = new EventEmitter();
-  @Output() loginEvent = new EventEmitter();
+  @Output() loginErrorEvent = new EventEmitter();
 
   constructor(
     private formBuilder: FormBuilder,
@@ -37,10 +39,24 @@ export class LoginComponent implements OnInit {
   }
 
   validateForm() {
-    if(!this.loginForm.valid) return;
+    if(!this.loginForm.valid) {
+      this.getFormErrors();
+      return;
+    }
 
     this.loginRequest = this.loginForm.value;
     this.login();
+  }
+
+  getFormErrors() {
+    this.formErrors = {};
+    Object.keys(this.loginForm.controls).forEach(key => {
+      const controlErrors = this.loginForm.get(key)?.errors;
+      if(!controlErrors) return;
+      this.formErrors[key] = [];
+      Object.keys(controlErrors).forEach(keyError => this.formErrors[key].push(keyError));
+    });
+    this.errorEvent();
   }
 
   login() {
@@ -50,8 +66,8 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  changeView() {
-    this.changeViewEvent.emit('login');
-  }
+  changeView() { this.changeViewEvent.emit('login'); }
+
+  errorEvent() { this.loginErrorEvent.emit(this.formErrors); }
 
 }

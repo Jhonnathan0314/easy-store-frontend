@@ -1,11 +1,9 @@
 <div class="card flex justify-content-center w-full h-full">
   <span class="p-float-label w-full h-full" *ngIf="!showIcon">
     <input
-      *ngIf="!showIcon"
       pInputText
       class="w-full h-full"
       [formControl]="controlValue"
-      (ngModelChange)="sendValue()"
     />
     <label>{{ label }}</label>
   </span>
@@ -15,6 +13,7 @@
       pInputText
       class="w-full h-full"
       [formControl]="controlValue"
+      (ngModelChange)="sendValue()"
     />
     <label>{{ label }}</label>
   </span>

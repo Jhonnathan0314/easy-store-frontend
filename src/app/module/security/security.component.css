@@ -55,5 +55,5 @@
 
 .flip-card-back {
     transform: rotateY(180deg);
-    margin-top: -7%;
+    margin-top: -10%;
 }

@@ -1,14 +1,21 @@
-import { Component } from '@angular/core';
-import { MenuItem } from 'primeng/api';
+import { Component, ViewChild } from '@angular/core';
+import { MenuItem, MessageService } from 'primeng/api';
+import { FormErrors } from 'src/app/core/models/data-types/security/security-error.model';
 import { ThemeService } from 'src/app/core/services/theme/theme.service';
+import { MessageComponent } from 'src/app/shared/informative/message/message.component';
 
 @Component({
   selector: 'app-security',
   templateUrl: './security.component.html',
   styleUrls: ['./security.component.css'],
+  providers: [ MessageService ]
 })
 export class SecurityComponent {
+
+  @ViewChild(MessageComponent) messageComponent: MessageComponent;
+
   items: MenuItem[] = [];
+  detailError: string = '';
 
   constructor(public themeService: ThemeService) {
     this.configMenuItems();
@@ -74,6 +81,15 @@ export class SecurityComponent {
     let formContainer = document.getElementById('form-card');
     const classes = 'flip-card-inner w-full h-full';
     formContainer?.setAttribute('class', oldView == 'login' ? classes + ' change-view' : classes);
+  }
+
+  showFormErrors(formErrors: FormErrors) {
+    Object.keys(formErrors).forEach(field => {
+      this.detailError = `El campo ${field} `;
+      if(formErrors[field].includes('required')) this.detailError += 'es obligatorio.';
+      if(formErrors[field].includes('email')) this.detailError += 'no es un correo valido.';
+      this.messageComponent.showError('Error en el formulario', this.detailError);
+    });
   }
 
 }
