@@ -1,26 +1,26 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { environment } from 'src/environments/environment';
 import { LoginRequest } from '../../models/data-types/security/security-request.model';
+import { SessionData } from '../../models/data-types/security/security-data.model';
+import { CryptoService } from '../crypto/crypto.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SessionService {
 
-  apiUrl: string = '';
-  username: string = '';
-
-  constructor(private router: Router, private http: HttpClient) {
-    this.apiUrl = environment.BACKEND_URL;
+  constructor(private router: Router, private cryptoService: CryptoService) {
     this.validateSession();
   }
 
   saveSession(loginRequest: LoginRequest, token: string) {
-    localStorage.setItem("token", token);
-    localStorage.setItem("username", loginRequest.username);
-    if(this.isTokenExpired()) this.logout();
+    const sessionData = {
+      token: token,
+      username: loginRequest.username,
+      role: this.getTokenAttribute(token, "user_role")
+    };
+    localStorage.setItem("object", this.cryptoService.encryptObject(sessionData));
+    if (this.isTokenExpired() || !this.isValidSessionData()) this.logout();
     this.validateSession();
   }
 
@@ -30,15 +30,19 @@ export class SessionService {
   }
 
   validateSession() {
-    if(this.isLogged()){
+    if (this.isLogged()) {
       this.redirect('/dashboard');
     } else {
       this.logout();
     }
   }
 
+  isValidSessionData(): boolean {
+    return this.getSessionData().isValid();
+  }
+
   isLogged(): boolean {
-    return localStorage.getItem("token") != null && localStorage.getItem("token") != undefined;
+    return localStorage.getItem("object") != null && this.isValidSessionData();
   }
 
   redirect(path: string) {
@@ -46,7 +50,8 @@ export class SessionService {
   }
 
   isTokenExpired(): boolean {
-    const token = localStorage.getItem("token") || "";
+    const sessionData = this.getSessionData();
+    const token = sessionData.token;
     const tokenPayload = this.decodePayload(token)
 
     if (!tokenPayload) return true;
@@ -64,6 +69,21 @@ export class SessionService {
     return JSON.parse(decoded);
   }
 
+  getSessionData(): SessionData {
+    const localStorageValue = this.cryptoService.decryptObject(localStorage.getItem("object") || "");
+
+    let sessionData: SessionData = new SessionData();
+    sessionData.token = localStorageValue.token;
+    sessionData.username = localStorageValue.username;
+    sessionData.role = localStorageValue.role;
+    
+    return sessionData;
+  }
+
+  getTokenAttribute(token: string, attribute: string) {
+    return this.decodePayload(token)[attribute];
+  }
+
   getUsername() { return localStorage.getItem("username") || ''; }
-  
+
 }
