@@ -14,6 +14,4 @@ export class SplitButtonComponent {
 
   @Output() actionEvent = new EventEmitter();
 
-  constructor() { }
-
 }

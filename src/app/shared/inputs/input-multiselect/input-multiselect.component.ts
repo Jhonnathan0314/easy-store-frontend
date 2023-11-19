@@ -19,8 +19,6 @@ export class InputMultiselectComponent implements OnChanges {
 
   @Output() valueEvent = new EventEmitter<PrimeNGObject[]>();
 
-  constructor() { }
-
   ngOnChanges(changes: SimpleChanges): void {
     this.controlValue.setValue(this.selectedOptions);
     this.validateState();

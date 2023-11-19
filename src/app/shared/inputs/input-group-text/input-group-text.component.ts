@@ -18,8 +18,6 @@ export class InputGroupTextComponent implements OnChanges {
 
   @Output() valueEvent = new EventEmitter<string | number>();
 
-  constructor() { }
-
   ngOnChanges(changes: SimpleChanges): void {
     this.controlValue.setValue(this.value);
     this.validateState();

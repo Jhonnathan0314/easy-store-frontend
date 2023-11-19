@@ -20,8 +20,6 @@ export class InputDropdownComponent implements OnChanges {
 
   @Output() valueEvent = new EventEmitter<PrimeNGObject>();
 
-  constructor() { }
-
   ngOnChanges(changes: SimpleChanges): void {
     this.controlValue.setValue(this.selectedOption);
     this.validateState();

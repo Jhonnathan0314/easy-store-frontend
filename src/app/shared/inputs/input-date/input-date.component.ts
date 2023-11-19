@@ -20,8 +20,6 @@ export class InputDateComponent implements OnChanges {
 
   @Output() valueEvent = new EventEmitter<Date>();
 
-  constructor() { }
-
   ngOnChanges(changes: SimpleChanges): void {
     this.controlValue.setValue(this.value);
     this.validateState();
