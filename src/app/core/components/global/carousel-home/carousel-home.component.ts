@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, QueryList, Renderer2, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChildren } from '@angular/core';
 import { CarouselHomeObject } from 'src/app/core/models/data-types/primeng-object.model';
 
 @Component({

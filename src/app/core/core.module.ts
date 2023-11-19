@@ -9,7 +9,8 @@ import { RegisterComponent } from './components/forms/security/register/register
 import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { CarouselHomeComponent } from './components/global/carousel-home/carousel-home.component';
-import { PrimengModule } from '../shared/primeng.module';
+import { ToastModule } from 'primeng/toast';
+import { RouterModule } from '@angular/router';
 
 
 @NgModule({
@@ -25,8 +26,9 @@ import { PrimengModule } from '../shared/primeng.module';
     ReactiveFormsModule,
     HttpClientModule,
     SharedModule,
+    RouterModule,
 
-    PrimengModule
+    ToastModule
   ],
   exports: [
     TopbarComponent,

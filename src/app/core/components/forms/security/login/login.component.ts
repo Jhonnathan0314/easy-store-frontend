@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormErrors } from 'src/app/core/models/data-types/security/security-error.model';
 import { LoginRequest } from 'src/app/core/models/data-types/security/security-request.model';
