@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { SelectItem } from 'primeng/api';
 import { Product } from 'src/app/core/models/data-types/primeng-object.model';
+import { DataViewLayout } from 'src/app/core/models/enums/primeng.enum';
 
 @Component({
   selector: 'app-data-view',
@@ -17,7 +18,7 @@ export class DataViewComponent implements OnInit {
   sortOrder: number;
   sortField: string;
 
-  layout: string = 'list';
+  layout: DataViewLayout = DataViewLayout.LIST;
 
   ngOnInit(): void {
     this.sortOptions = [

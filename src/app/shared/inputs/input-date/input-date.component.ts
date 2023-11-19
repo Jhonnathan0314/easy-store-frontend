@@ -1,13 +1,6 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { DateSelectionMode } from 'src/app/core/models/enums/primeng.enum';
 
 @Component({
   selector: 'app-input-date',
@@ -20,14 +13,14 @@ export class InputDateComponent implements OnChanges {
   @Input() value: Date = new Date();
   @Input() label: string = '';
   @Input() dateFormat: string = '';
-  @Input() selectionMode: string = 'single';
+  @Input() selectionMode: DateSelectionMode = DateSelectionMode.SINGLE;
   @Input() showButtonBar: boolean = false;
   @Input() disabled: boolean = false;
   @Input() showIcon: boolean = false;
 
   @Output() valueEvent = new EventEmitter<Date>();
 
-  constructor() {}
+  constructor() { }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.controlValue.setValue(this.value);
