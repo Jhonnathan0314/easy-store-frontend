@@ -22,6 +22,7 @@ import { DataViewModule } from 'primeng/dataview';
 
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { MessagesModule } from 'primeng/messages';
 
 import { CarouselModule } from 'primeng/carousel';
@@ -51,6 +52,7 @@ import { CarouselModule } from 'primeng/carousel';
     DataViewModule,
 
     ConfirmDialogModule,
+    ConfirmPopupModule,
     ToastModule,
     MessagesModule,
 
@@ -77,6 +79,7 @@ import { CarouselModule } from 'primeng/carousel';
     DataViewModule,
     
     ConfirmDialogModule,
+    ConfirmPopupModule,
     ToastModule,
     MessagesModule,
 
