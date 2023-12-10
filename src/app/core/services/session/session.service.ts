@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginRequest } from '../../models/data-types/security/security-request.model';
 import { SessionData } from '../../models/data-types/security/security-data.model';
-import { CryptoService } from '../crypto/crypto.service';
+import { CryptoService } from '../utils/crypto/crypto.service';
 
 @Injectable({
   providedIn: 'root'
@@ -70,7 +70,7 @@ export class SessionService {
   }
 
   getSessionData(): SessionData {
-    const localStorageValue = this.cryptoService.decryptObject(localStorage.getItem("object") || "");
+    const localStorageValue = this.cryptoService.decryptObject(localStorage.getItem("object") ?? "");
 
     let sessionData: SessionData = new SessionData();
     sessionData.token = localStorageValue.token;
@@ -84,6 +84,10 @@ export class SessionService {
     return this.decodePayload(token)[attribute];
   }
 
-  getUsername() { return localStorage.getItem("username") || ''; }
+  getUsername() { return this.getSessionData().username; }
+
+  getRole() { return this.getSessionData().role; }
+  
+  getToken() { return this.getSessionData().token; }
 
 }

@@ -3,20 +3,20 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
 import { TopbarComponent } from './components/global/topbar/topbar.component';
-import { FooterComponent } from './components/global/footer/footer.component';
 import { LoginComponent } from './components/forms/security/login/login.component';
 import { RegisterComponent } from './components/forms/security/register/register.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { CarouselHomeComponent } from './components/global/carousel-home/carousel-home.component';
-import { ToastModule } from 'primeng/toast';
 import { RouterModule } from '@angular/router';
+import { ToastModule } from 'primeng/toast';
+import { CardModule } from 'primeng/card';
+import { CarouselModule } from 'primeng/carousel';
 
 
 @NgModule({
   declarations: [
     TopbarComponent,
-    FooterComponent,
     LoginComponent,
     RegisterComponent,
     CarouselHomeComponent
@@ -28,11 +28,12 @@ import { RouterModule } from '@angular/router';
     SharedModule,
     RouterModule,
 
-    ToastModule
+    ToastModule,
+    CardModule,
+    CarouselModule
   ],
   exports: [
     TopbarComponent,
-    FooterComponent,
     LoginComponent,
     RegisterComponent,
     CarouselHomeComponent

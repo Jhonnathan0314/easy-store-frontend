@@ -1,77 +1,80 @@
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChildren } from '@angular/core';
-import { CarouselHomeObject } from 'src/app/core/models/data-types/primeng-object.model';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChildren } from '@angular/core';
+import { ResponsiveOverlayOptions } from 'primeng/api';
+import { Subscription } from 'rxjs';
+import { Category } from 'src/app/core/models/data-types/data/category.model';
+import { CarouselHomeObject, ResponsiveCarouselOptions } from 'src/app/core/models/data-types/primeng-object.model';
+import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
 
 @Component({
   selector: 'app-carousel-home',
   templateUrl: './carousel-home.component.html',
   styleUrls: ['./carousel-home.component.css'],
 })
-export class CarouselHomeComponent implements OnInit, AfterViewInit {
+export class CarouselHomeComponent implements OnInit, OnDestroy {
 
   @ViewChildren('section') container: ElementRef;
 
+  categories: Category[] = [];
   items: CarouselHomeObject[] = [];
 
-  screenWidth: number = screen.width;
-  itemClass: string = '';
+  responsiveOptions: ResponsiveCarouselOptions[] = [];
 
-  private listenerFn: () => void;
+  categoriesSuscription: Subscription;
 
-  constructor(private renderer: Renderer2) {}
+  constructor(
+    private categoryService: CategoryService
+  ) {}
 
   ngOnInit() {
-    this.defineItems();
-    this.validateActualItem();
+    this.categoriesSubscribe();
   }
 
-  ngAfterViewInit(): void {
-    this.changesFunction();
+  ngOnDestroy(): void {
+    this.categoriesSuscription.unsubscribe();
   }
 
-  changesFunction() {
-    this.listenerFn = this.renderer.listen('window', 'resize', (event) => {
-      this.screenWidth = event.target.innerWidth;
-      this.defineItems();
-      this.validateActualItem();
+  categoriesSubscribe() {
+    this.categoriesSuscription = this.categoryService.storedCategories$.subscribe({
+      next: (value) => {
+        this.categories = value;
+        this.defineItems();
+        this.defineResponsiveOptions();
+      }
     });
   }
 
   defineItems() {
-    this.items = [
-      {
-        title: 'Sophie shoes',
-        img: '../../../../../assets/img/shoes.png',
-        body: 'Compra todo tipo de productos de revista! Ingresa y observa todos los productos disponibles.',
-        value: 'shoes',
+    this.categories.forEach(category => {
+      this.items.push({
+        title: category.name,
+        img: `../../../../../assets/img/${category.imageName}`,
+        body: category.description,
+        value: category.id,
+        route: category.imageName.split('.')[0],
         hidden: '',
         classes: ''
-      },
-      {
-        title: 'Sophie offers',
-        img: '../../../../../assets/img/offers.png',
-        body: 'Aprovecha las ofertas temporales! Adquiere lo que requieras al mejor precio',
-        value: 'offers',
-        hidden: '',
-        classes: ''
-      },
-      {
-        title: 'Las onces de sofi',
-        img: '../../../../../assets/img/launch.png',
-        body: 'Pide ahora los mejores postres a domicilio! Disponible en la ciudad de Tunja',
-        value: 'launch',
-        hidden: '',
-        classes: ''
-      }
-    ]
+      });
+    });
   }
 
-  validateActualItem() {
-    this.screenWidth = window.innerWidth;
-    if(this.screenWidth <= 1150) {
-      this.itemClass = 'item w-12 flex justify-content-start align-items-center';
-    } else {
-      this.itemClass = 'item w-11 h-full m-auto text-center flex flex-column justify-content-center align-items-center';
-    }
+  defineResponsiveOptions() {
+    this.responsiveOptions = [
+      {
+          breakpoint: '1400px',
+          numVisible: 3,
+          numScroll: 3
+      },
+      {
+          breakpoint: '1100px',
+          numVisible: 2,
+          numScroll: 2
+      },
+      {
+          breakpoint: '700px',
+          numVisible: 1,
+          numScroll: 1
+      }
+  ];
   }
 
 }

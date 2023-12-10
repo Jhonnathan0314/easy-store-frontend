@@ -1,20 +1,15 @@
-<section #section class="p-5 xl:p-8 w-full container flex align-content-center justify-content-center">
-  <div *ngFor="let item of items" class="w-12 my-3 xl:my-0">
-    <a
-      [class]="'px-3 xl:px-0 ' + itemClass"
-      [routerLink]="'/dashboard/' + item.value"
-    >
-      <div class="xl:mb-3 xl:text-2xl">
-        <p>{{ item.title }}</p>
-      </div>
-      <div class="text-center py-3 xl:p-0">
-        <img class="w-5 xl:w-3" [src]="item.img" alt="image" />
-      </div>
-      <div class="xl:w-12">
-        <div class="xl:w-10 xl:m-auto xl:text-lg">
-          <p>{{ item.body }}</p>
+<section #section class="w-full h-full carousel-section">
+  <p-carousel [value]="items" [numVisible]="3" [numScroll]="1" [responsiveOptions]="responsiveOptions">
+    <ng-template let-item pTemplate="item">
+        <div class="item text-center py-5 md:p-5 lg:p-5 xl:p-5 m-2" [routerLink]="'/dashboard/' + item.route">
+            <div class="mb-3">
+              <img [src]="item.img" [alt]="item.img" class="item-image w-6" />
+            </div>
+            <div>
+              <h3 class="pb-4">{{ item.title }}</h3>
+              <h4 class="mt-0 pb-3">{{ item.body }}</h4>
+            </div>
         </div>
-      </div>
-    </a>
-  </div>
+    </ng-template>
+</p-carousel>
 </section>

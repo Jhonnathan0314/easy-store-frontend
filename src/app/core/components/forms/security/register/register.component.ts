@@ -2,7 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormErrors } from 'src/app/core/models/data-types/security/security-error.model';
 import { RegisterRequest } from 'src/app/core/models/data-types/security/security-request.model';
-import { SecurityService } from 'src/app/core/services/security/security.service';
+import { SecurityService } from 'src/app/core/services/api/security/security.service';
 import { SessionService } from 'src/app/core/services/session/session.service';
 
 @Component({

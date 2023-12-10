@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
 import { FormErrors } from 'src/app/core/models/data-types/security/security-error.model';
-import { ThemeService } from 'src/app/core/services/theme/theme.service';
+import { ThemeService } from 'src/app/core/services/utils/theme/theme.service';
 import { MessageComponent } from 'src/app/shared/informative/message/message.component';
 
 @Component({

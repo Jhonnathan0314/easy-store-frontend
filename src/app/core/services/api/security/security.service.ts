@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { LoginRequest, RegisterRequest } from '../../models/data-types/security/security-request.model';
+import { LoginRequest, RegisterRequest } from '../../../models/data-types/security/security-request.model';
 import { Observable } from 'rxjs';
-import { ApiResponse, AuthResponse } from '../../models/data-types/security/security-response.model';
+import { AuthResponse } from '../../../models/data-types/security/security-response.model';
+import { ApiResponse } from 'src/app/core/models/data-types/data/general.model';
 
 @Injectable({
   providedIn: 'root'

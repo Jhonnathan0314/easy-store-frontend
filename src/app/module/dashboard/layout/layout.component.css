@@ -1,12 +1,7 @@
-.header {
-    height: 70px;
+header {
+    height: 80px;
 }
 
-.footer {
-    height: 90px;
-}
-
-.content {
-    margin-top: 70px;
-    margin-bottom: 90px;
+main {
+    height: calc(100vh - 80px);
 }

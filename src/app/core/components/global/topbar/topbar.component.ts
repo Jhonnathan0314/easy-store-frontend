@@ -2,12 +2,11 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { SessionService } from 'src/app/core/services/session/session.service';
-import { ThemeService } from 'src/app/core/services/theme/theme.service';
+import { ThemeService } from 'src/app/core/services/utils/theme/theme.service';
 
 @Component({
   selector: 'app-topbar',
-  templateUrl: './topbar.component.html',
-  styleUrls: ['./topbar.component.css']
+  templateUrl: './topbar.component.html'
 })
 export class TopbarComponent {
 
@@ -19,14 +18,14 @@ export class TopbarComponent {
 
   itemsOptions() {
     this.items = [
-      { label: 'Menu', icon: 'pi pi-fw pi-home', command: () => { this.router.navigateByUrl('/dashboard/home') } },
-      { label: 'Sophie shoes', icon: 'pi pi-fw pi-shopping-bag', command: () => { this.router.navigateByUrl('/dashboard/shoes') } },
-      { label: 'Sophie offers', icon: 'pi pi-fw pi-dollar', command: () => { this.router.navigateByUrl('/dashboard/offers') } },
-      { label: 'Onces sofi', icon: 'pi pi-fw pi-gift', command: () => { this.router.navigateByUrl('/dashboard/launch') } },
-      { label: 'Mi perfil', icon: 'pi pi-fw pi-user', command: () => { this.router.navigateByUrl('/dashboard/profile') } },
+      { label: 'Menu', icon: 'pi pi-fw pi-home text-primary', command: () => { this.router.navigateByUrl('/dashboard/home') } },
+      { label: 'Sophie shoes', icon: 'pi pi-fw pi-shopping-bag text-primary', command: () => { this.router.navigateByUrl('/dashboard/shoes') } },
+      { label: 'Sophie offers', icon: 'pi pi-fw pi-dollar text-primary', command: () => { this.router.navigateByUrl('/dashboard/offers') } },
+      { label: 'Onces sofi', icon: 'pi pi-fw pi-gift text-primary', command: () => { this.router.navigateByUrl('/dashboard/launch') } },
+      { label: 'Mi perfil', icon: 'pi pi-fw pi-user text-primary', command: () => { this.router.navigateByUrl('/dashboard/profile') } },
       { 
         label: 'Tema actual', 
-        icon: 'pi pi-fw pi-cog',
+        icon: 'pi pi-fw pi-cog text-primary',
         items: [
           {
             label: 'Azul claro',
@@ -70,7 +69,7 @@ export class TopbarComponent {
           }
         ]
       },
-      { label: 'Salir', icon: 'pi pi-fw pi-sign-out', command: () => { this.sessionService.logout(); } },
+      { label: 'Salir', icon: 'pi pi-fw pi-sign-out text-primary', command: () => { this.sessionService.logout(); } },
     ];
   }
 
