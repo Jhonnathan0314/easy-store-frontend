@@ -51,4 +51,11 @@ export class ProductService {
       );
   }
 
+  getBySubcategory(subcategory: string) {
+    return this.storedProducts$
+      .pipe(
+        map(products => products.filter(product => product.subcategory.name.toLowerCase() == subcategory.toLowerCase()))
+      );
+  }
+
 }

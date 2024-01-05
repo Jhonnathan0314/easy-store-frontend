@@ -7,31 +7,31 @@
     <div class="pl-4">
         <h5 class="cursor-pointer hover:text-primary" (click)="showCategory('shoes')"><i class="pi pi-chevron-right"></i> Calzado familiar</h5>
         <div #shoesRef class="hidden pl-4">
-            <h6>Dama</h6>
-            <h6>Caballero</h6>
-            <h6>Niños</h6>
+            <h6 class="cursor-pointer" (click)="filterBySubcategory('Dama')">Dama</h6>
+            <h6 class="cursor-pointer" (click)="filterBySubcategory('Caballero')">Caballero</h6>
+            <h6 class="cursor-pointer" (click)="filterBySubcategory('Caballero')">Caballero</h6>
         </div>
 
         <h5 class="cursor-pointer hover:text-primary" (click)="showCategory('lingerie')"><i class="pi pi-chevron-right"></i> Lenceria de hogar</h5>
         <div #lingerieRef class="hidden pl-4">
-            <h6>Sabanas</h6>
-            <h6>Cobijas y colchones</h6>
-            <h6>Cortinas</h6>
-            <h6>Tapetes</h6>
+            <h6 class="cursor-pointer" (click)="filterBySubcategory('Sabanas')">Sabanas</h6>
+            <h6 class="cursor-pointer" (click)="filterBySubcategory('Cobijas y colchones')">Cobijas y colchones</h6>
+            <h6 class="cursor-pointer" (click)="filterBySubcategory('Cortinas')">Cortinas</h6>
+            <h6 class="cursor-pointer" (click)="filterBySubcategory('Tapetes')">Tapetes</h6>
         </div>
 
         <h5 class="cursor-pointer hover:text-primary" (click)="showCategory('clothes')"><i class="pi pi-chevron-right"></i> Ropa familiar</h5>
         <div #clothesRef class="hidden pl-4">
-            <h6>Dama</h6>
-            <h6>Caballero</h6>
-            <h6>Niños</h6>
+            <h6 class="cursor-pointer" (click)="filterBySubcategory('Dama')">Dama</h6>
+            <h6 class="cursor-pointer" (click)="filterBySubcategory('Caballero')">Caballero</h6>
+            <h6 class="cursor-pointer" (click)="filterBySubcategory('Niños')">Niños</h6>
         </div>
 
         <h5 class="cursor-pointer hover:text-primary" (click)="showCategory('accesories')"><i class="pi pi-chevron-right"></i> Accesorios y bisuteria</h5>
         <div #accesoriesRef class="hidden pl-4">
-            <h6>Perfumeria</h6>
-            <h6>Joyas</h6>
-            <h6>Accesorios</h6>
+            <h6 class="cursor-pointer" (click)="filterBySubcategory('Perfumeria')">Perfumeria</h6>
+            <h6 class="cursor-pointer" (click)="filterBySubcategory('Joyas')">Joyas</h6>
+            <h6 class="cursor-pointer" (click)="filterBySubcategory('Accesorios')">Accesorios</h6>
         </div>
     </div>
     <h4><i class="pi pi-dollar"></i> Precio</h4>

@@ -14,7 +14,8 @@ export class FiltersMenuComponent {
 
   @Output() displayFiltersEvent = new EventEmitter<void>();
   @Output() priceFilterEvent = new EventEmitter<number[]>();
-  
+  @Output() subcategoryFilterEvent = new EventEmitter<string>();
+
   canFilter: boolean = false;
   canCleanFilter: boolean = false;
   isLoading: boolean = false;
@@ -62,6 +63,10 @@ export class FiltersMenuComponent {
 
   filterByRangePrice() {
     if(this.canFilter) this.priceFilterEvent.emit([this.minPrice, this.maxPrice]);
+  }
+
+  filterBySubcategory(subcategory: string) {
+    this.subcategoryFilterEvent.emit(subcategory);
   }
 
 }

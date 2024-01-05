@@ -69,4 +69,8 @@ export class ShoesProductsComponent implements OnInit, OnDestroy {
     this.products = await (firstValueFrom(this.productService.getBetweenPrice(value[0], value[1])));
   }
 
+  async applySubcategoryFilter(value: string) {
+    this.products = await (firstValueFrom(this.productService.getBySubcategory(value)));
+  }
+
 }
