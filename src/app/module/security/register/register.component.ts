@@ -29,12 +29,16 @@ export class RegisterComponent {
 
   initializeForm() {
     this.registerForm = this.formBuilder.group({
-      name: ['', [Validators.required]],
-      lastName: ['', [Validators.required]],
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      lastName: ['', [Validators.required, Validators.minLength(2)]],
       username: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]],
-      confirmPassword: ['', [Validators.required]]
+      password: ['', [Validators.required, Validators.minLength(5)]],
+      confirmPassword: ['', [Validators.required, Validators.minLength(5)]]
     });
+  }
+
+  receiveValue(key: string, value: string) {
+    this.registerForm.value[key] = value;
   }
 
   validateForm() {

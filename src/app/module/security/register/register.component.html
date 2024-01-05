@@ -7,28 +7,40 @@
   </div>
   <div class="col-10 h-3rem my-3">
     <app-input-text
+      [value]="registerForm.value.name"
       label="Nombre"
+      [hasError]="registerForm.controls['name'].status === 'INVALID'"
+      (valueEvent)="receiveValue('name', $event)"
       formControlName="name"
       ngDefaultControl
     ></app-input-text>
   </div>
   <div class="col-10 h-3rem my-3">
     <app-input-text
+      [value]="registerForm.value.lastName"
       label="Apellidos"
+      [hasError]="registerForm.controls['lastName'].status === 'INVALID'"
+      (valueEvent)="receiveValue('lastName', $event)"
       formControlName="lastName"
       ngDefaultControl
     ></app-input-text>
   </div>
   <div class="col-10 h-3rem my-3">
     <app-input-text
+      [value]="registerForm.value.username"
       label="Correo electronico"
+      [hasError]="registerForm.controls['username'].status === 'INVALID'"
+      (valueEvent)="receiveValue('username', $event)"
       formControlName="username"
       ngDefaultControl
     ></app-input-text>
   </div>
   <div class="col-10 h-3rem my-3">
     <app-input-password
+      [value]="registerForm.value.password"
       label="Contraseña"
+      [hasError]="registerForm.controls['password'].status === 'INVALID'"
+      (valueEvent)="receiveValue('password', $event)"
       [feedback]="true"
       [toggleMask]="true"
       formControlName="password"
@@ -37,7 +49,10 @@
   </div>
   <div class="col-10 h-3rem my-3">
     <app-input-password
+      [value]="registerForm.value.confirmPassword"
       label="Confirmar contraseña"
+      [hasError]="registerForm.controls['confirmPassword'].status === 'INVALID'"
+      (valueEvent)="receiveValue('confirmPassword', $event)"
       [feedback]="true"
       [toggleMask]="true"
       formControlName="confirmPassword"
