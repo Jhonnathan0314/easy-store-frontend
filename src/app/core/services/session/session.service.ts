@@ -26,7 +26,7 @@ export class SessionService {
 
   logout() {
     localStorage.clear();
-    this.redirect('/security');
+    this.redirect('/security/login');
   }
 
   validateSession() {

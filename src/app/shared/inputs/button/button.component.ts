@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ButtonIconPosition } from '@enums/primeng.enum';
 import { ConfirmationService } from 'primeng/api';
 
 @Component({
@@ -10,6 +11,7 @@ export class ButtonComponent {
 
   @Input() label: string = '';
   @Input() icon: string = '';
+  @Input() iconPos: ButtonIconPosition = ButtonIconPosition.LEFT;
   @Input() loading: boolean = false;
   @Input() disabled: boolean = false;
   @Input() confirmClick: boolean = false;
@@ -23,8 +25,10 @@ export class ButtonComponent {
    */
   sendValue(event: Event) {
     if (this.confirmClick) {
+      console.log("if");
       this.confirmClickAction(event);
     } else {
+      console.log("else");
       this.clickEvent.emit();
     }
   }

@@ -1,8 +1,11 @@
-import { Component, ViewChild } from '@angular/core';
-import { MenuItem, MessageService } from 'primeng/api';
-import { FormErrors } from 'src/app/core/models/data-types/security/security-error.model';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { FormErrors } from '@models/security/security-error.model';
+import { MessageService } from 'primeng/api';
 import { ThemeService } from 'src/app/core/services/utils/theme/theme.service';
 import { MessageComponent } from 'src/app/shared/informative/message/message.component';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-security',
@@ -10,79 +13,50 @@ import { MessageComponent } from 'src/app/shared/informative/message/message.com
   styleUrls: ['./security.component.css'],
   providers: [ MessageService ]
 })
-export class SecurityComponent {
+export class SecurityComponent implements OnDestroy {
 
   @ViewChild(MessageComponent) messageComponent: MessageComponent;
 
-  items: MenuItem[] = [];
+  loginSubscription: Subscription | undefined;
+  registerSubscription: Subscription | undefined;
+
   detailError: string = '';
 
-  constructor(public themeService: ThemeService) {
-    this.configMenuItems();
+  constructor(public themeService: ThemeService) {}
+
+  /**
+   * The function onActivate is used to subscribe to error events from LoginComponent and
+   * RegisterComponent and display the form errors.
+   * @param {Component} componentRef - The componentRef parameter is a reference to the component that
+   * is being activated. It is used to determine the type of component and subscribe to the appropriate
+   * error event.
+   */
+  onActivate(componentRef: Component) {
+    this.loginSubscription = undefined;
+    this.registerSubscription = undefined;
+    if (componentRef instanceof LoginComponent) {
+      this.loginSubscription = componentRef.loginErrorEvent.subscribe((errors) => this.showFormErrors(errors));
+    }
+    if (componentRef instanceof RegisterComponent) {
+      this.registerSubscription = componentRef.registerErrorEvent.subscribe((errors) => this.showFormErrors(errors));
+    }
   }
 
-  configMenuItems() {
-    this.items = [
-      {
-        label: 'Temas',
-        icon: 'pi pi-fw pi-palette',
-        items: [
-          {
-            label: 'Azul claro',
-            escape: true,
-            command: () => { this.themeService.switchTheme('saga-blue'); }
-          },
-          {
-            label: 'Verde claro',
-            escape: true,
-            command: () => { this.themeService.switchTheme('saga-green'); }
-          },
-          {
-            label: 'Naranja claro',
-            escape: true,
-            command: () => { this.themeService.switchTheme('saga-orange'); }
-          },
-          {
-            label: 'Purpura claro',
-            escape: true,
-            command: () => { this.themeService.switchTheme('saga-purple'); }
-          },
-          {
-            label: 'Azul oscuro',
-            escape: true,
-            command: () => { this.themeService.switchTheme('arya-blue'); }
-          },
-          {
-            label: 'Verde oscuro',
-            escape: true,
-            command: () => { this.themeService.switchTheme('arya-green'); }
-          },
-          {
-            label: 'Naranja oscuro',
-            escape: true,
-            command: () => { this.themeService.switchTheme('arya-orange'); }
-          },
-          {
-            label: 'Purpura oscuro',
-            escape: true,
-            command: () => { this.themeService.switchTheme('arya-purple'); }
-          }
-        ],
-      },
-      {
-        label: 'Ayuda y soporte',
-        icon: 'pi pi-fw pi-question-circle',
-        command: () => { } 
-      }
-    ];
+  /**
+   * The ngOnDestroy function is used to unsubscribe from any active subscriptions for the login and
+   * register processes.
+   */
+  ngOnDestroy(): void {
+    if(this.loginSubscription) this.loginSubscription.unsubscribe();
+    if(this.registerSubscription) this.registerSubscription.unsubscribe();
   }
 
-  changeViewEvent(oldView: string) {
-    let formContainer = document.getElementById('form-card');
-    const classes = 'flip-card-inner w-full h-full';
-    formContainer?.setAttribute('class', oldView == 'login' ? classes + ' change-view' : classes);
-  }
-
+  /**
+   * The function "showFormErrors" displays error messages for each field in a form.
+   * @param {FormErrors} formErrors - An object that contains the errors for each field in a form. The
+   * keys of the object represent the field names, and the values are arrays of error messages for each
+   * field.
+   */
   showFormErrors(formErrors: FormErrors) {
     Object.keys(formErrors).forEach(field => {
       this.detailError = `El campo ${field} `;

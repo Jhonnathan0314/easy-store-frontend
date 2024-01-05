@@ -12,6 +12,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { PasswordModule } from 'primeng/password';
 import { RatingModule } from 'primeng/rating';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 
 import { DividerModule } from 'primeng/divider';
 import { TagModule } from 'primeng/tag';
@@ -43,6 +44,7 @@ import { CarouselModule } from 'primeng/carousel';
     PasswordModule,
     RatingModule,
     InputTextareaModule,
+    AutoCompleteModule,
 
     DividerModule,
     TagModule,
@@ -70,6 +72,7 @@ import { CarouselModule } from 'primeng/carousel';
     PasswordModule,
     RatingModule,
     InputTextareaModule,
+    AutoCompleteModule,
     
     DividerModule,
     TagModule,

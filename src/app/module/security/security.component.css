@@ -1,59 +1,7 @@
-.image {
-    background-repeat: no-repeat;
-    background-size: cover;
+header {
+    height: 100px;
 }
 
-.saga-blue {
-    background-image: url('../../../assets/img/background-saga-blue.svg');
-}
-
-.saga-green {
-    background-image: url('../../../assets/img/background-saga-green.svg');
-}
-
-.saga-orange {
-    background-image: url('../../../assets/img/background-saga-orange.svg');
-}
-
-.saga-purple {
-    background-image: url('../../../assets/img/background-saga-purple.svg');
-}
-
-.arya-blue {
-    background-image: url('../../../assets/img/background-arya-blue.svg');
-}
-
-.arya-green {
-    background-image: url('../../../assets/img/background-arya-green.svg');
-}
-
-.arya-orange {
-    background-image: url('../../../assets/img/background-arya-orange.svg');
-}
-
-.arya-purple {
-    background-image: url('../../../assets/img/background-arya-purple.svg');
-}
-
-.flip-card-inner {
-    position: relative;
-    transition: transform 0.8s;
-    transform-style: preserve-3d;
-}
-
-.change-view {
-    transition: transform 0.8s;
-    transform: rotateY(180deg);
-}
-
-.flip-card-front,
-.flip-card-back {
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    position: absolute;
-}
-
-.flip-card-back {
-    transform: rotateY(180deg);
-    margin-top: -10%;
+.body {
+    height: calc(100vh - 100px);
 }

@@ -3,9 +3,11 @@
   <p-button
     [label]="label"
     [icon]="icon"
-    iconPos="left"
+    [iconPos]="iconPos"
     [loading]="loading"
     [disabled]="disabled"
     (click)="sendValue($event)"
   ></p-button>
 </div>
+<p-toast></p-toast>
+<p-confirmPopup></p-confirmPopup>

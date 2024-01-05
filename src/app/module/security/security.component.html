@@ -1,28 +1,12 @@
+<div [class]="themeService.theme + ' image w-full h-screen'">
+    <header class="w-full pt-5">
+        <app-security-topbar></app-security-topbar>
+    </header>
+    <section class="body w-full px-1 md:px-6">
+        <div class="w-10 md:w-7 h-full m-auto flex align-items-center justify-content-center">
+            <router-outlet (activate)="onActivate($event)"></router-outlet>
+        </div>
+    </section>
+</div>
 <p-toast></p-toast>
 <app-message #messageComponent></app-message>
-<div [class]="themeService.theme + ' image px-4 w-screen h-screen grid grid-nogutter justify-content-center align-items-center'">
-    <div class="col-12 sm:col-12 md:col-3 h-auto grid justify-content-start align-items-center sm:justify-content-start md:justify-content-center">
-        <app-split-button icon="pi pi-cog" [items]="items"></app-split-button>
-    </div>
-    <div class="col-12 sm:col-12 md:col-9 h-auto grid justify-content-evenly align-items-center sm:justify-content-evenly md:justify-content-center">
-        <img src="assets/img/store.png" alt="store-logo" class="w-3rem sm:w-3rem md:w-7rem md:pr-6">
-        <h1 class="text-4xl sm:text-4xl md:text-6xl text-color">Sophie store</h1>
-    </div>
-    <div class="surface-card shadow-6 col-12 sm:col-12 md:col-4 md:h-18rem h-7rem md:py-6 grid justify-content-evenly md:flex-column align-items-center card-linear cursor-pointer">
-        <img src="assets/img/google.png" alt="logo google" class="w-4rem md:w-6rem">
-        <p class="text-lg md:text-xl text-color">Ingresar con Google</p>
-    </div>
-    <div class="col-12 sm:col-12 md:col-1 md:flex-column grid justify-content-evenly align-items-center">
-        <div class="w-5 border-bottom-1 sm:border-bottom-1 md:w-auto md:h-17rem md:border-left-1"></div> o <div class="w-5 border-bottom-1 sm:border-bottom-1 md:w-auto md:h-17rem md:border-left-1"></div>
-    </div>
-    <div class="flip-card col-12 sm:col-12 md:col-6 h-26rem md:h-30rem">
-        <div id="form-card" class="flip-card-inner w-full h-full">
-            <div class="flip-card-front w-full h-full">
-                <app-login class="w-full h-full" (changeViewEvent)="changeViewEvent($event)" (loginErrorEvent)="showFormErrors($event)"></app-login>
-            </div>
-            <div class="flip-card-back w-full h-full">
-                <app-register class="w-full h-full" (changeViewEvent)="changeViewEvent($event)" (registerErrorEvent)="showFormErrors($event)"></app-register>
-            </div>
-        </div>
-    </div>
-</div>

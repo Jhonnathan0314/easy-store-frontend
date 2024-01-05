@@ -125,3 +125,35 @@ body {
 .h-12vh {
     height: 100vh;
 } */
+
+.saga-blue {
+    background-image: url('assets/img/background-saga-blue.svg');
+}
+
+.saga-green {
+    background-image: url('assets/img/background-saga-green.svg');
+}
+
+.saga-orange {
+    background-image: url('assets/img/background-saga-orange.svg');
+}
+
+.saga-purple {
+    background-image: url('assets/img/background-saga-purple.svg');
+}
+
+.arya-blue {
+    background-image: url('assets/img/background-arya-blue.svg');
+}
+
+.arya-green {
+    background-image: url('assets/img/background-arya-green.svg');
+}
+
+.arya-orange {
+    background-image: url('assets/img/background-arya-orange.svg');
+}
+
+.arya-purple {
+    background-image: url('assets/img/background-arya-purple.svg');
+}

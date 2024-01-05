@@ -8,3 +8,8 @@ export enum DataViewLayout {
     LIST = "list",
     GRID = "grid"
 }
+
+export enum ButtonIconPosition {
+    LEFT = "left",
+    RIGHT = "right"
+}

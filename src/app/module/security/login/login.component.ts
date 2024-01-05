@@ -1,24 +1,25 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { FormErrors } from 'src/app/core/models/data-types/security/security-error.model';
-import { LoginRequest } from 'src/app/core/models/data-types/security/security-request.model';
+import { ButtonIconPosition } from '@enums/primeng.enum';
+import { FormErrors } from '@models/security/security-error.model';
+import { LoginRequest } from '@models/security/security-request.model';
 import { SecurityService } from 'src/app/core/services/api/security/security.service';
 import { SessionService } from 'src/app/core/services/session/session.service';
 import { ThemeService } from 'src/app/core/services/utils/theme/theme.service';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
+  templateUrl: './login.component.html'
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
+
+  buttonIconPositionRight: ButtonIconPosition = ButtonIconPosition.RIGHT;
 
   loginForm: FormGroup;
   loginRequest: LoginRequest = new LoginRequest();
   formErrors: FormErrors;
   
-  @Output() changeViewEvent = new EventEmitter();
-  @Output() loginErrorEvent = new EventEmitter();
+  @Output() loginErrorEvent = new EventEmitter<FormErrors>();
 
   constructor(
     private formBuilder: FormBuilder,
@@ -31,13 +32,28 @@ export class LoginComponent implements OnInit {
     this.initializeForm();
   }
 
+  /**
+   * The function initializes a form with two fields, username and password, and applies required and
+   * email validators to the username field.
+   */
   initializeForm() {
     this.loginForm = this.formBuilder.group({
       username: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]]
+      password: ['', [Validators.required, Validators.minLength(5)]]
     });
   }
 
+  receiveValue(key: string, value: string) {
+    this.loginForm.value[key] = value;
+  }
+
+  /**
+   * The function validates a form, retrieves form errors if the form is invalid, and then proceeds to
+   * perform a login request.
+   * @returns If the loginForm is not valid, the function will return after calling the getFormErrors()
+   * function. Otherwise, it will assign the value of the loginForm to the loginRequest variable and
+   * call the login() function.
+   */
   validateForm() {
     if(!this.loginForm.valid) {
       this.getFormErrors();
@@ -48,6 +64,9 @@ export class LoginComponent implements OnInit {
     this.login();
   }
 
+  /**
+   * The function "getFormErrors" retrieves and stores any errors present in the login form controls.
+   */
   getFormErrors() {
     this.formErrors = {};
     Object.keys(this.loginForm.controls).forEach(key => {
@@ -59,14 +78,16 @@ export class LoginComponent implements OnInit {
     this.errorEvent();
   }
 
+  /**
+   * The login function calls the security service's login method with a login request, saves the
+   * session with the returned token, and logs any errors.
+   */
   login() {
     this.securityService.login(this.loginRequest).subscribe({
       next: (res) => this.sessionService.saveSession(this.loginRequest, res.data.token),
       error: (error) => console.log("Error en login: ", error)
     });
   }
-
-  changeView() { this.changeViewEvent.emit('login'); }
 
   errorEvent() { this.loginErrorEvent.emit(this.formErrors); }
 

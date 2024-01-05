@@ -1,15 +1,23 @@
 <section #section class="w-full h-full carousel-section">
-  <p-carousel [value]="items" [numVisible]="3" [numScroll]="1" [responsiveOptions]="responsiveOptions">
+  <p-carousel
+    [value]="items"
+    [numVisible]="3"
+    [numScroll]="1"
+    [responsiveOptions]="responsiveOptions"
+  >
     <ng-template let-item pTemplate="item">
-        <div class="item text-center py-5 md:p-5 lg:p-5 xl:p-5 m-2" [routerLink]="'/dashboard/' + item.route">
-            <div class="mb-3">
-              <img [src]="item.img" [alt]="item.img" class="item-image w-6" />
-            </div>
-            <div>
-              <h3 class="pb-4">{{ item.title }}</h3>
-              <h4 class="mt-0 pb-3">{{ item.body }}</h4>
-            </div>
+      <div
+        class="item text-center py-5 md:p-5 lg:p-5 xl:p-5 m-2"
+        [routerLink]="'/dashboard/' + item.route"
+      >
+        <div class="mb-3">
+          <img [src]="item.img" [alt]="item.img" class="item-image w-6" />
         </div>
+        <div>
+          <h3 class="pb-4">{{ item.title }}</h3>
+          <h4 class="mt-0 pb-3">{{ item.body }}</h4>
+        </div>
+      </div>
     </ng-template>
-</p-carousel>
+  </p-carousel>
 </section>

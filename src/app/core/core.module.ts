@@ -3,8 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
 import { TopbarComponent } from './components/global/topbar/topbar.component';
-import { LoginComponent } from './components/forms/security/login/login.component';
-import { RegisterComponent } from './components/forms/security/register/register.component';
+import { SecurityTopbarComponent } from './components/security/topbar/topbar.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { CarouselHomeComponent } from './components/global/carousel-home/carousel-home.component';
@@ -17,8 +16,7 @@ import { CarouselModule } from 'primeng/carousel';
 @NgModule({
   declarations: [
     TopbarComponent,
-    LoginComponent,
-    RegisterComponent,
+    SecurityTopbarComponent,
     CarouselHomeComponent
   ],
   imports: [
@@ -34,8 +32,7 @@ import { CarouselModule } from 'primeng/carousel';
   ],
   exports: [
     TopbarComponent,
-    LoginComponent,
-    RegisterComponent,
+    SecurityTopbarComponent,
     CarouselHomeComponent
   ]
 })

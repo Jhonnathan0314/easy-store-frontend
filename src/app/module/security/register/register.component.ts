@@ -1,14 +1,13 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { FormErrors } from 'src/app/core/models/data-types/security/security-error.model';
-import { RegisterRequest } from 'src/app/core/models/data-types/security/security-request.model';
+import { FormErrors } from '@models/security/security-error.model';
+import { RegisterRequest } from '@models/security/security-request.model';
 import { SecurityService } from 'src/app/core/services/api/security/security.service';
 import { SessionService } from 'src/app/core/services/session/session.service';
 
 @Component({
   selector: 'app-register',
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  templateUrl: './register.component.html'
 })
 export class RegisterComponent {
 
@@ -16,10 +15,13 @@ export class RegisterComponent {
   registerRequest: RegisterRequest = new RegisterRequest();
   formErrors: FormErrors;
 
-  @Output() changeViewEvent = new EventEmitter();
   @Output() registerErrorEvent = new EventEmitter();
 
-  constructor(private formBuilder: FormBuilder, private securityService: SecurityService, private sessionService: SessionService) {}
+  constructor(
+    private formBuilder: FormBuilder, 
+    private securityService: SecurityService, 
+    private sessionService: SessionService
+  ) {}
 
   ngOnInit(): void {
     this.initializeForm();
@@ -67,10 +69,6 @@ export class RegisterComponent {
       next: (res) => this.sessionService.saveSession(this.registerRequest, res.data.token),
       error: (error) => console.log("Error en register: ", error)
     });
-  }
-
-  changeView() {
-    this.changeViewEvent.emit('register');
   }
 
   errorEvent() { this.registerErrorEvent.emit(this.formErrors); }

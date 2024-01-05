@@ -1,5 +1,5 @@
 <form
-  class="surface-card shadow-6 w-full h-fit py-2 grid grid-nogutter justify-content-evenly align-items-start"
+  class="surface-card shadow-6 w-full h-fit py-5 grid grid-nogutter justify-content-evenly align-items-start"
   [formGroup]="registerForm"
 >
   <div class="col-12 text-center">
@@ -45,9 +45,9 @@
     ></app-input-password>
   </div>
   <div class="col-10 h-3rem">
-    <app-button label="Crear cuenta" (clickEvent)="validateForm()"></app-button>
+    <app-button [confirmClick]="true" label="Crear cuenta" (clickEvent)="validateForm()"></app-button>
   </div>
   <div class="col-12 text-center">
-    <p class="text-xs md:text-sm cursor-pointer text-color" (click)="changeView()">Ingresar</p>
+    <a class="text-xs md:text-sm cursor-pointer text-color" routerLink="/security/login">Ingresar</a>
   </div>
 </form>
