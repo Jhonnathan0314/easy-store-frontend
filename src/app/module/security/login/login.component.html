@@ -9,7 +9,7 @@
     <app-input-text
       [value]="loginForm.value.username"
       label="Correo electronico"
-      [hasError]="loginForm.controls['username'].invalid"
+      [hasError]="loginForm.controls['username'].status === 'INVALID'"
       (valueEvent)="receiveValue('username', $event)"
       formControlName="username"
       ngDefaultControl
@@ -19,6 +19,7 @@
     <app-input-password
       [value]="loginForm.value.password"
       label="Contraseña"
+      [hasError]="loginForm.controls['password'].status === 'INVALID'"
       [feedback]="true"
       [toggleMask]="true"
       (valueEvent)="receiveValue('password', $event)"

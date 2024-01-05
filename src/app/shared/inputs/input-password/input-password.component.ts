@@ -20,6 +20,7 @@ export class InputPasswordComponent implements OnChanges {
   @Input() classes: string = '';
   @Input() pattern: string = '';
   @Input() promptLabel: string = '';
+  @Input() hasError: boolean = false;
   @Input() toggleMask: boolean = false;
   @Input() feedback: boolean = false;
   @Input() disabled: boolean = false;
