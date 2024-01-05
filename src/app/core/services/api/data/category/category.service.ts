@@ -26,7 +26,6 @@ export class CategoryService {
       next: (apiResponse) => {
         this.categories = apiResponse.data;
         this.categoriesSubject.next(this.categories);
-        console.log("EJECUTE PETICION");
       },
       error: (error) => {
         console.log("error finding categories: ", error);

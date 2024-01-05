@@ -25,10 +25,8 @@ export class ButtonComponent {
    */
   sendValue(event: Event) {
     if (this.confirmClick) {
-      console.log("if");
       this.confirmClickAction(event);
     } else {
-      console.log("else");
       this.clickEvent.emit();
     }
   }

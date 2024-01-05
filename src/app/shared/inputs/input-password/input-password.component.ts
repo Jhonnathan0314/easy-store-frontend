@@ -43,7 +43,6 @@ export class InputPasswordComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(`Componente iniciado con ID: ${this.componentId}`);
     this.controlValue.setValue(this.value);
     this.validateState();
     this.validatePassword();
@@ -73,8 +72,6 @@ export class InputPasswordComponent implements OnChanges {
       this.hasUppercase &&
       this.hasLowercase &&
       this.controlValue.value.length >= 12 && this.controlValue.value.length <= 24;
-
-    console.log("isValidPassword ", this.isValidPassword);
   }
 
   /**
