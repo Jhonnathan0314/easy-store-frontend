@@ -18,12 +18,3 @@ export class CarouselHomeObject {
     hidden: 'hidden' | '';
     classes: string;
 }
-
-export class Product {
-    id: string;
-    category: string;
-    name: string;
-    price: number;
-    inventory: number;
-    rating?: number;
-}

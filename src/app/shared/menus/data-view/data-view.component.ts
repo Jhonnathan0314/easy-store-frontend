@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Product } from '@models/data/product.model';
 import { SelectItem } from 'primeng/api';
-import { Product } from 'src/app/core/models/data-types/primeng-object.model';
 import { DataViewLayout } from 'src/app/core/models/enums/primeng.enum';
 
 @Component({
@@ -28,8 +28,8 @@ export class DataViewComponent implements OnInit {
   }
 
   getSeverity(product: Product) {
-    if (product.inventory == 0) return 'danger';
-    if (product.inventory < 3) return 'warning';
+    if (product.quantity == 0) return 'danger';
+    if (product.quantity < 3) return 'warning';
     return 'success';
   }
 

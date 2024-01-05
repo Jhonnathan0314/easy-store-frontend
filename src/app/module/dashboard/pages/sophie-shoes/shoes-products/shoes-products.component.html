@@ -1,4 +1,4 @@
-<div class="container w-full grid grid-nogutter">
+<div class="container w-full grid grid-nogutter" *ngIf="products">
     <section #filtersRef class="hidden py-2 pl-2">
         <app-filters-menu (displayFiltersEvent)="showHideFilters()"></app-filters-menu>
     </section>
@@ -25,7 +25,7 @@
                 <p class="p-0 m-0">{{ products.length }} resultados</p>
             </div>
         </div>
-        <div class="w-full h-fit overflow-auto">
+        <div class="w-full h-fit overflow-auto" *ngIf="products.length > 0">
             <app-data-view [objects]="products" [isOffer]="false"></app-data-view>
         </div>
     </section>

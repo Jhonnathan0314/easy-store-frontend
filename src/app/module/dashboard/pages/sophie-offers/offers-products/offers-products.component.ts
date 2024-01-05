@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Product } from 'src/app/core/models/data-types/primeng-object.model';
+import { Product } from '@models/data/product.model';
 
 @Component({
   selector: 'app-offers-products',

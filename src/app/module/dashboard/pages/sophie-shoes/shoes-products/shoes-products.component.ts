@@ -1,6 +1,8 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Product } from '@models/data/product.model';
 import { MessageService } from 'primeng/api';
-import { Product } from 'src/app/core/models/data-types/primeng-object.model';
+import { Subscription } from 'rxjs';
+import { ProductService } from 'src/app/core/services/api/data/product/product.service';
 
 @Component({
   selector: 'app-shoes-products',
@@ -8,12 +10,34 @@ import { Product } from 'src/app/core/models/data-types/primeng-object.model';
   styleUrls: ['./shoes-products.component.css'],
   providers: [ MessageService ]
 })
-export class ShoesProductsComponent {
+export class ShoesProductsComponent implements OnInit, OnDestroy {
 
   @ViewChild("filtersRef") filtersContainer: ElementRef;
   @ViewChild("productsRef") productsContainer: ElementRef;
   
   products: Product[] = [];
+
+  productsSubscription: Subscription;
+
+  constructor(
+    private productService: ProductService
+  ) {}
+
+  ngOnInit(): void {
+    this.productsSubscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.productsSubscription.unsubscribe();
+  }
+
+  productsSubscribe() {
+    this.productsSubscription = this.productService.storedProducts$.subscribe({
+      next: (value) => {
+        this.products = value;
+      }
+    });
+  }
 
   showHideFilters() {
     const isFilterVisible = this.filtersContainer.nativeElement.classList.contains("col-2");
