@@ -17,6 +17,7 @@ export class InputGroupTextComponent implements OnChanges {
   @Input() loading: boolean = false;
 
   @Output() valueEvent = new EventEmitter<string | number>();
+  @Output() clickEvent = new EventEmitter<string>();
 
   ngOnChanges(changes: SimpleChanges): void {
     this.controlValue.setValue(this.value);
@@ -33,6 +34,10 @@ export class InputGroupTextComponent implements OnChanges {
 
   sendValue() {
     this.valueEvent.emit(this.controlValue.value);
+  }
+
+  sendClickEvent() {
+    this.clickEvent.emit(this.controlValue.value.toString());
   }
 
 }

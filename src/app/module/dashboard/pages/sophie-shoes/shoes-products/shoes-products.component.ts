@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Product } from '@models/data/product.model';
 import { MessageService } from 'primeng/api';
-import { Subscription } from 'rxjs';
+import { Subscription, firstValueFrom } from 'rxjs';
 import { ProductService } from 'src/app/core/services/api/data/product/product.service';
 
 @Component({
@@ -59,6 +59,10 @@ export class ShoesProductsComponent implements OnInit, OnDestroy {
         this.filtersContainer.nativeElement.classList.replace("hidden", "col-2");
         this.productsContainer.nativeElement.classList.replace("col-12", "col-10");
       }
+  }
+
+  async applyFilter(value: string) {
+    this.products = await (firstValueFrom(this.productService.getLikeName(value)));
   }
 
 }

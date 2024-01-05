@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ApiResponse } from '@models/data/general.model';
 import { Product } from '@models/data/product.model';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -35,6 +35,13 @@ export class ProductService {
 
   getAll() {
     return this.storedProducts$.pipe();
+  }
+
+  getLikeName(name: string) {
+    return this.storedProducts$
+    .pipe(
+      map(products => products.filter(product => product.name.toLowerCase().includes(name.toLowerCase())))
+    );
   }
 
 }
