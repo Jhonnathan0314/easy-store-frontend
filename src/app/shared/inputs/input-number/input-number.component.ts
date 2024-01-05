@@ -8,8 +8,6 @@ import { FormControl } from '@angular/forms';
 })
 export class InputNumberComponent implements OnChanges {
 
-  controlValue: FormControl = new FormControl<number>(0);
-
   @Input() value: number = 0;
   @Input() label: string = '';
   @Input() prefix: string = '';
@@ -17,6 +15,8 @@ export class InputNumberComponent implements OnChanges {
   @Input() disabled: boolean = false;
 
   @Output() valueEvent = new EventEmitter<number>();
+
+  controlValue: FormControl = new FormControl<number>(this.value);
 
   ngOnChanges(changes: SimpleChanges): void {
     this.controlValue.setValue(this.value);

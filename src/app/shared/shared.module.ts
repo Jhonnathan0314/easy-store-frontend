@@ -51,7 +51,7 @@ import { MessageComponent } from './informative/message/message.component';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-        PrimengModule
+    PrimengModule
   ],
   exports: [
     ButtonComponent,

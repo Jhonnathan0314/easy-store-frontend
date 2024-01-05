@@ -39,9 +39,16 @@ export class ProductService {
 
   getLikeName(name: string) {
     return this.storedProducts$
-    .pipe(
-      map(products => products.filter(product => product.name.toLowerCase().includes(name.toLowerCase())))
-    );
+      .pipe(
+        map(products => products.filter(product => product.name.toLowerCase().includes(name.toLowerCase())))
+      );
+  }
+
+  getBetweenPrice(min: number, max: number) {
+    return this.storedProducts$
+      .pipe(
+        map(products => products.filter(product => product.price >= min && product.price <= max))
+      );
   }
 
 }

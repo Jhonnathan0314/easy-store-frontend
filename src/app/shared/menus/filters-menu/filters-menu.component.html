@@ -36,12 +36,12 @@
     </div>
     <h4><i class="pi pi-dollar"></i> Precio</h4>
     <div class="pl-4 py-2">
-        <app-input-number label="min" [value]="0" prefix="$ "></app-input-number>
+        <app-input-number [value]="minPrice" label="min" prefix="$ " (valueEvent)="receiveValue($event, 'min'); validateCanFilter(); validateCanCleanFilter();"></app-input-number>
         <p class="pr-4 py-3 m-0 text-center">-</p>
-        <app-input-number label="max" [value]="0" prefix="$"></app-input-number>
+        <app-input-number [value]="maxPrice" label="max" prefix="$ " (valueEvent)="receiveValue($event, 'max'); validateCanFilter(); validateCanCleanFilter();"></app-input-number>
     </div>
     <div class="w-12 h-2rem py-3 flex flex-wrap justify-content-between align-items-center">
-        <app-button label="Limpiar" icon="pi pi-eraser" [disabled]="!canCleanFilter"></app-button>
-        <app-button label="Aplicar" icon="pi pi-send" [loading]="isLoading" [disabled]="!canFilter"></app-button>
+        <app-button label="Limpiar" icon="pi pi-eraser" (clickEvent)="cleanFilters()" [disabled]="!canCleanFilter"></app-button>
+        <app-button label="Aplicar" icon="pi pi-send" (clickEvent)="filterByRangePrice()" [loading]="isLoading" [disabled]="!canFilter"></app-button>
     </div>
 </div>
