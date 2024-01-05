@@ -1,10 +1,12 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { MessageService } from 'primeng/api';
 import { Product } from 'src/app/core/models/data-types/primeng-object.model';
 
 @Component({
   selector: 'app-shoes-products',
   templateUrl: './shoes-products.component.html',
-  styleUrls: ['./shoes-products.component.css']
+  styleUrls: ['./shoes-products.component.css'],
+  providers: [ MessageService ]
 })
 export class ShoesProductsComponent {
 
