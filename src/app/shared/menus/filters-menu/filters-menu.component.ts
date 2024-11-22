@@ -49,7 +49,9 @@ export class FiltersMenuComponent {
   }
 
   validateCanFilter() {
-    this.canFilter = this.minPrice != undefined && this.minPrice != null && this.maxPrice > 0;
+    if(this.minPrice == undefined || this.minPrice == null) this.minPrice = 0;
+    if(this.maxPrice == undefined || this.maxPrice == null) this.maxPrice = 0;
+    this.canFilter = this.minPrice > 0 || this.maxPrice > 0;
   }
 
   validateCanCleanFilter() {

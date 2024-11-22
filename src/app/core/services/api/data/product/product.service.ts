@@ -37,6 +37,16 @@ export class ProductService {
     return this.storedProducts$.pipe();
   }
 
+  getByCategoryLikeName(categoryId: number, name: string) {
+    return this.storedProducts$
+      .pipe(
+        map(products => products.filter(product => 
+          product.subcategory.category.id == categoryId &&
+          product.name.toLowerCase().includes(name.toLowerCase()))
+        )
+      );
+  }
+
   getLikeName(name: string) {
     return this.storedProducts$
       .pipe(
@@ -44,10 +54,50 @@ export class ProductService {
       );
   }
 
+  getByCategoryAndMinPrice(categoryId: number, min: number) {
+    return this.storedProducts$
+      .pipe(
+        map(products => products.filter(product => 
+          product.subcategory.category.id == categoryId &&
+          product.price >= min)
+        )
+      );
+  }
+
+  getByCategoryAndMaxPrice(categoryId: number, max: number) {
+    return this.storedProducts$
+      .pipe(
+        map(products => products.filter(product => 
+          product.subcategory.category.id == categoryId &&
+          product.price <= max)
+        )
+      );
+  }
+
+  getByCategoryBetweenPrice(categoryId: number, min: number, max: number) {
+    return this.storedProducts$
+      .pipe(
+        map(products => products.filter(product => 
+          product.subcategory.category.id == categoryId &&
+          product.price >= min && product.price <= max)
+        )
+      );
+  }
+
   getBetweenPrice(min: number, max: number) {
     return this.storedProducts$
       .pipe(
         map(products => products.filter(product => product.price >= min && product.price <= max))
+      );
+  }
+
+  getByCategoryAndSubcategory(categoryId: number, subcategory: string) {
+    return this.storedProducts$
+      .pipe(
+        map(products => products.filter(product => 
+          product.subcategory.category.id == categoryId &&
+          product.subcategory.name.toLowerCase() == subcategory.toLowerCase())
+        )
       );
   }
 
