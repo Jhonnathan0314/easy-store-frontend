@@ -38,7 +38,7 @@ export class SessionService {
   }
 
   isValidSessionData(): boolean {
-    return this.getSessionData().isValid();
+    return this.getSessionData().isValid() && !this.isTokenExpired();
   }
 
   isLogged(): boolean {
