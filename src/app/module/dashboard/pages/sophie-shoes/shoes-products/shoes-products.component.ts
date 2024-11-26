@@ -1,3 +1,4 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Product } from '@models/data/product.model';
 import { MessageService } from 'primeng/api';
@@ -8,7 +9,34 @@ import { ProductService } from 'src/app/core/services/api/data/product/product.s
   selector: 'app-shoes-products',
   templateUrl: './shoes-products.component.html',
   styleUrls: ['./shoes-products.component.css'],
-  providers: [ MessageService ]
+  providers: [ MessageService ],
+  animations: [
+    trigger('fadeInOut', [
+      state('hidden', style({
+        opacity: 0,
+        transform: 'translateX(-100%)',
+        width: '0%'
+      })),
+      state('visible', style({
+        opacity: 1,
+        transform: 'translateX(0%)'
+      })),
+      transition('visible <=> hidden', [
+        animate(300)
+      ])
+    ]),
+    trigger('resize', [
+      state('full', style({
+        width: '100%'
+      })),
+      state('partial', style({
+        width: '83.3333%'
+      })),
+      transition('full <=> partial', [
+        animate(300)
+      ])
+    ])
+  ]
 })
 export class ShoesProductsComponent implements OnInit, OnDestroy {
 
@@ -18,6 +46,9 @@ export class ShoesProductsComponent implements OnInit, OnDestroy {
   products: Product[] = [];
 
   productsSubscription: Subscription;
+
+  filtersState = 'hidden';
+  productsState  = 'full';
 
   constructor(
     private productService: ProductService
@@ -40,25 +71,8 @@ export class ShoesProductsComponent implements OnInit, OnDestroy {
   }
 
   showHideFilters() {
-    const isFilterVisible = this.filtersContainer.nativeElement.classList.contains("col-2");
-    const isMobile = window.innerWidth <= 1150;
-    if(isMobile){
-      if(isFilterVisible) {
-        this.filtersContainer.nativeElement.classList.remove("col-12");
-        this.filtersContainer.nativeElement.classList.replace("col-2", "hidden");
-        this.productsContainer.nativeElement.classList.remove("hidden");
-      } else {
-        this.filtersContainer.nativeElement.classList.add("col-12");
-        this.filtersContainer.nativeElement.classList.replace("hidden", "col-2");
-        this.productsContainer.nativeElement.classList.add("hidden")
-      }
-    } else if(isFilterVisible ) {
-        this.filtersContainer.nativeElement.classList.replace("col-2", "hidden");
-        this.productsContainer.nativeElement.classList.replace("col-10", "col-12");
-      } else {
-        this.filtersContainer.nativeElement.classList.replace("hidden", "col-2");
-        this.productsContainer.nativeElement.classList.replace("col-12", "col-10");
-      }
+    this.filtersState = this.filtersState === 'hidden' ? 'visible' : 'hidden';
+    this.productsState = this.productsState === 'full' ? 'partial' : 'full';
   }
 
   async applyFilter(value: string) {

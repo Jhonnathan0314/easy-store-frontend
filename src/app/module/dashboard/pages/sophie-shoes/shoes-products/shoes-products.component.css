@@ -1,7 +1,3 @@
-.container {
-    height: calc(100vh - 160px);
-}
-
 h5, h6 {
     font-weight: lighter;
 }

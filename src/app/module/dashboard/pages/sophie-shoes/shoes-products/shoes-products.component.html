@@ -1,12 +1,13 @@
-<div class="container w-full grid grid-nogutter" *ngIf="products">
-    <section #filtersRef class="hidden py-2 pl-2">
-        <app-filters-menu (displayFiltersEvent)="showHideFilters()" (priceFilterEvent)="applyPriceFilter($event)" (subcategoryFilterEvent)="applySubcategoryFilter($event)"></app-filters-menu>
+<div class="flex" *ngIf="products">
+    <section #filtersRef [@fadeInOut]="filtersState" class="py-2 pl-2">
+        <app-filters-menu (displayFiltersEvent)="showHideFilters()" (priceFilterEvent)="applyPriceFilter($event)"
+            (subcategoryFilterEvent)="applySubcategoryFilter($event)"></app-filters-menu>
     </section>
-    <section #productsRef class="col-12 py-2 px-2">
+    <section #productsRef [@resize]="productsState" class="py-2 px-2">
         <div class="surface-card w-full h-6rem px-5 grid grid-nogutter justify-content-between align-items-center border-bottom-1 border-primary-800">
-            <div class="col-2 h-full flex align-items-center justify-content-center">
-                <p class="p-0 m-0 cursor-pointer hover:text-primary" (click)="showHideFilters()">Filtros</p>
-                <!-- <i class="pi pi-sliders-h text-2xl w-fit cursor-pointer hover:text-primary"></i> -->
+            <div class="col-2 h-full flex align-items-center justify-content-center cursor-pointer hover:text-primary" (click)="showHideFilters()">
+                <p class="p-0 m-0 pr-3">Filtros</p>
+                <i class="pi pi-sliders-h text-2xl w-fit"></i>
             </div>
             <div class="col-7 h-3rem">
                 <app-input-group-text label="Buscar" (clickEvent)="applyFilter($event)" icon="pi pi-search"></app-input-group-text>
