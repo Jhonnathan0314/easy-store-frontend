@@ -5,30 +5,30 @@
     <h3 class="pt-4 m-0 text-center">Filtros</h3>
     <h4><i class="pi pi-th-large"></i> Categorias</h4>
     <div class="pl-4">
-        <h5 class="cursor-pointer hover:text-primary" (click)="showCategory('shoes')"><i class="pi pi-chevron-right"></i> Calzado familiar</h5>
-        <div #shoesRef class="hidden pl-4">
+        <h5 class="cursor-pointer hover:text-primary" (click)="showCategory(0)"><i class="pi pi-chevron-right"></i> Calzado familiar</h5>
+        <div #shoesRef class="pl-4" [@fadeInDown]="fadeInDown[0]">
             <h6 class="cursor-pointer" (click)="filterBySubcategory('Dama')">Dama</h6>
             <h6 class="cursor-pointer" (click)="filterBySubcategory('Caballero')">Caballero</h6>
             <h6 class="cursor-pointer" (click)="filterBySubcategory('Caballero')">Caballero</h6>
         </div>
 
-        <h5 class="cursor-pointer hover:text-primary" (click)="showCategory('lingerie')"><i class="pi pi-chevron-right"></i> Lenceria de hogar</h5>
-        <div #lingerieRef class="hidden pl-4">
+        <h5 class="cursor-pointer hover:text-primary" (click)="showCategory(1)"><i class="pi pi-chevron-right"></i> Lenceria de hogar</h5>
+        <div #lingerieRef class="pl-4" [@fadeInDown]="fadeInDown[1]">
             <h6 class="cursor-pointer" (click)="filterBySubcategory('Sabanas')">Sabanas</h6>
             <h6 class="cursor-pointer" (click)="filterBySubcategory('Cobijas y colchones')">Cobijas y colchones</h6>
             <h6 class="cursor-pointer" (click)="filterBySubcategory('Cortinas')">Cortinas</h6>
             <h6 class="cursor-pointer" (click)="filterBySubcategory('Tapetes')">Tapetes</h6>
         </div>
 
-        <h5 class="cursor-pointer hover:text-primary" (click)="showCategory('clothes')"><i class="pi pi-chevron-right"></i> Ropa familiar</h5>
-        <div #clothesRef class="hidden pl-4">
+        <h5 class="cursor-pointer hover:text-primary" (click)="showCategory(2)"><i class="pi pi-chevron-right"></i> Ropa familiar</h5>
+        <div #clothesRef class="pl-4" [@fadeInDown]="fadeInDown[2]">
             <h6 class="cursor-pointer" (click)="filterBySubcategory('Dama')">Dama</h6>
             <h6 class="cursor-pointer" (click)="filterBySubcategory('Caballero')">Caballero</h6>
             <h6 class="cursor-pointer" (click)="filterBySubcategory('Niños')">Niños</h6>
         </div>
 
-        <h5 class="cursor-pointer hover:text-primary" (click)="showCategory('accesories')"><i class="pi pi-chevron-right"></i> Accesorios y bisuteria</h5>
-        <div #accesoriesRef class="hidden pl-4">
+        <h5 class="cursor-pointer hover:text-primary" (click)="showCategory(3)"><i class="pi pi-chevron-right"></i> Accesorios y bisuteria</h5>
+        <div #accesoriesRef class="pl-4" [@fadeInDown]="fadeInDown[3]">
             <h6 class="cursor-pointer" (click)="filterBySubcategory('Perfumeria')">Perfumeria</h6>
             <h6 class="cursor-pointer" (click)="filterBySubcategory('Joyas')">Joyas</h6>
             <h6 class="cursor-pointer" (click)="filterBySubcategory('Accesorios')">Accesorios</h6>

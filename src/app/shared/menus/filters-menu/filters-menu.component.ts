@@ -1,9 +1,39 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-filters-menu',
   templateUrl: './filters-menu.component.html',
-  styleUrls: ['./filters-menu.component.css']
+  styleUrls: ['./filters-menu.component.css'],
+  animations:[
+    trigger('fadeInDown', [
+      state('after-hidden', style({
+        display: 'none'
+      })),
+      state('hidden', style({
+        opacity: 0,
+        transform: 'translateX(-100%)'
+      })),
+      state('before-visible', style({
+        opacity: 0,
+        transform: 'translateX(-100%)',
+        display: 'block'
+      })),
+      state('visible', style({
+        opacity: 1,
+        transform: 'translateX(0%)'
+      })),
+      transition('visible <=> hidden', [
+        animate(300)
+      ]),
+      transition('hidden => after-hidden', [
+        animate(0)
+      ]),
+      transition('before-visible => visible', [
+        animate(300)
+      ])
+    ])
+  ]
 })
 export class FiltersMenuComponent {
 
@@ -23,11 +53,18 @@ export class FiltersMenuComponent {
   minPrice: number = 0;
   maxPrice: number = 0;
 
-  showCategory(categoryName: string) {
-    if(categoryName == 'shoes') this.changeFilterClass(this.shoesContainer);
-    if(categoryName == 'lingerie') this.changeFilterClass(this.lingerieContainer);
-    if(categoryName == 'clothes') this.changeFilterClass(this.clothesContainer);
-    if(categoryName == 'accesories') this.changeFilterClass(this.accesoriesContainer);
+  fadeInDown: string[] = ['after-hidden', 'after-hidden', 'after-hidden', 'after-hidden']
+
+  showCategory(pos: number) {
+    this.fadeInDown[pos] = this.fadeInDown[pos] == 'after-hidden' ? 'before-visible' : 'hidden';
+    if(this.fadeInDown[pos] == 'hidden') this.timeout(pos, "after-hidden", 300);
+    if(this.fadeInDown[pos] == 'before-visible') this.timeout(pos, "visible", 0);
+  }
+
+  timeout(pos: number, value: string, time: number) {
+    setTimeout(() => {
+      this.fadeInDown[pos] = value;
+    }, time);
   }
 
   changeFilterClass(container: ElementRef) {
