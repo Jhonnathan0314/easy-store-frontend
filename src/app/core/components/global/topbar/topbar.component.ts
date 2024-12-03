@@ -19,9 +19,7 @@ export class TopbarComponent {
   itemsOptions() {
     this.items = [
       { label: 'Menu', icon: 'pi pi-fw pi-home text-primary', command: () => { this.router.navigateByUrl('/dashboard/home') } },
-      { label: 'Easy shoes', icon: 'pi pi-fw pi-shopping-bag text-primary', command: () => { this.router.navigateByUrl('/dashboard/shoes') } },
-      { label: 'Easy offers', icon: 'pi pi-fw pi-dollar text-primary', command: () => { this.router.navigateByUrl('/dashboard/offers') } },
-      { label: 'Onces sofi', icon: 'pi pi-fw pi-gift text-primary', command: () => { this.router.navigateByUrl('/dashboard/launch') } },
+      { label: 'Store', icon: 'pi pi-fw pi-shopping-bag text-primary', command: () => { this.router.navigateByUrl('/dashboard/store') } },
       { label: 'Mi perfil', icon: 'pi pi-fw pi-user text-primary', command: () => { this.router.navigateByUrl('/dashboard/profile') } },
       { 
         label: 'Tema actual', 
