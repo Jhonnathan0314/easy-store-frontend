@@ -9,9 +9,7 @@ const routes: Routes = [
     [
       { path: 'home', component: HomeComponent },
       { path: 'profile', component: UserProfileComponent },
-      { path: 'shoes', loadChildren: () => import('./pages/sophie-shoes/sophie-shoes.module').then(m => m.SophieShoesModule) },
-      { path: 'offers', loadChildren: () => import('./pages/sophie-offers/sophie-offers.module').then(m => m.SophieOffersModule) },
-      { path: 'launch', loadChildren: () => import('./pages/sophie-launch/sophie-launch.module').then(m => m.SophieLaunchModule) },
+      { path: 'store', loadChildren: () => import('./pages/store/store.module').then(m => m.StoreModule) },
       { path: '**', redirectTo: 'home', pathMatch: 'full' }
     ]
   },

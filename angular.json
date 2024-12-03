@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "sophie-store-frontend": {
+    "easy-store-frontend": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -16,7 +16,7 @@
             "allowedCommonJsDependencies": [
               "crypto-js"
             ],
-            "outputPath": "dist/sophie-store-frontend",
+            "outputPath": "dist/easy-store-frontend",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -113,13 +113,13 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "sophie-store-frontend:build:production"
+              "browserTarget": "easy-store-frontend:build:production"
             },
             "quality": {
-              "browserTarget": "sophie-store-frontend:build:quality"
+              "browserTarget": "easy-store-frontend:build:quality"
             },
             "development": {
-              "browserTarget": "sophie-store-frontend:build:development"
+              "browserTarget": "easy-store-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -127,7 +127,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "sophie-store-frontend:build"
+            "browserTarget": "easy-store-frontend:build"
           }
         },
         "test": {

@@ -6,9 +6,9 @@ import { Subscription, firstValueFrom } from 'rxjs';
 import { ProductService } from 'src/app/core/services/api/data/product/product.service';
 
 @Component({
-  selector: 'app-shoes-products',
-  templateUrl: './shoes-products.component.html',
-  styleUrls: ['./shoes-products.component.css'],
+  selector: 'app-products',
+  templateUrl: './products.component.html',
+  styleUrls: ['./products.component.css'],
   providers: [ MessageService ],
   animations: [
     trigger('fadeInOut', [
@@ -38,7 +38,7 @@ import { ProductService } from 'src/app/core/services/api/data/product/product.s
     ])
   ]
 })
-export class ShoesProductsComponent implements OnInit, OnDestroy {
+export class ProductsComponent implements OnInit, OnDestroy {
 
   @ViewChild("filtersRef") filtersContainer: ElementRef;
   @ViewChild("productsRef") productsContainer: ElementRef;
