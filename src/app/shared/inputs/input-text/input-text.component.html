@@ -1,23 +1,26 @@
 <div class="card flex justify-content-center w-full h-full">
-  <span class="p-float-label w-full h-full" *ngIf="!showIcon">
-    <input
-      [id]="'inputText'+componentId"
-      pInputText
-      class="w-full h-full"
-      [formControl]="controlValue"
-      (ngModelChange)="sendValue()"
-    />
-    <label>{{ label }}</label>
-  </span>
-  <span class="p-float-label p-input-icon-left w-full h-full" *ngIf="showIcon">
-    <i [class]="icon"></i>
-    <input
-      id="inputText"
-      pInputText
-      class="w-full h-full"
-      [formControl]="controlValue"
-      (ngModelChange)="sendValue()"
-    />
-    <label>{{ label }}</label>
-  </span>
+  @if (!showIcon) {
+    <span class="p-float-label w-full h-full">
+      <input
+        [id]="'inputText'+componentId"
+        pInputText
+        class="w-full h-full"
+        [formControl]="controlValue"
+        (ngModelChange)="sendValue()"
+      />
+      <label>{{ label }}</label>
+    </span>
+  } @else {
+    <span class="p-float-label p-input-icon-left w-full h-full">
+      <i [class]="icon"></i>
+      <input
+        id="inputText"
+        pInputText
+        class="w-full h-full"
+        [formControl]="controlValue"
+        (ngModelChange)="sendValue()"
+      />
+      <label>{{ label }}</label>
+    </span>
+  }
 </div>

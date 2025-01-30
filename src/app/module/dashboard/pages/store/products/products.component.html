@@ -1,33 +1,39 @@
-<div class="flex" *ngIf="products">
-    <section #filtersRef [@fadeInOut]="filtersState" class="py-2 pl-2">
-        <app-filters-menu (displayFiltersEvent)="showHideFilters()" (priceFilterEvent)="applyPriceFilter($event)"
-            (subcategoryFilterEvent)="applySubcategoryFilter($event)"></app-filters-menu>
-    </section>
-    <section #productsRef [@resize]="productsState" class="py-2 px-2">
-        <div class="surface-card w-full h-6rem px-5 grid grid-nogutter justify-content-between align-items-center border-bottom-1 border-primary-800">
-            <div class="col-2 h-full flex align-items-center justify-content-center cursor-pointer hover:text-primary" (click)="showHideFilters()">
-                <p class="p-0 m-0 pr-3">Filtros</p>
-                <i class="pi pi-sliders-h text-2xl w-fit"></i>
+@if (products) {
+    <div class="flex">
+        <section #filtersRef [@fadeInOut]="filtersState" class="py-2 pl-2">
+            <app-filters-menu (displayFiltersEvent)="showHideFilters()" (priceFilterEvent)="applyPriceFilter($event)"
+                (subcategoryFilterEvent)="applySubcategoryFilter($event)"></app-filters-menu>
+        </section>
+        <section #productsRef [@resize]="productsState" class="py-2 px-2">
+            <div class="surface-card w-full h-6rem px-5 grid grid-nogutter justify-content-between align-items-center border-bottom-1 border-primary-800">
+                <div class="col-2 h-full flex align-items-center justify-content-center cursor-pointer hover:text-primary" (click)="showHideFilters()">
+                    <p class="p-0 m-0 pr-3">Filtros</p>
+                    <i class="pi pi-sliders-h text-2xl w-fit"></i>
+                </div>
+                <div class="col-7 h-3rem">
+                    <app-input-group-text label="Buscar" (clickEvent)="applyFilter($event)" icon="pi pi-search"></app-input-group-text>
+                </div>
+                <div class="col-2 h-full flex flex-column justify-content-center text-center">
+                    <i routerLink="/dashboard/shoes/cart" class="pi pi-shopping-cart text-2xl w-fit cursor-pointer hover:text-primary"></i>
+                </div>
             </div>
-            <div class="col-7 h-3rem">
-                <app-input-group-text label="Buscar" (clickEvent)="applyFilter($event)" icon="pi pi-search"></app-input-group-text>
+            <div class="surface-card border-bottom-1 border-primary-800 w-full h-3rem grid grid-nogutter align-items-center">
+                <div class="col-7 h-full flex pl-4 align-items-center justify-content-center">
+                    <i class="pi pi-map-marker mr-4"></i>
+                    <p class="p-0 m-0">Calle 11 # 12a-09</p>
+                </div>
+                <hr class="h-2rem">
+                <div class="col-4 text-center">
+                    <p class="p-0 m-0">{{ products.length }} resultados</p>
+                </div>
             </div>
-            <div class="col-2 h-full flex flex-column justify-content-center text-center">
-                <i routerLink="/dashboard/shoes/cart" class="pi pi-shopping-cart text-2xl w-fit cursor-pointer hover:text-primary"></i>
-            </div>
-        </div>
-        <div class="surface-card border-bottom-1 border-primary-800 w-full h-3rem grid grid-nogutter align-items-center">
-            <div class="col-7 h-full flex pl-4 align-items-center justify-content-center">
-                <i class="pi pi-map-marker mr-4"></i>
-                <p class="p-0 m-0">Calle 11 # 12a-09</p>
-            </div>
-            <hr class="h-2rem">
-            <div class="col-4 text-center">
-                <p class="p-0 m-0">{{ products.length }} resultados</p>
-            </div>
-        </div>
-        <div class="w-full h-fit overflow-auto" *ngIf="products.length > 0">
-            <app-data-view [objects]="products" [isOffer]="false"></app-data-view>
-        </div>
-    </section>
-</div>
+            @if (products.length > 0) {
+                <div class="w-full h-fit overflow-auto">
+                    <app-data-view [objects]="products" [isOffer]="false"></app-data-view>
+                </div>
+            } @else {
+                <h1>No se encontraron resultados.</h1>
+            }
+        </section>
+    </div>
+}
