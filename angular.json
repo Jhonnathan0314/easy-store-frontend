@@ -113,13 +113,13 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "easy-store-frontend:build:production"
+              "buildTarget": "easy-store-frontend:build:production"
             },
             "quality": {
-              "browserTarget": "easy-store-frontend:build:quality"
+              "buildTarget": "easy-store-frontend:build:quality"
             },
             "development": {
-              "browserTarget": "easy-store-frontend:build:development"
+              "buildTarget": "easy-store-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -127,7 +127,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "easy-store-frontend:build"
+            "buildTarget": "easy-store-frontend:build"
           }
         },
         "test": {
