@@ -6,9 +6,14 @@ import { MessageComponent } from 'src/app/shared/informative/message/message.com
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { Subscription } from 'rxjs';
+import { SecurityTopbarComponent } from '@component/core/security/topbar/topbar.component';
+import { RouterModule } from '@angular/router';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-security',
+  standalone: true,
+  imports: [ToastModule, RouterModule, SecurityTopbarComponent, MessageComponent],
   templateUrl: './security.component.html',
   styleUrls: ['./security.component.css'],
   providers: [ MessageService ]
