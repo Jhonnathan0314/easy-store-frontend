@@ -11,9 +11,8 @@ export class ThemeService {
   
   localStorage: Storage | undefined;
 
-  constructor(@Inject(DOCUMENT) private document: Document) {
-    this.localStorage = this.document.defaultView?.localStorage;
-    this.findActualTheme();
+  constructor() {
+    
   }
 
   /**
@@ -21,8 +20,7 @@ export class ThemeService {
    * theme.
    */
   findActualTheme() {
-    this.theme = this.localStorage?.getItem('theme') || 'arya-purple';
-    this.switchTheme(this.theme);
+    
   }
 
   /**
@@ -32,14 +30,6 @@ export class ThemeService {
    * be applied.
    */
   switchTheme(theme: string) {
-    let themeLink = this.document.getElementById('app-theme') as HTMLLinkElement;
-
-    this.theme = theme;
-    this.color = this.theme.split('-')[1];
-    this.localStorage?.setItem('theme', this.theme);
-
-    if (themeLink) {
-      themeLink.href = this.theme + '.css';
-    }
+    
   }
 }

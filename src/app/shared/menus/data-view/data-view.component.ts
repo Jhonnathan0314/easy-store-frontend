@@ -34,9 +34,9 @@ export class DataViewComponent implements OnInit {
     ];
   }
 
-  getSeverity(product: Product) {
+  getSeverity(product: Product): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" | undefined {
     if (product.quantity == 0) return 'danger';
-    if (product.quantity < 3) return 'warning';
+    if (product.quantity < 3) return 'warn';
     return 'success';
   }
 

@@ -14,7 +14,6 @@ export class InputRatingComponent implements OnChanges {
   controlValue: FormControl = new FormControl<number>(0);
 
   @Input() value: number = 0;
-  @Input() cancel: boolean = false;
   @Input() disabled: boolean = false;
 
   @Output() valueEvent = new EventEmitter<number>();

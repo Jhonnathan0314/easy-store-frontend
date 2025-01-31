@@ -1,4 +1,4 @@
-<div class="card">
+<div class="">
   <p-dataView
     #dv
     [value]="objects"
@@ -9,68 +9,64 @@
     [sortField]="sortField"
     [sortOrder]="sortOrder"
   >
-    <ng-template pTemplate="header" class="md:flex">
-      <div
-        class="flex h-2rem justify-content-center md:justify-content-around align-items-center px-4"
-      >
+    <ng-template pTemplate="header" class="">
+      <div class="">
         @if (isOffer) {
-          <i class="w-2 pi pi-percentage pr-4 text-primary-500">OFF</i>
+          <i class="pi pi-percentage">OFF</i>
         }
-        <p-dataViewLayoutOptions></p-dataViewLayoutOptions>
-        <div class="hidden md:flex md:flex-row md:justify-content-between">
+        <div class="">
           <p-dropdown
             [options]="sortOptions"
             placeholder="Ordenar por precio"
             (onChange)="onSortChange($event)"
-            styleClass="mb-2 md:mb-0"
+            styleClass=""
           ></p-dropdown>
         </div>
       </div>
       <div
-        class="flex h-full justify-content-center md:hidden align-items-center px-4 pt-4"
+        class=""
       >
         <p-dropdown
           [options]="sortOptions"
           placeholder="Ordenar por precio"
           (onChange)="onSortChange($event)"
-          styleClass="mb-2 md:mb-0"
+          styleClass=""
         ></p-dropdown>
       </div>
     </ng-template>
     <ng-template pTemplate="listItem">
       @for (object of objects; track object.id) {
         <div
-          class="w-12 grid grid-nogutter w-full h-9rem justify-content-evenly align-items-center"
+          class=""
         >
-          <div class="col-3 sm:w-6rem md:w-7rem pl-2">
+          <div class="">
             <img class="w-12" src="assets/img/product.jpg" [alt]="object.name" />
           </div>
           <div
-            class="col-6 pl-3 h-full flex flex-column justify-content-start align-content-start"
+            class=""
           >
-            <p class="text-2xl font-bold text-900">{{ object.name }}</p>
-            <div class="flex align-items-center gap-2 margin">
+            <p class="">{{ object.name }}</p>
+            <div class="">
               <p-tag
                 [value]="object.quantity + ''"
                 [severity]="getSeverity(object)"
               ></p-tag>
               <i class="pi pi-tag"></i>
-              <p class="font-semibold">{{ object.subcategory.name }}</p>
+              <p class="">{{ object.subcategory.name }}</p>
             </div>
             <app-input-rating
-              class="w-fit"
+              class=""
               [value]="object.qualification"
               [disabled]="true"
-              [cancel]="false"
             ></app-input-rating>
           </div>
           <div
-            class="col-3 pr-3 h-full flex flex-column justify-content-evenly align-items-end"
+            class=""
           >
-            <span class="text-xl font-semibold">{{ "$" + object.price }}</span>
+            <span class="">{{ "$" + object.price }}</span>
             <p-button
               icon="pi pi-shopping-cart"
-              styleClass="w-3rem h-3rem p-button-rounded"
+              styleClass=""
               [disabled]="object.quantity == 0"
             ></p-button>
           </div>
@@ -82,35 +78,34 @@
 
     <ng-template pTemplate="gridItem">
       @for (object of objects; track object.id) {
-        <div class="col-6 md:col-4 lg:col-3 p-1 m-auto">
-          <div class="p-4 border-1 surface-border surface-card border-round">
+        <div class="">
+          <div class="">
             <div
-              class="flex flex-wrap align-items-center justify-content-center gap-1"
+              class=""
             >
               <p-tag
-                class="text-sm"
+                class=""
                 [value]="object.quantity + ''"
                 [severity]="getSeverity(object)"
               ></p-tag>
               <i class="pi pi-tag"></i>
-              <span class="font-semibold text-sm">{{
+              <span class="">{{
                 object.subcategory.name
               }}</span>
             </div>
-            <div class="flex flex-column align-items-center gap-2 py-3">
+            <div class="">
               <img
-                class="w-5 shadow-2 border-round"
+                class=""
                 src="assets/img/product.jpg"
                 [alt]="object.name"
               />
-              <div class="text-xl font-bold">{{ object.name }}</div>
+              <div class="">{{ object.name }}</div>
               <app-input-rating
-                class="w-fit"
+                class=""
                 [value]="object.qualification"
                 [disabled]="true"
-                [cancel]="false"
               ></app-input-rating>
-              <span class="text-xl font-semibold">{{ "$" + object.price }}</span>
+              <span class="">{{ "$" + object.price }}</span>
               <p-button
                 icon="pi pi-shopping-cart"
                 [disabled]="object.quantity == 0"

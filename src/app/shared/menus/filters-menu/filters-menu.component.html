@@ -1,46 +1,46 @@
-<div class="surface-card w-full h-full px-4">
-    <div class="w-full flex justify-content-end pt-3 md:hidden">
-        <i class="pi pi-times" (click)="hideFiltersEvent()"></i>
+<div class="">
+    <div class="">
+        <i class="" (click)="hideFiltersEvent()"></i>
     </div>
-    <h3 class="pt-4 m-0 text-center">Filtros</h3>
+    <h3 class="">Filtros</h3>
     <h4><i class="pi pi-th-large"></i> Categorias</h4>
-    <div class="pl-4">
-        <h5 class="cursor-pointer hover:text-primary" (click)="showCategory(0)"><i class="pi pi-chevron-right"></i> Calzado familiar</h5>
-        <div #shoesRef class="pl-4" [@fadeInDown]="fadeInDown[0]">
-            <h6 class="cursor-pointer" (click)="filterBySubcategory('Dama')">Dama</h6>
-            <h6 class="cursor-pointer" (click)="filterBySubcategory('Caballero')">Caballero</h6>
-            <h6 class="cursor-pointer" (click)="filterBySubcategory('Caballero')">Caballero</h6>
+    <div class="">
+        <h5 class="" (click)="showCategory(0)"><i class="pi pi-chevron-right"></i> Calzado familiar</h5>
+        <div #shoesRef class="" [@fadeInDown]="fadeInDown[0]">
+            <h6 class="" (click)="filterBySubcategory('Dama')">Dama</h6>
+            <h6 class="" (click)="filterBySubcategory('Caballero')">Caballero</h6>
+            <h6 class="" (click)="filterBySubcategory('Caballero')">Caballero</h6>
         </div>
 
-        <h5 class="cursor-pointer hover:text-primary" (click)="showCategory(1)"><i class="pi pi-chevron-right"></i> Lenceria de hogar</h5>
-        <div #lingerieRef class="pl-4" [@fadeInDown]="fadeInDown[1]">
-            <h6 class="cursor-pointer" (click)="filterBySubcategory('Sabanas')">Sabanas</h6>
-            <h6 class="cursor-pointer" (click)="filterBySubcategory('Cobijas y colchones')">Cobijas y colchones</h6>
-            <h6 class="cursor-pointer" (click)="filterBySubcategory('Cortinas')">Cortinas</h6>
-            <h6 class="cursor-pointer" (click)="filterBySubcategory('Tapetes')">Tapetes</h6>
+        <h5 class="" (click)="showCategory(1)"><i class="pi pi-chevron-right"></i> Lenceria de hogar</h5>
+        <div #lingerieRef class="" [@fadeInDown]="fadeInDown[1]">
+            <h6 class="" (click)="filterBySubcategory('Sabanas')">Sabanas</h6>
+            <h6 class="" (click)="filterBySubcategory('Cobijas y colchones')">Cobijas y colchones</h6>
+            <h6 class="" (click)="filterBySubcategory('Cortinas')">Cortinas</h6>
+            <h6 class="" (click)="filterBySubcategory('Tapetes')">Tapetes</h6>
         </div>
 
-        <h5 class="cursor-pointer hover:text-primary" (click)="showCategory(2)"><i class="pi pi-chevron-right"></i> Ropa familiar</h5>
+        <h5 class="" (click)="showCategory(2)"><i class="pi pi-chevron-right"></i> Ropa familiar</h5>
         <div #clothesRef class="pl-4" [@fadeInDown]="fadeInDown[2]">
-            <h6 class="cursor-pointer" (click)="filterBySubcategory('Dama')">Dama</h6>
-            <h6 class="cursor-pointer" (click)="filterBySubcategory('Caballero')">Caballero</h6>
-            <h6 class="cursor-pointer" (click)="filterBySubcategory('Niños')">Niños</h6>
+            <h6 class="" (click)="filterBySubcategory('Dama')">Dama</h6>
+            <h6 class="" (click)="filterBySubcategory('Caballero')">Caballero</h6>
+            <h6 class="" (click)="filterBySubcategory('Niños')">Niños</h6>
         </div>
 
-        <h5 class="cursor-pointer hover:text-primary" (click)="showCategory(3)"><i class="pi pi-chevron-right"></i> Accesorios y bisuteria</h5>
+        <h5 class="" (click)="showCategory(3)"><i class="pi pi-chevron-right"></i> Accesorios y bisuteria</h5>
         <div #accesoriesRef class="pl-4" [@fadeInDown]="fadeInDown[3]">
-            <h6 class="cursor-pointer" (click)="filterBySubcategory('Perfumeria')">Perfumeria</h6>
-            <h6 class="cursor-pointer" (click)="filterBySubcategory('Joyas')">Joyas</h6>
-            <h6 class="cursor-pointer" (click)="filterBySubcategory('Accesorios')">Accesorios</h6>
+            <h6 class="" (click)="filterBySubcategory('Perfumeria')">Perfumeria</h6>
+            <h6 class="" (click)="filterBySubcategory('Joyas')">Joyas</h6>
+            <h6 class="" (click)="filterBySubcategory('Accesorios')">Accesorios</h6>
         </div>
     </div>
     <h4><i class="pi pi-dollar"></i> Precio</h4>
-    <div class="pl-4 py-2">
+    <div class="">
         <app-input-number [value]="minPrice" label="min" prefix="$ " (valueEvent)="receiveValue($event, 'min'); validateCanFilter(); validateCanCleanFilter();"></app-input-number>
-        <p class="pr-4 py-3 m-0 text-center">-</p>
+        <p class="">-</p>
         <app-input-number [value]="maxPrice" label="max" prefix="$ " (valueEvent)="receiveValue($event, 'max'); validateCanFilter(); validateCanCleanFilter();"></app-input-number>
     </div>
-    <div class="w-12 h-2rem py-3 flex flex-wrap justify-content-between align-items-center">
+    <div class="">
         <app-button label="Limpiar" icon="pi pi-eraser" (clickEvent)="cleanFilters()" [disabled]="!canCleanFilter"></app-button>
         <app-button label="Aplicar" icon="pi pi-send" (clickEvent)="filterByRangePrice()" [loading]="isLoading" [disabled]="!canFilter"></app-button>
     </div>
