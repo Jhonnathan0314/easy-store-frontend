@@ -1,7 +1,7 @@
 <div class="card w-full h-full">
     <p-menubar [model]="items" styleClass="px-4 w-full h-full">
         <ng-template pTemplate="start">
-            <div class="pr-6 flex align-items-center cursor-pointer" routerLink="/dashboard">
+            <div class="pr-6 flex align-items-center cursor-pointer" [routerLink]="['/dashboard']">
                 <img src="../../../../assets/img/store.png" alt="store.png" height="40" class="mr-3"/>
                 <p class="text-xl">Easy store</p>
             </div>

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
 import { InputPasswordComponent } from '@component/shared/inputs/input-password/input-password.component';
 import { InputTextComponent } from '@component/shared/inputs/input-text/input-text.component';
@@ -11,7 +12,7 @@ import { SessionService } from 'src/app/core/services/session/session.service';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, InputTextComponent, InputPasswordComponent, ButtonComponent],
+  imports: [RouterModule, ReactiveFormsModule, InputTextComponent, InputPasswordComponent, ButtonComponent],
   templateUrl: './register.component.html'
 })
 export class RegisterComponent {

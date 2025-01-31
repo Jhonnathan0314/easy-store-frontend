@@ -8,7 +8,7 @@
     <ng-template let-item pTemplate="item">
       <div
         class="item text-center py-5 md:p-5 lg:p-5 xl:p-5 m-2"
-        [routerLink]="'/dashboard/' + item.route"
+        [routerLink]="['/dashboard/' + item.route]"
       >
         <div class="mb-3">
           <img [src]="item.img" [alt]="item.img" class="item-image w-6" />

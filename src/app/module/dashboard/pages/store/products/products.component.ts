@@ -1,5 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { InputGroupTextComponent } from '@component/shared/inputs/input-group-text/input-group-text.component';
 import { DataViewComponent } from '@component/shared/menus/data-view/data-view.component';
 import { FiltersMenuComponent } from '@component/shared/menus/filters-menu/filters-menu.component';
@@ -11,7 +12,7 @@ import { ProductService } from 'src/app/core/services/api/data/product/product.s
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [FiltersMenuComponent, InputGroupTextComponent, DataViewComponent],
+  imports: [RouterModule, FiltersMenuComponent, InputGroupTextComponent, DataViewComponent],
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css'],
   providers: [ MessageService ],

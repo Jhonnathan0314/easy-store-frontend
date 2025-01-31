@@ -14,7 +14,7 @@
                     <app-input-group-text label="Buscar" (clickEvent)="applyFilter($event)" icon="pi pi-search"></app-input-group-text>
                 </div>
                 <div class="col-2 h-full flex flex-column justify-content-center text-center">
-                    <i routerLink="/dashboard/shoes/cart" class="pi pi-shopping-cart text-2xl w-fit cursor-pointer hover:text-primary"></i>
+                    <i [routerLink]="['/dashboard/shoes/cart']" class="pi pi-shopping-cart text-2xl w-fit cursor-pointer hover:text-primary"></i>
                 </div>
             </div>
             <div class="surface-card border-bottom-1 border-primary-800 w-full h-3rem grid grid-nogutter align-items-center">

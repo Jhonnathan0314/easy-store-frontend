@@ -63,6 +63,6 @@
     <app-button [confirmClick]="true" label="Crear cuenta" (clickEvent)="validateForm()"></app-button>
   </div>
   <div class="col-12 text-center">
-    <a class="text-xs md:text-sm cursor-pointer text-color" routerLink="/security/login">Ingresar</a>
+    <a class="text-xs md:text-sm cursor-pointer text-color" [routerLink]="['/security/login']">Ingresar</a>
   </div>
 </form>
