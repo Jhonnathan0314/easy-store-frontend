@@ -1,34 +1,34 @@
 @if (products) {
-    <div class="">
+    <div >
         <section #filtersRef [@fadeInOut]="filtersState" class="py-2 pl-2">
             <app-filters-menu (displayFiltersEvent)="showHideFilters()" (priceFilterEvent)="applyPriceFilter($event)"
                 (subcategoryFilterEvent)="applySubcategoryFilter($event)"></app-filters-menu>
         </section>
         <section #productsRef [@resize]="productsState" class="py-2 px-2">
-            <div class="">
-                <div class="" (click)="showHideFilters()">
-                    <p class="">Filtros</p>
+            <div >
+                <div  (click)="showHideFilters()">
+                    <p >Filtros</p>
                     <i class="pi pi-sliders-h"></i>
                 </div>
-                <div class="">
+                <div >
                     <app-input-group-text label="Buscar" (clickEvent)="applyFilter($event)" icon="pi pi-search"></app-input-group-text>
                 </div>
-                <div class="">
+                <div >
                     <i [routerLink]="['/dashboard/shoes/cart']" class="pi pi-shopping-cart"></i>
                 </div>
             </div>
-            <div class="">
-                <div class="">
+            <div >
+                <div >
                     <i class="pi pi-map-marker"></i>
-                    <p class="">Calle 11 # 12a-09</p>
+                    <p >Calle 11 # 12a-09</p>
                 </div>
-                <hr class="">
-                <div class="">
-                    <p class="">{{ products.length }} resultados</p>
+                <hr >
+                <div >
+                    <p >{{ products.length }} resultados</p>
                 </div>
             </div>
             @if (products.length > 0) {
-                <div class="">
+                <div >
                     <app-data-view [objects]="products" [isOffer]="false"></app-data-view>
                 </div>
             } @else {

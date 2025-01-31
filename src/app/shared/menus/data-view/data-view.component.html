@@ -1,4 +1,4 @@
-<div class="">
+<div >
   <p-dataView
     #dv
     [value]="objects"
@@ -9,64 +9,61 @@
     [sortField]="sortField"
     [sortOrder]="sortOrder"
   >
-    <ng-template pTemplate="header" class="">
-      <div class="">
+    <ng-template pTemplate="header" >
+      <div >
         @if (isOffer) {
           <i class="pi pi-percentage">OFF</i>
         }
-        <div class="">
+        <div >
           <p-dropdown
             [options]="sortOptions"
             placeholder="Ordenar por precio"
             (onChange)="onSortChange($event)"
-            styleClass=""
           ></p-dropdown>
         </div>
       </div>
       <div
-        class=""
+        
       >
         <p-dropdown
           [options]="sortOptions"
           placeholder="Ordenar por precio"
           (onChange)="onSortChange($event)"
-          styleClass=""
         ></p-dropdown>
       </div>
     </ng-template>
     <ng-template pTemplate="listItem">
       @for (object of objects; track object.id) {
         <div
-          class=""
+          
         >
-          <div class="">
+          <div >
             <img class="w-12" src="assets/img/product.jpg" [alt]="object.name" />
           </div>
           <div
-            class=""
+            
           >
-            <p class="">{{ object.name }}</p>
-            <div class="">
+            <p >{{ object.name }}</p>
+            <div >
               <p-tag
                 [value]="object.quantity + ''"
                 [severity]="getSeverity(object)"
               ></p-tag>
               <i class="pi pi-tag"></i>
-              <p class="">{{ object.subcategory.name }}</p>
+              <p >{{ object.subcategory.name }}</p>
             </div>
             <app-input-rating
-              class=""
+              
               [value]="object.qualification"
               [disabled]="true"
             ></app-input-rating>
           </div>
           <div
-            class=""
+            
           >
-            <span class="">{{ "$" + object.price }}</span>
+            <span >{{ "$" + object.price }}</span>
             <p-button
               icon="pi pi-shopping-cart"
-              styleClass=""
               [disabled]="object.quantity == 0"
             ></p-button>
           </div>
@@ -78,34 +75,34 @@
 
     <ng-template pTemplate="gridItem">
       @for (object of objects; track object.id) {
-        <div class="">
-          <div class="">
+        <div >
+          <div >
             <div
-              class=""
+              
             >
               <p-tag
-                class=""
+                
                 [value]="object.quantity + ''"
                 [severity]="getSeverity(object)"
               ></p-tag>
               <i class="pi pi-tag"></i>
-              <span class="">{{
+              <span >{{
                 object.subcategory.name
               }}</span>
             </div>
-            <div class="">
+            <div >
               <img
-                class=""
+                
                 src="assets/img/product.jpg"
                 [alt]="object.name"
               />
-              <div class="">{{ object.name }}</div>
+              <div >{{ object.name }}</div>
               <app-input-rating
-                class=""
+                
                 [value]="object.qualification"
                 [disabled]="true"
               ></app-input-rating>
-              <span class="">{{ "$" + object.price }}</span>
+              <span >{{ "$" + object.price }}</span>
               <p-button
                 icon="pi pi-shopping-cart"
                 [disabled]="object.quantity == 0"

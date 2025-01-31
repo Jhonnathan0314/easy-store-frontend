@@ -1,4 +1,4 @@
-<section #section class="">
+<section #section >
   <p-carousel
     [value]="items"
     [numVisible]="3"
@@ -6,13 +6,13 @@
     [responsiveOptions]="responsiveOptions"
   >
     <ng-template let-item pTemplate="item">
-      <div class="" [routerLink]="['/dashboard/' + item.route]">
-        <div class="">
-          <img [src]="item.img" [alt]="item.img" class="" />
+      <div  [routerLink]="['/dashboard/' + item.route]">
+        <div >
+          <img [src]="item.img" [alt]="item.img"  />
         </div>
         <div>
-          <h3 class="">{{ item.title }}</h3>
-          <h4 class="">{{ item.body }}</h4>
+          <h3 >{{ item.title }}</h3>
+          <h4 >{{ item.body }}</h4>
         </div>
       </div>
     </ng-template>

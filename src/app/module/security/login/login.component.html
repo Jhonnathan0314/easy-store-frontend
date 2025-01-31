@@ -1,8 +1,8 @@
-<form class="" [formGroup]="loginForm">
-  <div class="">
-    <p class="">¡Bienvenido de vuelta!</p>
+<form  [formGroup]="loginForm">
+  <div >
+    <p >¡Bienvenido de vuelta!</p>
   </div>
-  <div class="">
+  <div >
     <app-input-text
       [value]="loginForm.value.username"
       label="Correo electronico"
@@ -12,7 +12,7 @@
       ngDefaultControl
     ></app-input-text>
   </div>
-  <div class="">
+  <div >
     <app-input-password
       [value]="loginForm.value.password"
       label="Contraseña"
@@ -24,31 +24,31 @@
       ngDefaultControl
     ></app-input-password>
   </div>
-  <div class="">
-    <div class="">
-      <a class="">Olvide mi contraseña</a>
+  <div >
+    <div >
+      <a >Olvide mi contraseña</a>
     </div>
-    <div class="">
+    <div >
       <app-button
         [confirmClick]="true"
         label="Ingresar"
         (clickEvent)="validateForm()"
       ></app-button>
     </div>
-    <div class="">
-      <a class="" [routerLink]="['/security/register']">Crear cuenta</a>
+    <div >
+      <a  [routerLink]="['/security/register']">Crear cuenta</a>
     </div>
   </div>
-  <div class="">
-    <div class=""><p></p></div>
-    <div class="">
+  <div >
+    <div ><p></p></div>
+    <div >
       <app-button
         label="Ingresa con "
         [iconPos]="buttonIconPositionRight"
         icon="pi pi-google"
       ></app-button>
     </div>
-    <div class=""><p></p></div>
+    <div ><p></p></div>
   </div>
 </form>
 <p-toast></p-toast>

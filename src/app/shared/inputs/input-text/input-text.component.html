@@ -1,6 +1,6 @@
-<div class="">
+<div >
   @if (!showIcon) {
-    <span class="">
+    <span >
       <input
         [id]="'inputText'+componentId"
         pInputText
@@ -11,12 +11,12 @@
       <label>{{ label }}</label>
     </span>
   } @else {
-    <span class="">
+    <span >
       <i [class]="icon"></i>
       <input
         id="inputText"
         pInputText
-        class=""
+        
         [formControl]="controlValue"
         (ngModelChange)="sendValue()"
       />

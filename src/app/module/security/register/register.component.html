@@ -1,8 +1,8 @@
-<form class="" [formGroup]="registerForm">
-  <div class="">
-    <p class="">¡Bienvenido de vuelta!</p>
+<form  [formGroup]="registerForm">
+  <div >
+    <p >¡Bienvenido de vuelta!</p>
   </div>
-  <div class="">
+  <div >
     <app-input-text
       [value]="registerForm.value.name"
       label="Nombre"
@@ -12,7 +12,7 @@
       ngDefaultControl
     ></app-input-text>
   </div>
-  <div class="">
+  <div >
     <app-input-text
       [value]="registerForm.value.lastName"
       label="Apellidos"
@@ -22,7 +22,7 @@
       ngDefaultControl
     ></app-input-text>
   </div>
-  <div class="">
+  <div >
     <app-input-text
       [value]="registerForm.value.username"
       label="Correo electronico"
@@ -32,7 +32,7 @@
       ngDefaultControl
     ></app-input-text>
   </div>
-  <div class="">
+  <div >
     <app-input-password
       [value]="registerForm.value.password"
       label="Contraseña"
@@ -44,7 +44,7 @@
       ngDefaultControl
     ></app-input-password>
   </div>
-  <div class="">
+  <div >
     <app-input-password
       [value]="registerForm.value.confirmPassword"
       label="Confirmar contraseña"
@@ -56,10 +56,10 @@
       ngDefaultControl
     ></app-input-password>
   </div>
-  <div class="">
+  <div >
     <app-button [confirmClick]="true" label="Crear cuenta" (clickEvent)="validateForm()"></app-button>
   </div>
-  <div class="">
-    <a class="" [routerLink]="['/security/login']">Ingresar</a>
+  <div >
+    <a  [routerLink]="['/security/login']">Ingresar</a>
   </div>
 </form>
