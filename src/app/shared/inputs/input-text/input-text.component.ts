@@ -7,8 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
   selector: 'app-input-text',
   standalone: true,
   imports: [InputTextModule, ReactiveFormsModule],
-  templateUrl: './input-text.component.html',
-  styleUrls: ['./input-text.component.css']
+  templateUrl: './input-text.component.html'
 })
 export class InputTextComponent implements OnChanges {
 

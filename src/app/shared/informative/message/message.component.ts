@@ -7,7 +7,6 @@ import { ToastModule } from 'primeng/toast';
   standalone: true,
   imports: [ToastModule],
   templateUrl: './message.component.html',
-  styleUrls: ['./message.component.css'],
   providers: [ MessageService ]
 })
 export class MessageComponent {

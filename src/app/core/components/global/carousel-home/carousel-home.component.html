@@ -6,9 +6,9 @@
     [responsiveOptions]="responsiveOptions"
   >
     <ng-template let-item pTemplate="item">
-      <div  [routerLink]="['/dashboard/' + item.route]">
+      <div [routerLink]="['/dashboard/' + item.route]">
         <div >
-          <img [src]="item.img" [alt]="item.img"  />
+          <img [src]="item.img" [alt]="item.img"/>
         </div>
         <div>
           <h3 >{{ item.title }}</h3>

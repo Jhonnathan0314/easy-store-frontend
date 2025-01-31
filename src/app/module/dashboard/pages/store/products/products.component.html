@@ -1,10 +1,10 @@
 @if (products) {
     <div >
-        <section #filtersRef [@fadeInOut]="filtersState" class="py-2 pl-2">
+        <section #filtersRef [@fadeInOut]="filtersState" class="">
             <app-filters-menu (displayFiltersEvent)="showHideFilters()" (priceFilterEvent)="applyPriceFilter($event)"
                 (subcategoryFilterEvent)="applySubcategoryFilter($event)"></app-filters-menu>
         </section>
-        <section #productsRef [@resize]="productsState" class="py-2 px-2">
+        <section #productsRef [@resize]="productsState" class="">
             <div >
                 <div  (click)="showHideFilters()">
                     <p >Filtros</p>

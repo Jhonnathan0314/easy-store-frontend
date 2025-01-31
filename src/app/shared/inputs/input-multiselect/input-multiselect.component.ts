@@ -7,8 +7,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
   selector: 'app-input-multiselect',
   standalone: true,
   imports: [MultiSelectModule, ReactiveFormsModule],
-  templateUrl: './input-multiselect.component.html',
-  styleUrls: ['./input-multiselect.component.css']
+  templateUrl: './input-multiselect.component.html'
 })
 export class InputMultiselectComponent implements OnChanges {
 

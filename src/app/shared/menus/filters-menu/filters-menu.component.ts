@@ -8,7 +8,6 @@ import { InputNumberComponent } from '@component/shared/inputs/input-number/inpu
   standalone: true,
   imports: [InputNumberComponent, ButtonComponent],
   templateUrl: './filters-menu.component.html',
-  styleUrls: ['./filters-menu.component.css'],
   animations:[
     trigger('fadeInDown', [
       state('after-hidden', style({

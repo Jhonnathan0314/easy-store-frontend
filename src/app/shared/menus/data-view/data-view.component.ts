@@ -12,8 +12,7 @@ import { ButtonModule } from 'primeng/button';
   selector: 'app-data-view',
   standalone: true,
   imports: [DataViewModule, DropdownModule, TagModule, ButtonModule, InputRatingComponent],
-  templateUrl: './data-view.component.html',
-  styleUrls: ['./data-view.component.css'],
+  templateUrl: './data-view.component.html'
 })
 export class DataViewComponent implements OnInit {
 

@@ -7,8 +7,7 @@ import { DropdownModule } from 'primeng/dropdown';
   selector: 'app-input-dropdown',
   standalone: true,
   imports: [DropdownModule, ReactiveFormsModule],
-  templateUrl: './input-dropdown.component.html',
-  styleUrls: ['./input-dropdown.component.css']
+  templateUrl: './input-dropdown.component.html'
 })
 export class InputDropdownComponent implements OnChanges {
 

@@ -10,8 +10,7 @@ import { RouterModule } from '@angular/router';
   selector: 'app-carousel-home',
   standalone: true,
   imports: [CarouselModule, RouterModule],
-  templateUrl: './carousel-home.component.html',
-  styleUrls: ['./carousel-home.component.css'],
+  templateUrl: './carousel-home.component.html'
 })
 export class CarouselHomeComponent implements OnInit, OnDestroy {
 

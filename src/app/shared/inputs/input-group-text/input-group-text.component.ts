@@ -7,8 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
   selector: 'app-input-group-text',
   standalone: true,
   imports: [ButtonModule, InputTextModule, ReactiveFormsModule],
-  templateUrl: './input-group-text.component.html',
-  styleUrls: ['./input-group-text.component.css']
+  templateUrl: './input-group-text.component.html'
 })
 export class InputGroupTextComponent implements OnChanges {
 

@@ -6,8 +6,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
   selector: 'app-input-number',
   standalone: true,
   imports: [InputNumberModule, ReactiveFormsModule],
-  templateUrl: './input-number.component.html',
-  styleUrls: ['./input-number.component.css']
+  templateUrl: './input-number.component.html'
 })
 export class InputNumberComponent implements OnChanges {
 

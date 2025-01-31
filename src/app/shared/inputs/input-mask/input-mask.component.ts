@@ -6,8 +6,7 @@ import { InputMaskModule } from 'primeng/inputmask';
   selector: 'app-input-mask',
   standalone: true,
   imports: [InputMaskModule, ReactiveFormsModule],
-  templateUrl: './input-mask.component.html',
-  styleUrls: ['./input-mask.component.css'],
+  templateUrl: './input-mask.component.html'
 })
 export class InputMaskComponent implements OnChanges {
   

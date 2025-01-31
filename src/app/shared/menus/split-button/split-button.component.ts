@@ -6,8 +6,7 @@ import { SplitButtonModule } from 'primeng/splitbutton';
   selector: 'app-split-button',
   standalone: true,
   imports: [SplitButtonModule],
-  templateUrl: './split-button.component.html',
-  styleUrls: ['./split-button.component.css'],
+  templateUrl: './split-button.component.html'
 })
 export class SplitButtonComponent {
 

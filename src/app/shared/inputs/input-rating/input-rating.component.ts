@@ -6,8 +6,7 @@ import { RatingModule } from 'primeng/rating';
   selector: 'app-input-rating',
   standalone: true,
   imports: [RatingModule, ReactiveFormsModule],
-  templateUrl: './input-rating.component.html',
-  styleUrls: ['./input-rating.component.css']
+  templateUrl: './input-rating.component.html'
 })
 export class InputRatingComponent implements OnChanges {
 

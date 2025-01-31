@@ -6,8 +6,7 @@ import { TabMenuModule } from 'primeng/tabmenu';
   selector: 'app-tab-menu',
   standalone: true,
   imports: [TabMenuModule],
-  templateUrl: './tab-menu.component.html',
-  styleUrls: ['./tab-menu.component.css'],
+  templateUrl: './tab-menu.component.html'
 })
 export class TabMenuComponent {
 

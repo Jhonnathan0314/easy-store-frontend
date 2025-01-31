@@ -8,7 +8,6 @@ import { ToastModule } from 'primeng/toast';
   standalone: true,
   imports: [ToastModule, ConfirmDialogModule],
   templateUrl: './confirm-dialog.component.html',
-  styleUrls: ['./confirm-dialog.component.css'],
   providers: [ ConfirmationService, MessageService ]
 })
 export class ConfirmDialogComponent implements OnChanges {

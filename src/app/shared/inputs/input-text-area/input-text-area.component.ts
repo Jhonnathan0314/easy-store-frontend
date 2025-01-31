@@ -6,8 +6,7 @@ import { TextareaModule } from 'primeng/textarea';
   selector: 'app-input-text-area',
   standalone: true,
   imports: [TextareaModule, ReactiveFormsModule],
-  templateUrl: './input-text-area.component.html',
-  styleUrls: ['./input-text-area.component.css']
+  templateUrl: './input-text-area.component.html'
 })
 export class InputTextAreaComponent implements OnChanges {
 

@@ -15,8 +15,7 @@ import { PasswordModule } from 'primeng/password';
   selector: 'app-input-password',
   standalone: true,
   imports: [PasswordModule, ReactiveFormsModule],
-  templateUrl: './input-password.component.html',
-  styleUrls: ['./input-password.component.css'],
+  templateUrl: './input-password.component.html'
 })
 export class InputPasswordComponent implements OnChanges {
 
