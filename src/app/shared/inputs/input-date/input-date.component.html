@@ -1,13 +1,13 @@
 <div >
   <span >
-    <p-calendar
+    <p-datepicker
       [formControl]="controlValue"
       [showButtonBar]="showButtonBar"
       [dateFormat]="dateFormat"
       [showIcon]="showIcon"
       [selectionMode]="selectionMode"
       (ngModelChange)="sendValue()"
-    ></p-calendar>
+    ></p-datepicker>
     <label>{{ label }}</label>
   </span>
 </div>

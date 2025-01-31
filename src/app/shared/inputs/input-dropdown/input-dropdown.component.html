@@ -1,6 +1,6 @@
 <div >
   <span >
-    <p-dropdown
+    <p-select
       [options]="options"
       [formControl]="controlValue"
       [placeholder]="label"
@@ -10,7 +10,7 @@
       optionLabel="name"
       optionValue="value"
       (ngModelChange)="sendValue()"
-    ></p-dropdown>
+    ></p-select>
     <label>{{ label }}</label>
   </span>
 </div>

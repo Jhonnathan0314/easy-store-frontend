@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { DateSelectionMode } from 'src/app/core/models/enums/primeng.enum';
-import { CalendarModule } from 'primeng/calendar';
+import { DatePicker } from 'primeng/datepicker';
 
 @Component({
   selector: 'app-input-date',
   standalone: true,
-  imports: [CalendarModule, ReactiveFormsModule],
+  imports: [DatePicker, ReactiveFormsModule],
   templateUrl: './input-date.component.html'
 })
 export class InputDateComponent implements OnChanges {
