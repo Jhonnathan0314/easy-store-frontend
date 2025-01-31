@@ -2,9 +2,16 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Product } from '@models/data/product.model';
 import { SelectItem } from 'primeng/api';
 import { DataViewLayout } from 'src/app/core/models/enums/primeng.enum';
+import { DataViewModule } from 'primeng/dataview';
+import { DropdownModule } from 'primeng/dropdown';
+import { TagModule } from 'primeng/tag';
+import { InputRatingComponent } from '@component/shared/inputs/input-rating/input-rating.component';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-data-view',
+  standalone: true,
+  imports: [DataViewModule, DropdownModule, TagModule, ButtonModule, InputRatingComponent],
   templateUrl: './data-view.component.html',
   styleUrls: ['./data-view.component.css'],
 })

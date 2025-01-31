@@ -1,8 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @Component({
   selector: 'app-input-number',
+  standalone: true,
+  imports: [InputNumberModule, ReactiveFormsModule],
   templateUrl: './input-number.component.html',
   styleUrls: ['./input-number.component.css']
 })

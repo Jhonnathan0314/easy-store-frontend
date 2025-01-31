@@ -1,9 +1,14 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ButtonIconPosition } from '@enums/primeng.enum';
 import { ConfirmationService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-button',
+  standalone: true,
+  imports: [ ButtonModule, ToastModule, ConfirmPopupModule ],
   templateUrl: './button.component.html',
   providers: [ ConfirmationService ]
 })

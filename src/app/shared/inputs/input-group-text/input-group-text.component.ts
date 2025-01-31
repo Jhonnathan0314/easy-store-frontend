@@ -1,8 +1,12 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-input-group-text',
+  standalone: true,
+  imports: [ButtonModule, InputTextModule, ReactiveFormsModule],
   templateUrl: './input-group-text.component.html',
   styleUrls: ['./input-group-text.component.css']
 })

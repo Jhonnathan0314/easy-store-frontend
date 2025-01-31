@@ -1,8 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 
 @Component({
   selector: 'app-input-text-area',
+  standalone: true,
+  imports: [InputTextareaModule, ReactiveFormsModule],
   templateUrl: './input-text-area.component.html',
   styleUrls: ['./input-text-area.component.css']
 })

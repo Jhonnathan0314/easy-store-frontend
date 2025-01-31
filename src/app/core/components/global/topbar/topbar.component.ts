@@ -1,11 +1,14 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { MenuBarComponent } from '@component/shared/menus/menu-bar/menu-bar.component';
 import { MenuItem } from 'primeng/api';
 import { SessionService } from 'src/app/core/services/session/session.service';
 import { ThemeService } from 'src/app/core/services/utils/theme/theme.service';
 
 @Component({
   selector: 'app-topbar',
+  standalone: true,
+  imports: [MenuBarComponent],
   templateUrl: './topbar.component.html'
 })
 export class TopbarComponent {

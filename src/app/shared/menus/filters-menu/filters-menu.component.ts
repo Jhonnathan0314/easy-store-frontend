@@ -1,8 +1,12 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+import { ButtonComponent } from '@component/shared/inputs/button/button.component';
+import { InputNumberComponent } from '@component/shared/inputs/input-number/input-number.component';
 
 @Component({
   selector: 'app-filters-menu',
+  standalone: true,
+  imports: [InputNumberComponent, ButtonComponent],
   templateUrl: './filters-menu.component.html',
   styleUrls: ['./filters-menu.component.css'],
   animations:[

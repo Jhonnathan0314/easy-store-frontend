@@ -1,8 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MenuItem } from 'primeng/api';
+import { SplitButtonModule } from 'primeng/splitbutton';
 
 @Component({
   selector: 'app-split-button',
+  standalone: true,
+  imports: [SplitButtonModule],
   templateUrl: './split-button.component.html',
   styleUrls: ['./split-button.component.css'],
 })

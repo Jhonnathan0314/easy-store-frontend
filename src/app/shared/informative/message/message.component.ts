@@ -1,8 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-message',
+  standalone: true,
+  imports: [ToastModule],
   templateUrl: './message.component.html',
   styleUrls: ['./message.component.css'],
   providers: [ MessageService ]

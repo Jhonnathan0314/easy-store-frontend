@@ -1,8 +1,12 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { ConfirmEventType, ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-confirm-dialog',
+  standalone: true,
+  imports: [ToastModule, ConfirmDialogModule],
   templateUrl: './confirm-dialog.component.html',
   styleUrls: ['./confirm-dialog.component.css'],
   providers: [ ConfirmationService, MessageService ]

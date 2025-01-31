@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
+import { SplitButtonComponent } from '@component/shared/menus/split-button/split-button.component';
 import { MenuItem } from 'primeng/api';
 import { ThemeService } from 'src/app/core/services/utils/theme/theme.service';
 
 @Component({
   selector: 'app-security-topbar',
+  standalone: true,
+  imports: [SplitButtonComponent],
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.css']
 })

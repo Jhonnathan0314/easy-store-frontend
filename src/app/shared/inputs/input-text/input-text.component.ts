@@ -1,8 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-input-text',
+  standalone: true,
+  imports: [InputTextModule, ReactiveFormsModule],
   templateUrl: './input-text.component.html',
   styleUrls: ['./input-text.component.css']
 })

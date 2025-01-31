@@ -6,10 +6,13 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { PasswordModule } from 'primeng/password';
 
 @Component({
   selector: 'app-input-password',
+  standalone: true,
+  imports: [PasswordModule, ReactiveFormsModule],
   templateUrl: './input-password.component.html',
   styleUrls: ['./input-password.component.css'],
 })

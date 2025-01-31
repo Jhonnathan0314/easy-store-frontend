@@ -1,8 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { InputMaskModule } from 'primeng/inputmask';
 
 @Component({
   selector: 'app-input-mask',
+  standalone: true,
+  imports: [InputMaskModule, ReactiveFormsModule],
   templateUrl: './input-mask.component.html',
   styleUrls: ['./input-mask.component.css'],
 })

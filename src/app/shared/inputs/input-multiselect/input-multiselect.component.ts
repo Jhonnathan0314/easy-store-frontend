@@ -1,9 +1,12 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PrimeNGObject } from 'src/app/core/models/data-types/primeng-object.model';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
   selector: 'app-input-multiselect',
+  standalone: true,
+  imports: [MultiSelectModule, ReactiveFormsModule],
   templateUrl: './input-multiselect.component.html',
   styleUrls: ['./input-multiselect.component.css']
 })

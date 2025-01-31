@@ -1,9 +1,12 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PrimeNGObject } from 'src/app/core/models/data-types/primeng-object.model';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-input-dropdown',
+  standalone: true,
+  imports: [DropdownModule, ReactiveFormsModule],
   templateUrl: './input-dropdown.component.html',
   styleUrls: ['./input-dropdown.component.css']
 })

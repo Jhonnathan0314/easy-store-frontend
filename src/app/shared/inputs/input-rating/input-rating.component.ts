@@ -1,8 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { RatingModule } from 'primeng/rating';
 
 @Component({
   selector: 'app-input-rating',
+  standalone: true,
+  imports: [RatingModule, ReactiveFormsModule],
   templateUrl: './input-rating.component.html',
   styleUrls: ['./input-rating.component.css']
 })

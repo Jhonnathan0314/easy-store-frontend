@@ -1,12 +1,15 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChildren } from '@angular/core';
-import { ResponsiveOverlayOptions } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { Category } from 'src/app/core/models/data-types/data/category.model';
 import { CarouselHomeObject, ResponsiveCarouselOptions } from 'src/app/core/models/data-types/primeng-object.model';
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
+import { CarouselModule } from 'primeng/carousel';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-carousel-home',
+  standalone: true,
+  imports: [CarouselModule, RouterModule],
   templateUrl: './carousel-home.component.html',
   styleUrls: ['./carousel-home.component.css'],
 })
