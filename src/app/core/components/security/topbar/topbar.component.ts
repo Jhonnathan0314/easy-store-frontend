@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, Inject } from '@angular/core';
 import { SplitButtonComponent } from '@component/shared/menus/split-button/split-button.component';
 import { MenuItem } from 'primeng/api';
 import { ThemeService } from 'src/app/core/services/utils/theme/theme.service';
@@ -7,62 +8,42 @@ import { ThemeService } from 'src/app/core/services/utils/theme/theme.service';
   selector: 'app-security-topbar',
   standalone: true,
   imports: [SplitButtonComponent],
-  templateUrl: './topbar.component.html',
-  styleUrls: ['./topbar.component.css']
+  templateUrl: './topbar.component.html'
 })
 export class SecurityTopbarComponent {
 
   items: MenuItem[] = [];
 
-  constructor(public themeService: ThemeService) {
+  theme: string = ''
+
+  constructor(public themeService: ThemeService, @Inject(DOCUMENT) private document: Document) {
+    this.configMenuItems();
+  }
+
+  updateThemeText() {
+    const element = this.document.querySelector('html')?.classList;
+    this.theme = 'Claro';
+    if(element?.length == 0) this.theme = 'Oscuro';
     this.configMenuItems();
   }
 
   configMenuItems() {
+    const element = this.document.querySelector('html')?.classList;
+    this.theme = 'Claro';
+    if(element?.length == 0) this.theme = 'Oscuro';
+    
     this.items = [
       {
         label: 'Temas',
         icon: 'pi pi-fw pi-palette',
         items: [
           {
-            label: 'Azul claro',
+            label: this.theme,
             escape: true,
-            command: () => { this.themeService.switchTheme('saga-blue'); }
-          },
-          {
-            label: 'Verde claro',
-            escape: true,
-            command: () => { this.themeService.switchTheme('saga-green'); }
-          },
-          {
-            label: 'Naranja claro',
-            escape: true,
-            command: () => { this.themeService.switchTheme('saga-orange'); }
-          },
-          {
-            label: 'Purpura claro',
-            escape: true,
-            command: () => { this.themeService.switchTheme('saga-purple'); }
-          },
-          {
-            label: 'Azul oscuro',
-            escape: true,
-            command: () => { this.themeService.switchTheme('arya-blue'); }
-          },
-          {
-            label: 'Verde oscuro',
-            escape: true,
-            command: () => { this.themeService.switchTheme('arya-green'); }
-          },
-          {
-            label: 'Naranja oscuro',
-            escape: true,
-            command: () => { this.themeService.switchTheme('arya-orange'); }
-          },
-          {
-            label: 'Purpura oscuro',
-            escape: true,
-            command: () => { this.themeService.switchTheme('arya-purple'); }
+            command: () => { 
+              this.themeService.switchTheme('my-app-dark', this.theme);
+              this.updateThemeText();
+            }
           }
         ],
       },

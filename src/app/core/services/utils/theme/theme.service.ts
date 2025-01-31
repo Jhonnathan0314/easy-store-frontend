@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable, OnInit } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
@@ -11,8 +11,8 @@ export class ThemeService {
   
   localStorage: Storage | undefined;
 
-  constructor() {
-    
+  constructor(@Inject(DOCUMENT) private document: Document) {
+    this.findActualTheme()
   }
 
   /**
@@ -20,7 +20,9 @@ export class ThemeService {
    * theme.
    */
   findActualTheme() {
-    
+    if(this.document.defaultView?.sessionStorage == undefined) return;
+    const actualTheme = this.document.defaultView?.sessionStorage.getItem('theme') ?? 'Claro';
+    if(actualTheme === 'Oscuro') this.switchTheme('my-app-dark', actualTheme)
   }
 
   /**
@@ -29,7 +31,9 @@ export class ThemeService {
    * @param {string} theme - The `theme` parameter is a string that represents the name of the theme to
    * be applied.
    */
-  switchTheme(theme: string) {
-    
+  switchTheme(theme: string, newState: string) {
+    this.document.defaultView?.sessionStorage.setItem('theme', newState);
+    const element = this.document.querySelector('html')?.classList;
+    element?.toggle(theme);
   }
 }

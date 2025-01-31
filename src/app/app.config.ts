@@ -18,7 +18,14 @@ export const appConfig: ApplicationConfig = {
         provideClientHydration(),
         providePrimeNG({
             theme: {
-                preset: Aura
+                preset: Aura,
+                options: {
+                    darkModeSelector: '.my-app-dark',
+                    cssLayer: {
+                        name: 'app-styles',
+                        order: 'app-styles, primeng'
+                    }
+                }
             }
         })
     ]
