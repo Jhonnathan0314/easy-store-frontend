@@ -1,6 +1,8 @@
+import { DOCUMENT } from '@angular/common';
 import {
   Component,
   EventEmitter,
+  Inject,
   Input,
   OnChanges,
   Output,
@@ -41,7 +43,7 @@ export class InputPasswordComponent implements OnChanges {
   static nextId = 0;
   componentId: number;
 
-  constructor() {
+  constructor(@Inject(DOCUMENT) private document: Document) {
     this.componentId = InputPasswordComponent.nextId++;
   }
 
@@ -83,11 +85,11 @@ export class InputPasswordComponent implements OnChanges {
    */
   validateError() {
     if(!this.isValidPassword) {
-      document.getElementById('inputPassword'+this.componentId)?.classList.replace('ng-valid', 'ng-invalid');
-      document.getElementById('inputPassword'+this.componentId)?.classList.add('ng-dirty');
+      this.document.getElementById('inputPassword'+this.componentId)?.classList.replace('ng-valid', 'ng-invalid');
+      this.document.getElementById('inputPassword'+this.componentId)?.classList.add('ng-dirty');
     } else {
-      document.getElementById('inputPassword'+this.componentId)?.classList.replace('ng-invalid', 'ng-valid');
-      document.getElementById('inputPassword'+this.componentId)?.classList.remove('ng-dirty');
+      this.document.getElementById('inputPassword'+this.componentId)?.classList.replace('ng-invalid', 'ng-valid');
+      this.document.getElementById('inputPassword'+this.componentId)?.classList.remove('ng-dirty');
     }
   }
 

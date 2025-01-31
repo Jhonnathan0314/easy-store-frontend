@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, EventEmitter, Inject, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 
@@ -25,7 +26,7 @@ export class InputTextComponent implements OnChanges {
   static nextId = 0;
   componentId: number;
 
-  constructor() {
+  constructor(@Inject(DOCUMENT) private document: Document) {
     this.componentId = InputTextComponent.nextId++;
   }
 
@@ -60,11 +61,11 @@ export class InputTextComponent implements OnChanges {
    */
   validateError() {
     if(this.hasError) {
-      document.getElementById('inputText'+this.componentId)?.classList.replace('ng-valid', 'ng-invalid');
-      document.getElementById('inputText'+this.componentId)?.classList.add('ng-dirty');
+      this.document.getElementById('inputText'+this.componentId)?.classList.replace('ng-valid', 'ng-invalid');
+      this.document.getElementById('inputText'+this.componentId)?.classList.add('ng-dirty');
     } else {
-      document.getElementById('inputText'+this.componentId)?.classList.replace('ng-invalid', 'ng-valid');
-      document.getElementById('inputText'+this.componentId)?.classList.remove('ng-dirty');
+      this.document.getElementById('inputText'+this.componentId)?.classList.replace('ng-invalid', 'ng-valid');
+      this.document.getElementById('inputText'+this.componentId)?.classList.remove('ng-dirty');
     }
   }
 

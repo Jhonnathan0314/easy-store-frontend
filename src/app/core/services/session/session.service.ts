@@ -1,15 +1,19 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginRequest } from '../../models/data-types/security/security-request.model';
 import { SessionData } from '../../models/data-types/security/security-data.model';
 import { CryptoService } from '../utils/crypto/crypto.service';
+import { DOCUMENT } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SessionService {
 
-  constructor(private router: Router, private cryptoService: CryptoService) {
+  localStorage: Storage | undefined;
+
+  constructor(private router: Router, private cryptoService: CryptoService, @Inject(DOCUMENT) private document: Document) {
+    this.localStorage = this.document.defaultView?.localStorage;
     this.validateSession();
   }
 
@@ -19,13 +23,13 @@ export class SessionService {
       username: loginRequest.username,
       role: this.getTokenAttribute(token, "user_role")
     };
-    localStorage.setItem("object", this.cryptoService.encryptObject(sessionData));
+    this.localStorage?.setItem("object", this.cryptoService.encryptObject(sessionData));
     if (this.isTokenExpired() || !this.isValidSessionData()) this.logout();
     this.validateSession();
   }
 
   logout() {
-    localStorage.clear();
+    this.localStorage?.clear();
     this.redirect('/security/login');
   }
 
@@ -42,7 +46,7 @@ export class SessionService {
   }
 
   isLogged(): boolean {
-    return localStorage.getItem("object") != null && this.isValidSessionData();
+    return this.localStorage?.getItem("object") != null && this.isValidSessionData();
   }
 
   redirect(path: string) {
@@ -70,7 +74,7 @@ export class SessionService {
   }
 
   getSessionData(): SessionData {
-    const localStorageValue = this.cryptoService.decryptObject(localStorage.getItem("object") ?? "");
+    const localStorageValue = this.cryptoService.decryptObject(this.localStorage?.getItem("object") ?? "");
 
     let sessionData: SessionData = new SessionData();
     sessionData.token = localStorageValue.token;
