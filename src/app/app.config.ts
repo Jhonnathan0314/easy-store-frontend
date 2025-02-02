@@ -8,7 +8,7 @@ import { apiToken } from "@interceptor/api-token/api-token.interceptor";
 
 import { routes } from "./app.routes";
 import { providePrimeNG } from "primeng/config";
-import Aura from '@primeng/themes/aura';
+import { LaraGreenPreset } from "@theme/lara-green";
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -18,13 +18,9 @@ export const appConfig: ApplicationConfig = {
         provideClientHydration(),
         providePrimeNG({
             theme: {
-                preset: Aura,
+                preset: LaraGreenPreset,
                 options: {
-                    darkModeSelector: '.my-app-dark',
-                    cssLayer: {
-                        name: 'app-styles',
-                        order: 'app-styles, primeng'
-                    }
+                    darkModeSelector: '.my-app-dark'
                 }
             }
         })
