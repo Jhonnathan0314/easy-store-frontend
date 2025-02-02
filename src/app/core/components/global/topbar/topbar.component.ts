@@ -16,7 +16,7 @@ export class TopbarComponent {
 
   items: MenuItem[] = [];
 
-  theme: string = ''
+  mode: string = '';
 
   constructor(
     private themeService: ThemeService, 
@@ -29,29 +29,58 @@ export class TopbarComponent {
 
   updateThemeText() {
     const element = this.document.querySelector('html')?.classList;
-    this.theme = 'Claro';
-    if(element?.length == 0) this.theme = 'Oscuro';
+    this.mode = 'claro';
+    if(element?.length == 0) this.mode = 'oscuro';
     this.configMenuItems();
   }
 
   configMenuItems() {
+    this.mode = this.themeService.getMode() === 'claro' ? 'oscuro' : 'claro';
+
     this.items = [
-      { label: 'Menu', icon: 'pi pi-fw pi-home text-primary', command: () => { this.router.navigateByUrl('/dashboard/home') } },
-      { label: 'Store', icon: 'pi pi-fw pi-shopping-bag text-primary', command: () => { this.router.navigateByUrl('/dashboard/store') } },
-      { label: 'Mi perfil', icon: 'pi pi-fw pi-user text-primary', command: () => { this.router.navigateByUrl('/dashboard/profile') } },
       {
         label: 'Temas',
         icon: 'pi pi-fw pi-palette',
         items: [
           {
-            label: this.theme,
-            escape: true,
+            label: 'Verde',
             command: () => { 
-              this.themeService.switchTheme('my-app-dark', this.theme);
-              this.updateThemeText();
+              this.themeService.switchTheme('green');
+            }
+          },
+          {
+            label: 'Azul',
+            command: () => { 
+              this.themeService.switchTheme('sky');
+            }
+          },
+          {
+            label: 'Naranja',
+            command: () => { 
+              this.themeService.switchTheme('amber');
+            }
+          },
+          {
+            label: 'Rosado',
+            command: () => { 
+              this.themeService.switchTheme('pink');
+            }
+          },
+          {
+            label: 'Violeta',
+            command: () => { 
+              this.themeService.switchTheme('violet');
             }
           }
         ],
+      },
+      {
+        label: 'Modo ' + this.mode,
+        icon: `pi ${this.mode === 'claro' ? 'pi-sun' : 'pi-moon'}`,
+        command: () => { 
+          this.themeService.switchMode(this.mode);
+          this.configMenuItems();
+        }
       },
       { label: 'Salir', icon: 'pi pi-fw pi-sign-out text-primary', command: () => { this.sessionService.logout(); } },
     ];

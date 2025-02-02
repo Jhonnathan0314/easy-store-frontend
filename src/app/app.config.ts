@@ -16,13 +16,6 @@ export const appConfig: ApplicationConfig = {
         provideHttpClient(withFetch(), withInterceptors([apiToken])),
         provideAnimationsAsync(),
         provideClientHydration(),
-        providePrimeNG({
-            theme: {
-                preset: LaraGreenPreset,
-                options: {
-                    darkModeSelector: '.my-app-dark'
-                }
-            }
-        })
+        providePrimeNG()
     ]
 }

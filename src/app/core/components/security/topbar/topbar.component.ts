@@ -14,23 +14,14 @@ export class SecurityTopbarComponent {
 
   items: MenuItem[] = [];
 
-  theme: string = ''
+  mode: string = ''
 
   constructor(public themeService: ThemeService, @Inject(DOCUMENT) private document: Document) {
     this.configMenuItems();
   }
 
-  updateThemeText() {
-    const element = this.document.querySelector('html')?.classList;
-    this.theme = 'Claro';
-    if(element?.length == 0) this.theme = 'Oscuro';
-    this.configMenuItems();
-  }
-
   configMenuItems() {
-    const element = this.document.querySelector('html')?.classList;
-    this.theme = 'Claro';
-    if(element?.length == 0) this.theme = 'Oscuro';
+    this.mode = this.themeService.getMode() === 'claro' ? 'oscuro' : 'claro';
     
     this.items = [
       {
@@ -38,14 +29,49 @@ export class SecurityTopbarComponent {
         icon: 'pi pi-fw pi-palette',
         items: [
           {
-            label: this.theme,
+            label: 'Verde',
             escape: true,
             command: () => { 
-              this.themeService.switchTheme('my-app-dark', this.theme);
-              this.updateThemeText();
+              this.themeService.switchTheme('green');
+            }
+          },
+          {
+            label: 'Azul',
+            escape: true,
+            command: () => { 
+              this.themeService.switchTheme('sky');
+            }
+          },
+          {
+            label: 'Naranja',
+            escape: true,
+            command: () => { 
+              this.themeService.switchTheme('amber');
+            }
+          },
+          {
+            label: 'Rosado',
+            escape: true,
+            command: () => { 
+              this.themeService.switchTheme('pink');
+            }
+          },
+          {
+            label: 'Violeta',
+            escape: true,
+            command: () => { 
+              this.themeService.switchTheme('violet');
             }
           }
         ],
+      },
+      {
+        label: 'Modo ' + this.mode,
+        icon: `pi ${this.mode === 'claro' ? 'pi-sun' : 'pi-moon'}`,
+        command: () => { 
+          this.themeService.switchMode(this.mode);
+          this.configMenuItems();
+        }
       },
       {
         label: 'Ayuda y soporte',

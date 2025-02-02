@@ -29,7 +29,7 @@ export class SessionService {
   }
 
   logout() {
-    this.localStorage?.clear();
+    this.localStorage?.removeItem('object');
     this.redirect('/security/login');
   }
 
