@@ -6,8 +6,7 @@ import { TopbarComponent } from '@component/core/global/topbar/topbar.component'
   selector: 'app-layout',
   standalone: true,
   imports: [RouterModule, TopbarComponent],
-  templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.css']
+  templateUrl: './layout.component.html'
 })
 export class LayoutComponent {
 

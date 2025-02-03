@@ -1,10 +1,8 @@
-<div >
-    <p-menubar [model]="items">
-        <ng-template pTemplate="start">
-            <div  [routerLink]="['/dashboard']">
-                <img src="../../../../assets/img/store.png" alt="store.png" height="40" class="mr-3"/>
-                <p >Easy store</p>
-            </div>
-        </ng-template>
-    </p-menubar>
-</div>
+<p-menubar [model]="items">
+    <ng-template pTemplate="end">
+        <a [routerLink]="['/dashboard']" class="flex justify-center items-center gap-2 font-semibold md:text-xl lg:text-2xl">
+            <img src="../../../../assets/img/store.png" alt="store.png" class="h-8 lg:h-10" />
+            <p>Easy store</p>
+        </a>
+    </ng-template>
+</p-menubar>

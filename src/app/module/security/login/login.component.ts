@@ -21,7 +21,8 @@ import { ButtonIconPosition } from '@enums/primeng.enum';
   selector: 'app-login',
   standalone: true,
   imports: [ToastModule, DividerModule, RouterModule, ReactiveFormsModule, InputTextComponent, InputPasswordComponent, ButtonComponent],
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
+  styleUrls: ['../../../../assets/css/layout.css']
 })
 export class LoginComponent {
 

@@ -5,7 +5,8 @@ import { CarouselHomeComponent } from '@component/core/global/carousel-home/caro
   selector: 'app-home',
   standalone: true,
   imports: [CarouselHomeComponent],
-  templateUrl: './home.component.html'
+  templateUrl: './home.component.html',
+  styleUrls: ['../../../../../assets/css/layout.css']
 })
 export class HomeComponent {
 

@@ -1,5 +1,5 @@
 <section class="w-full h-fit px-4 pt-4 flex flex-col gap-4 justify-center lg:flex-row lg:px-40 lg:pt-20">
-  <form class="py-8 w-full bg-surface-200 rounded-border flex flex-col justify-start items-center grow-0 gap-8 lg:w-8/12" [formGroup]="loginForm">
+  <form class="py-8 w-full bg-section gap-8 grow-0 lg:w-8/12" [formGroup]="loginForm">
       <h1 class="w-full text-center">¡Bienvenido de vuelta!</h1>
   
       <app-input-text
@@ -30,7 +30,7 @@
       <a class="text-center">Olvide mi contraseña</a>
       <a class="text-center" [routerLink]="['/security/register']">Crear cuenta</a>
   </form>
-  <section class="py-8 w-full bg-surface-200 rounded-border flex justify-center items-center lg:w-4/12">
+  <section class="py-8 w-full bg-section lg:w-4/12">
     <app-button label="Ingresar con Google" icon="pi pi-google"></app-button>
   </section>
 </section>

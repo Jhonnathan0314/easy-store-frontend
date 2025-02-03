@@ -13,7 +13,8 @@ import { SessionService } from 'src/app/core/services/session/session.service';
   selector: 'app-register',
   standalone: true,
   imports: [RouterModule, ReactiveFormsModule, InputTextComponent, InputPasswordComponent, ButtonComponent],
-  templateUrl: './register.component.html'
+  templateUrl: './register.component.html',
+  styleUrls: ['../../../../assets/css/layout.css']
 })
 export class RegisterComponent {
 

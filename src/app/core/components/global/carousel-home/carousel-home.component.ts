@@ -10,11 +10,10 @@ import { RouterModule } from '@angular/router';
   selector: 'app-carousel-home',
   standalone: true,
   imports: [CarouselModule, RouterModule],
-  templateUrl: './carousel-home.component.html'
+  templateUrl: './carousel-home.component.html',
+  styleUrls: ['../../../../../assets/css/layout.css']
 })
 export class CarouselHomeComponent implements OnInit, OnDestroy {
-
-  @ViewChildren('section') container: ElementRef;
 
   categories: Category[] = [];
   items: CarouselHomeObject[] = [];

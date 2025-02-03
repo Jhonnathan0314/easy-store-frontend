@@ -1,0 +1,9 @@
+@layer tailwind-utilities {
+    .border-section {
+        @apply !w-full !py-2 !border !border-surface-300 !rounded-border;
+    }
+
+    .bg-section {
+        @apply !rounded-border !flex !flex-col !justify-center !items-center !px-8 !py-8 !bg-surface-200
+    }
+}
