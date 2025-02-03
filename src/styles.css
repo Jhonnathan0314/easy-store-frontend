@@ -1,63 +1,14 @@
-body {
-    font-family: var(--font-family);
+@layer tailwind-base, primeng, tailwind-utilities;
+
+@layer tailwind-base {
+    @tailwind base;
 }
 
-.card-linear-blue {
-    background: linear-gradient(to bottom, var(--blue-100), var(--blue-50), var(--blue-100), var(--blue-50), var(--blue-100));
-    border-radius: 7px;
-    box-shadow: 0 0 5px var(--primary-color);
-    color: var(--text-color);
+@layer tailwind-utilities {
+    @tailwind components;
+    @tailwind utilities;
 }
-
-.card-linear-green {
-    background: linear-gradient(to bottom, var(--green-100), var(--green-50), var(--green-100), var(--green-50), var(--green-100));
-    border-radius: 7px;
-    box-shadow: 0 0 5px var(--primary-color);
-    color: var(--text-color);
-}
-
-.card-linear-orange {
-    background: linear-gradient(to bottom, var(--orange-100), var(--orange-50), var(--orange-100), var(--orange-50), var(--orange-100));
-    border-radius: 7px;
-    box-shadow: 0 0 5px var(--primary-color);
-    color: var(--text-color);
-}
-
-.card-linear-purple {
-    background: linear-gradient(to bottom, var(--purple-100), var(--purple-50), var(--purple-100), var(--purple-50), var(--purple-100));
-    border-radius: 7px;
-    box-shadow: 0 0 5px var(--primary-color);
-    color: var(--text-color);
-}
-
-.saga-blue {
-    background-image: url('assets/img/background-saga-blue.svg');
-}
-
-.saga-green {
-    background-image: url('assets/img/background-saga-green.svg');
-}
-
-.saga-orange {
-    background-image: url('assets/img/background-saga-orange.svg');
-}
-
-.saga-purple {
-    background-image: url('assets/img/background-saga-purple.svg');
-}
-
-.arya-blue {
-    background-image: url('assets/img/background-arya-blue.svg');
-}
-
-.arya-green {
-    background-image: url('assets/img/background-arya-green.svg');
-}
-
-.arya-orange {
-    background-image: url('assets/img/background-arya-orange.svg');
-}
-
-.arya-purple {
-    background-image: url('assets/img/background-arya-purple.svg');
+h1, h2, h3, h4, h5, h6, p, a, label, span {
+    padding: 0;
+    margin: 0;
 }

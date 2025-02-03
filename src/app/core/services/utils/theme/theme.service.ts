@@ -71,7 +71,11 @@ export class ThemeService {
     this.primeng.theme.set({
       preset: this.themes[theme],
       options: {
-          darkModeSelector: '.my-app-dark'
+        darkModeSelector: '.my-app-dark',
+        cssLayer: {
+          name: 'primeng',
+          order: 'tailwind-base, primeng, tailwind-utilities'
+        }
       }
     })
     this.localStorage?.setItem('theme', theme);

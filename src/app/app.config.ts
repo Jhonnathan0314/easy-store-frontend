@@ -8,7 +8,6 @@ import { apiToken } from "@interceptor/api-token/api-token.interceptor";
 
 import { routes } from "./app.routes";
 import { providePrimeNG } from "primeng/config";
-import { LaraGreenPreset } from "@theme/lara-green";
 
 export const appConfig: ApplicationConfig = {
     providers: [
