@@ -1,0 +1,8 @@
+<p>category-all works!</p>
+<app-table
+    [objects]="mappedCategories"
+    [updateButton]="true"
+    [deleteButton]="true"
+    updateRedirectPath="category/form"
+    (deleteEvent)="deleteById($event)"
+/>

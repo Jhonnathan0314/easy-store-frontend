@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ButtonIconPosition } from '@enums/primeng.enum';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { ToastModule } from 'primeng/toast';
@@ -10,12 +10,14 @@ import { ToastModule } from 'primeng/toast';
   standalone: true,
   imports: [ ButtonModule, ToastModule, ConfirmPopupModule ],
   templateUrl: './button.component.html',
-  providers: [ ConfirmationService ]
+  providers: [ ConfirmationService, MessageService ]
 })
 export class ButtonComponent {
 
   @Input() label: string = '';
   @Input() icon: string = '';
+  @Input() severity: "success" | "info" | "warn" | "danger" | "help" | "primary" | "secondary" | "contrast" | null | undefined = 'primary';
+  @Input() rounded: boolean = false;
   @Input() iconPos: ButtonIconPosition = ButtonIconPosition.LEFT;
   @Input() loading: boolean = false;
   @Input() disabled: boolean = false;
@@ -47,6 +49,12 @@ export class ButtonComponent {
       target: event.target as EventTarget,
       message: '¿Estas seguro de continuar?',
       icon: 'pi pi-exclamation-triangle',
+      rejectButtonProps: {
+        label: 'No'
+      },
+      acceptButtonProps: {
+        label: 'Si'
+      },
       accept: () => {
         this.clickEvent.emit();
       },

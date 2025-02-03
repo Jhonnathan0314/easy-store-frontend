@@ -6,4 +6,8 @@
     .bg-section {
         @apply !rounded-border !flex !flex-col !justify-center !items-center !px-8 !py-8 !bg-surface-200
     }
+
+    .h2 {
+        @apply !pl-4 !pb-4 text-2xl font-semibold
+    }
 }

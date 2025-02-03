@@ -1,0 +1,130 @@
+<p-table
+    [value]="objects"
+    [paginator]="true"
+    [rows]="20"
+    [resizableColumns]="true"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    styleClass="p-datatable-lg"
+    [rowsPerPageOptions]="[5, 10, 20, 50, 100, 500]"
+>
+<ng-template pTemplate="header">
+    <tr>
+        @if(hasFields.id) { <th style="width:auto" pResizableColumn>Id</th> }
+        @if(hasFields.name) { <th style="width:auto" pResizableColumn>Nombre</th> }
+        @if(hasFields.description) { <th style="width:auto" pResizableColumn>Descripción</th> }
+        @if(hasFields.price) { <th style="width:auto" pResizableColumn>Precio</th> }
+        @if(hasFields.quantity) { <th style="width:auto" pResizableColumn>Cantidad</th> }
+        @if(hasFields.qualification) { <th style="width:auto" pResizableColumn>Calificación</th> }
+        @if(hasFields.categoryName) { <th style="width:auto" pResizableColumn>Tienda</th> }
+        @if(hasFields.subcategoryName) { <th style="width:auto" pResizableColumn>Categoria</th> }
+        @if(updateButton) { <th style="width:auto" pResizableColumn>Actualizar</th> }
+        @if(deleteButton) { <th style="width:auto" pResizableColumn>Eliminar</th> }
+    </tr>
+    <tr>
+        @if(hasFields.id) { 
+            <th>
+                <p-columnFilter
+                    type="numeric"
+                    field="id"
+                    placeholder="Buscar por id"
+                    ariaLabel="Buscar por id"
+                ></p-columnFilter>
+            </th>
+        }
+        @if(hasFields.name) {
+            <th>
+                <p-columnFilter
+                    type="text"
+                    field="name"
+                    placeholder="Buscar por nombre"
+                    ariaLabel="Buscar por nombre"
+                ></p-columnFilter>
+            </th>
+        }
+        @if(hasFields.description) {
+            <th>
+                <p-columnFilter
+                    type="text"
+                    field="description"
+                    placeholder="Buscar por descripción"
+                    ariaLabel="Buscar por descripción"
+                ></p-columnFilter>
+            </th>
+        }
+        @if(hasFields.price) {
+            <th>
+                <p-columnFilter
+                    type="numeric"
+                    field="price"
+                    placeholder="Buscar por precio"
+                    ariaLabel="Buscar por precio"
+                ></p-columnFilter>
+            </th>
+        }
+        @if(hasFields.quantity) {
+            <th>
+                <p-columnFilter
+                    type="numeric"
+                    field="quantity"
+                    placeholder="Buscar por cantidad"
+                    ariaLabel="Buscar por cantidad"
+                ></p-columnFilter>
+            </th>
+        }
+        @if(hasFields.qualification) {
+            <th>
+                <p-columnFilter
+                    type="numeric"
+                    field="qualification"
+                    placeholder="Buscar por calificacion"
+                    ariaLabel="Buscar por calificacion"
+                ></p-columnFilter>
+            </th>
+        }
+        @if(hasFields.categoryName) {
+            <th>
+                <p-columnFilter
+                    type="text"
+                    field="subcategoryName"
+                    placeholder="Buscar por categoria"
+                    ariaLabel="Buscar por categoria"
+                ></p-columnFilter>
+            </th>
+        }
+        @if(hasFields.subcategoryName) {
+            <th>
+                <p-columnFilter
+                    type="text"
+                    field="categoryName"
+                    placeholder="Buscar por tienda"
+                    ariaLabel="Buscar por tienda"
+                ></p-columnFilter>
+            </th>
+        }
+        @if(updateButton) { <th></th> }
+        @if(deleteButton) { <th></th> }
+    </tr>
+    </ng-template>
+    <ng-template #body let-obj>
+        <tr>
+            @if(hasFields.id) { <td>{{ obj.id }}</td> }
+            @if(hasFields.name) { <td>{{ obj.name }}</td> }
+            @if(hasFields.description) { <td>{{ obj.description }}</td> }
+            @if(hasFields.price) { <td>{{ obj.price }}</td> }
+            @if(hasFields.quantity) { <td>{{ obj.quantity }}</td> }
+            @if(hasFields.qualification) { <td>{{ obj.qualification }}</td> }
+            @if(hasFields.categoryName) { <td>{{ obj.subcategoryName }}</td> }
+            @if(hasFields.subcategoryName) { <td>{{ obj.categoryName }}</td> }
+            @if(updateButton) { 
+                <td>
+                    <app-button icon="pi pi-pencil" [rounded]="true" (clickEvent)="updateAction(obj.id)" />
+                </td>
+            }
+            @if(deleteButton) {
+                <td>
+                    <app-button icon="pi pi-trash" [rounded]="true" severity="danger" [confirmClick]="true" (clickEvent)="deleteAction(obj.id)" />
+                </td>
+            }
+        </tr>
+    </ng-template>
+</p-table>

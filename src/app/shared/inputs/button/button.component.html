@@ -1,13 +1,13 @@
 <p-confirmPopup></p-confirmPopup>
-<div >
-  <p-button
-    [label]="label"
-    [icon]="icon"
-    [iconPos]="iconPos"
-    [loading]="loading"
-    [disabled]="disabled"
-    (click)="sendValue($event)"
-  ></p-button>
-</div>
+<p-button
+  [label]="label"
+  [icon]="icon"
+  [iconPos]="iconPos"
+  [rounded]="rounded"
+  [loading]="loading"
+  [disabled]="disabled"
+  [severity]="severity"
+  (click)="sendValue($event)"
+></p-button>
 <p-toast></p-toast>
 <p-confirmPopup></p-confirmPopup>

@@ -9,6 +9,7 @@ export const routes: Routes = [
       { path: 'home', component: HomeComponent },
       { path: 'profile', component: UserProfileComponent },
       { path: 'store', loadChildren: () => import('./pages/store/store.routes').then(m => m.routes) },
+      { path: 'category', loadChildren: () => import('./pages/category/category.routes').then(m => m.routes) },
       { path: '**', redirectTo: 'home', pathMatch: 'full' }
     ]
   },

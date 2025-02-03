@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LoginRequest } from '../../models/data-types/security/security-request.model';
 import { SessionData } from '../../models/data-types/security/security-data.model';
 import { CryptoService } from '../utils/crypto/crypto.service';
@@ -12,7 +12,9 @@ export class SessionService {
 
   localStorage: Storage | undefined;
 
-  constructor(private router: Router, private cryptoService: CryptoService, @Inject(DOCUMENT) private document: Document) {
+  actualPath: string = '';
+
+  constructor(private router: Router, private activatedRoute: ActivatedRoute, private cryptoService: CryptoService, @Inject(DOCUMENT) private document: Document) {
     this.localStorage = this.document.defaultView?.localStorage;
     this.validateSession();
   }
@@ -21,7 +23,8 @@ export class SessionService {
     const sessionData = {
       token: token,
       username: loginRequest.username,
-      role: this.getTokenAttribute(token, "user_role")
+      role: this.getTokenAttribute(token, "user_role"),
+      id: this.getTokenAttribute(token, "user_id")
     };
     this.localStorage?.setItem("object", this.cryptoService.encryptObject(sessionData));
     if (this.isTokenExpired() || !this.isValidSessionData()) this.logout();
@@ -33,15 +36,17 @@ export class SessionService {
     this.redirect('/security/login');
   }
 
-  validateSession() {
+  private validateSession() {
     if (this.isLogged()) {
+      this.actualPath = window.location.href;
+      if(!this.actualPath.includes('security')) return;
       this.redirect('/dashboard');
     } else {
       this.logout();
     }
   }
 
-  isValidSessionData(): boolean {
+  private isValidSessionData(): boolean {
     return this.getSessionData().isValid() && !this.isTokenExpired();
   }
 
@@ -49,7 +54,7 @@ export class SessionService {
     return this.localStorage?.getItem("object") != null && this.isValidSessionData();
   }
 
-  redirect(path: string) {
+  private redirect(path: string) {
     this.router.navigateByUrl(path);
   }
 
@@ -73,22 +78,25 @@ export class SessionService {
     return JSON.parse(decoded);
   }
 
-  getSessionData(): SessionData {
+  private getSessionData(): SessionData {
     const localStorageValue = this.cryptoService.decryptObject(this.localStorage?.getItem("object") ?? "");
 
     let sessionData: SessionData = new SessionData();
     sessionData.token = localStorageValue.token;
     sessionData.username = localStorageValue.username;
     sessionData.role = localStorageValue.role;
+    sessionData.id = localStorageValue.id;
     
     return sessionData;
   }
 
-  getTokenAttribute(token: string, attribute: string) {
+  private getTokenAttribute(token: string, attribute: string) {
     return this.decodePayload(token)[attribute];
   }
 
   getUsername() { return this.getSessionData().username; }
+
+  getUserId() { return this.getSessionData().id; }
 
   getRole() { return this.getSessionData().role; }
   

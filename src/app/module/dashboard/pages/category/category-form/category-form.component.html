@@ -1,0 +1,50 @@
+<section class="w-full h-fit px-4 pt-4 flex flex-col gap-4 justify-center lg:flex-row lg:px-40 lg:pt-20">
+    <form class="py-8 w-full bg-section gap-8 grow-0 lg:w-8/12" [formGroup]="categoryForm">
+        <h1 class="w-full text-center">{{ title }}</h1>
+    
+        @if(categoryForm.value.id != 0) {
+          <app-input-number
+            [value]="categoryForm.value.id"
+            label="Id"
+            [hasError]="categoryForm.controls['id'].status === 'INVALID'"
+            [isDisabled]="true"
+            (valueEvent)="receiveValueNumber('id', $event)"
+            formControlName="name"
+            ngDefaultControl
+          ></app-input-number>
+        }
+        
+        <app-input-text
+          [value]="categoryForm.value.name"
+          label="Nombre"
+          [hasError]="categoryForm.controls['name'].status === 'INVALID'"
+          (valueEvent)="receiveValueString('name', $event)"
+          formControlName="name"
+          ngDefaultControl
+        />
+    
+        <app-input-text
+          [value]="categoryForm.value.description"
+          label="Descripcion"
+          [hasError]="categoryForm.controls['description'].status === 'INVALID'"
+          (valueEvent)="receiveValueString('description', $event)"
+          formControlName="description"
+          ngDefaultControl
+        />
+    
+        <app-input-text
+          [value]="categoryForm.value.imageName"
+          label="Imagen"
+          [hasError]="categoryForm.controls['imageName'].status === 'INVALID'"
+          (valueEvent)="receiveValueString('imageName', $event)"
+          formControlName="imageName"
+          ngDefaultControl
+        />
+    
+        <app-button
+          [label]="buttonLabel"
+          [confirmClick]="true"
+          (clickEvent)="validateForm()"
+        />
+    </form>
+</section>

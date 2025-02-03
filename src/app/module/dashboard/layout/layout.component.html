@@ -2,5 +2,7 @@
     <app-topbar class="w-full h-full"></app-topbar>
 </header>
 <main class="w-full max-w-full h-[calc(100vh-5rem)]">
-    <router-outlet></router-outlet>
+    <router-outlet (activate)="onActivate($event)"></router-outlet>
 </main>
+<p-toast></p-toast>
+<app-message #messageComponent></app-message>

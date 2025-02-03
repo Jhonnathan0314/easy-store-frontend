@@ -1,6 +1,8 @@
-<div >
-  <span >
+<p-floatlabel>
+  <p-iconfield>
     <p-inputNumber
+      [id]="'inputText'+componentId"
+      size="large"
       [formControl]="controlValue"
       mode="decimal"
       [min]="0"
@@ -8,7 +10,9 @@
       [prefix]="prefix"
       [suffix]="suffix"
       (ngModelChange)="sendValue()"
+      autocomplete="off"
     />
-    <label>{{ label }}</label>
-  </span>
-</div>
+    <p-inputicon [class]="icon"/>
+  </p-iconfield>
+  <label [for]="'inputText'+componentId">{{label}}</label>
+</p-floatlabel>
