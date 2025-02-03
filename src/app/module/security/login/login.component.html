@@ -2,11 +2,20 @@
   <form class="py-8 w-full bg-section gap-8 grow-0 lg:w-8/12" [formGroup]="loginForm">
       <h1 class="w-full text-center">¡Bienvenido de vuelta!</h1>
   
+      <app-input-number
+        [value]="loginForm.value.accountId"
+        label="Id de la cuenta"
+        [hasError]="loginForm.controls['accountId'].status === 'INVALID'"
+        (valueEvent)="receiveValueNumber('accountId', $event)"
+        formControlName="accountId"
+        ngDefaultControl
+      />
+
       <app-input-text
         [value]="loginForm.value.username"
         label="Correo electronico"
         [hasError]="loginForm.controls['username'].status === 'INVALID'"
-        (valueEvent)="receiveValue('username', $event)"
+        (valueEvent)="receiveValueString('username', $event)"
         formControlName="username"
         ngDefaultControl
       ></app-input-text>
@@ -17,7 +26,7 @@
         [hasError]="loginForm.controls['password'].status === 'INVALID'"
         [feedback]="false"
         [toggleMask]="true"
-        (valueEvent)="receiveValue('password', $event)"
+        (valueEvent)="receiveValueString('password', $event)"
         formControlName="password"
         ngDefaultControl
       ></app-input-password>
@@ -26,6 +35,10 @@
         label="Ingresar"
         (clickEvent)="validateForm()"
       ></app-button>
+
+      @if(loginError) {
+        <span class="text-red-600 text-center">Error al ingresar, por favor verifique los datos ingresados.</span>
+      }
   
       <a class="text-center">Olvide mi contraseña</a>
       <a class="text-center" [routerLink]="['/security/register']">Crear cuenta</a>

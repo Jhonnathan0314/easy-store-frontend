@@ -1,6 +1,9 @@
+import { Role } from "./role.model";
+
 export class LoginRequest {
     username: string;
     password: string;
+    accountId?: number;
 }
 
 export class RegisterRequest {
@@ -8,4 +11,5 @@ export class RegisterRequest {
     lastName: string;
     username: string;
     password: string;
+    role: Role;
 }

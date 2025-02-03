@@ -16,11 +16,12 @@ import { SecurityService } from 'src/app/core/services/api/security/security.ser
 import { SessionService } from 'src/app/core/services/session/session.service';
 import { ThemeService } from 'src/app/core/services/utils/theme/theme.service';
 import { ButtonIconPosition } from '@enums/primeng.enum';
+import { InputNumberComponent } from "../../../shared/inputs/input-number/input-number.component";
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ToastModule, DividerModule, RouterModule, ReactiveFormsModule, InputTextComponent, InputPasswordComponent, ButtonComponent],
+  imports: [ToastModule, DividerModule, RouterModule, ReactiveFormsModule, InputTextComponent, InputPasswordComponent, ButtonComponent, InputNumberComponent],
   templateUrl: './login.component.html',
   styleUrls: ['../../../../assets/css/layout.css']
 })
@@ -31,6 +32,8 @@ export class LoginComponent {
   loginForm: FormGroup;
   loginRequest: LoginRequest = new LoginRequest();
   formErrors: FormErrors;
+
+  loginError: boolean = false;
   
   @Output() loginErrorEvent = new EventEmitter<FormErrors>();
 
@@ -51,13 +54,18 @@ export class LoginComponent {
    */
   initializeForm() {
     this.loginForm = this.formBuilder.group({
+      accountId: [null, [Validators.required]],
       username: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(5)]]
     });
   }
 
-  receiveValue(key: string, value: string) {
-    this.loginForm.value[key] = value;
+  receiveValueString(key: string, value: string) {
+    this.loginForm.patchValue({ [key]: value });
+  }
+
+  receiveValueNumber(key: string, value: number) {
+    this.loginForm.patchValue({ [key]: value });
   }
 
   /**
@@ -98,7 +106,9 @@ export class LoginComponent {
   login() {
     this.securityService.login(this.loginRequest).subscribe({
       next: (res) => this.sessionService.saveSession(this.loginRequest, res.data.token),
-      error: (error) => console.log("Error en login: ", error)
+      error: (error) => {
+        if(error.error.error.code === 404) this.loginError = true;
+      }
     });
   }
 

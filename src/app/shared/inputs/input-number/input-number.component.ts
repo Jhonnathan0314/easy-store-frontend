@@ -49,11 +49,11 @@ export class InputNumberComponent implements OnChanges {
 
   validateError() {
     if(this.hasError) {
-      this.document.getElementById('inputText'+this.componentId)?.classList.replace('ng-valid', 'ng-invalid');
-      this.document.getElementById('inputText'+this.componentId)?.classList.add('ng-dirty');
+      this.document.getElementById('inputNumber'+this.componentId)?.classList.replace('ng-valid', 'ng-invalid');
+      this.document.getElementById('inputNumber'+this.componentId)?.classList.add('ng-dirty');
     } else {
-      this.document.getElementById('inputText'+this.componentId)?.classList.replace('ng-invalid', 'ng-valid');
-      this.document.getElementById('inputText'+this.componentId)?.classList.remove('ng-dirty');
+      this.document.getElementById('inputNumber'+this.componentId)?.classList.replace('ng-invalid', 'ng-valid');
+      this.document.getElementById('inputNumber'+this.componentId)?.classList.remove('ng-dirty');
     }
   }
 

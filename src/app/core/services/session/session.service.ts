@@ -4,6 +4,7 @@ import { LoginRequest } from '../../models/data-types/security/security-request.
 import { SessionData } from '../../models/data-types/security/security-data.model';
 import { CryptoService } from '../utils/crypto/crypto.service';
 import { DOCUMENT } from '@angular/common';
+import { log } from 'console';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,8 @@ export class SessionService {
       token: token,
       username: loginRequest.username,
       role: this.getTokenAttribute(token, "user_role"),
-      id: this.getTokenAttribute(token, "user_id")
+      userId: this.getTokenAttribute(token, "user_id"),
+      accountId: this.getTokenAttribute(token, "account_id"),
     };
     this.localStorage?.setItem("object", this.cryptoService.encryptObject(sessionData));
     if (this.isTokenExpired() || !this.isValidSessionData()) this.logout();
@@ -85,7 +87,8 @@ export class SessionService {
     sessionData.token = localStorageValue.token;
     sessionData.username = localStorageValue.username;
     sessionData.role = localStorageValue.role;
-    sessionData.id = localStorageValue.id;
+    sessionData.userId = localStorageValue.userId;
+    sessionData.accountId = localStorageValue.accountId;
     
     return sessionData;
   }
@@ -96,7 +99,9 @@ export class SessionService {
 
   getUsername() { return this.getSessionData().username; }
 
-  getUserId() { return this.getSessionData().id; }
+  getUserId() { return this.getSessionData().userId; }
+
+  getAccountId() { return this.getSessionData().accountId; }
 
   getRole() { return this.getSessionData().role; }
   

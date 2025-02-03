@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
 import { InputPasswordComponent } from '@component/shared/inputs/input-password/input-password.component';
 import { InputTextComponent } from '@component/shared/inputs/input-text/input-text.component';
+import { Role } from '@models/security/role.model';
 import { FormErrors } from '@models/security/security-error.model';
 import { RegisterRequest } from '@models/security/security-request.model';
 import { SecurityService } from 'src/app/core/services/api/security/security.service';
@@ -54,11 +55,16 @@ export class RegisterComponent {
       return;
     }
 
+    const role = {
+      id: 3,
+      name: 'admin'
+    }
     this.registerRequest = {
       name: this.registerForm.value.name,
       lastName: this.registerForm.value.lastName,
       username: this.registerForm.value.username,
-      password: this.registerForm.value.password
+      password: this.registerForm.value.password,
+      role: role
     };
 
     this.register();
