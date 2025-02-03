@@ -1,9 +1,7 @@
-<div >
-    <div >
-        <app-split-button icon="pi pi-cog" [items]="items"></app-split-button>
-    </div>
-    <div >
-        <img src="assets/img/store.png" alt="store-logo" >
-        <h1 >Easy store</h1>
-    </div>
-</div>
+<nav class="h-full px-4 md:px-40 lg:px-80 flex justify-between items-center">
+    <picture class="flex justify-center items-center gap-2.5">
+        <img src="assets/img/store.png" alt="store-logo" class="w-12 h-12">
+        <h1 class="text-lg">Easy store</h1>
+    </picture>
+    <app-split-button icon="pi pi-cog" [items]="items"></app-split-button>
+</nav>

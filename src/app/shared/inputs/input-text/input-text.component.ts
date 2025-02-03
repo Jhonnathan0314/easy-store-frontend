@@ -2,11 +2,14 @@ import { DOCUMENT } from '@angular/common';
 import { Component, EventEmitter, Inject, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
+import { IconField } from 'primeng/iconfield';
+import { InputIcon } from 'primeng/inputicon';
+import { FloatLabel } from 'primeng/floatlabel';
 
 @Component({
   selector: 'app-input-text',
   standalone: true,
-  imports: [InputTextModule, ReactiveFormsModule],
+  imports: [InputTextModule, IconField, InputIcon, FloatLabel, ReactiveFormsModule],
   templateUrl: './input-text.component.html'
 })
 export class InputTextComponent implements OnChanges {

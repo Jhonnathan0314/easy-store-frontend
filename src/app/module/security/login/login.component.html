@@ -1,54 +1,38 @@
-<form  [formGroup]="loginForm">
-  <div >
-    <p >¡Bienvenido de vuelta!</p>
-  </div>
-  <div >
-    <app-input-text
-      [value]="loginForm.value.username"
-      label="Correo electronico"
-      [hasError]="loginForm.controls['username'].status === 'INVALID'"
-      (valueEvent)="receiveValue('username', $event)"
-      formControlName="username"
-      ngDefaultControl
-    ></app-input-text>
-  </div>
-  <div >
-    <app-input-password
-      [value]="loginForm.value.password"
-      label="Contraseña"
-      [hasError]="loginForm.controls['password'].status === 'INVALID'"
-      [feedback]="true"
-      [toggleMask]="true"
-      (valueEvent)="receiveValue('password', $event)"
-      formControlName="password"
-      ngDefaultControl
-    ></app-input-password>
-  </div>
-  <div >
-    <div >
-      <a >Olvide mi contraseña</a>
-    </div>
-    <div >
+<section class="w-full h-fit px-4 pt-4 flex flex-col gap-4 justify-center lg:flex-row lg:px-40 lg:pt-20">
+  <form class="py-8 w-full bg-surface-200 rounded-border flex flex-col justify-start items-center grow-0 gap-8 lg:w-8/12" [formGroup]="loginForm">
+      <h1 class="w-full text-center">¡Bienvenido de vuelta!</h1>
+  
+      <app-input-text
+        [value]="loginForm.value.username"
+        label="Correo electronico"
+        [hasError]="loginForm.controls['username'].status === 'INVALID'"
+        (valueEvent)="receiveValue('username', $event)"
+        formControlName="username"
+        ngDefaultControl
+      ></app-input-text>
+  
+      <app-input-password
+        [value]="loginForm.value.password"
+        label="Contraseña"
+        [hasError]="loginForm.controls['password'].status === 'INVALID'"
+        [feedback]="false"
+        [toggleMask]="true"
+        (valueEvent)="receiveValue('password', $event)"
+        formControlName="password"
+        ngDefaultControl
+      ></app-input-password>
+  
       <app-button
-        [confirmClick]="true"
         label="Ingresar"
         (clickEvent)="validateForm()"
       ></app-button>
-    </div>
-    <div >
-      <a  [routerLink]="['/security/register']">Crear cuenta</a>
-    </div>
-  </div>
-  <div >
-    <div ><p></p></div>
-    <div >
-      <app-button
-        label="Ingresa con "
-        [iconPos]="buttonIconPositionRight"
-        icon="pi pi-google"
-      ></app-button>
-    </div>
-    <div ><p></p></div>
-  </div>
-</form>
+  
+      <a class="text-center">Olvide mi contraseña</a>
+      <a class="text-center" [routerLink]="['/security/register']">Crear cuenta</a>
+  </form>
+  <section class="py-8 w-full bg-surface-200 rounded-border flex justify-center items-center lg:w-4/12">
+    <app-button label="Ingresar con Google" icon="pi pi-google"></app-button>
+  </section>
+</section>
+
 <p-toast></p-toast>

@@ -10,11 +10,12 @@ import {
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PasswordModule } from 'primeng/password';
+import { FloatLabel } from 'primeng/floatlabel';
 
 @Component({
   selector: 'app-input-password',
   standalone: true,
-  imports: [PasswordModule, ReactiveFormsModule],
+  imports: [PasswordModule, FloatLabel, ReactiveFormsModule],
   templateUrl: './input-password.component.html'
 })
 export class InputPasswordComponent implements OnChanges {

@@ -1,8 +1,6 @@
-<form  [formGroup]="registerForm">
-  <div >
-    <p >¡Bienvenido de vuelta!</p>
-  </div>
-  <div >
+<section class="w-full h-fit px-4 pt-4 flex flex-col gap-4 justify-center lg:flex-row lg:px-40 lg:pt-20">
+  <form class="py-8 w-full bg-surface-200 rounded-border flex flex-col justify-start items-center gap-8" [formGroup]="registerForm">
+    <h1 class="w-full text-center">¡Bienvenido de vuelta!</h1>
     <app-input-text
       [value]="registerForm.value.name"
       label="Nombre"
@@ -11,8 +9,6 @@
       formControlName="name"
       ngDefaultControl
     ></app-input-text>
-  </div>
-  <div >
     <app-input-text
       [value]="registerForm.value.lastName"
       label="Apellidos"
@@ -21,8 +17,6 @@
       formControlName="lastName"
       ngDefaultControl
     ></app-input-text>
-  </div>
-  <div >
     <app-input-text
       [value]="registerForm.value.username"
       label="Correo electronico"
@@ -31,8 +25,6 @@
       formControlName="username"
       ngDefaultControl
     ></app-input-text>
-  </div>
-  <div >
     <app-input-password
       [value]="registerForm.value.password"
       label="Contraseña"
@@ -43,8 +35,6 @@
       formControlName="password"
       ngDefaultControl
     ></app-input-password>
-  </div>
-  <div >
     <app-input-password
       [value]="registerForm.value.confirmPassword"
       label="Confirmar contraseña"
@@ -55,11 +45,7 @@
       formControlName="confirmPassword"
       ngDefaultControl
     ></app-input-password>
-  </div>
-  <div >
     <app-button [confirmClick]="true" label="Crear cuenta" (clickEvent)="validateForm()"></app-button>
-  </div>
-  <div >
-    <a  [routerLink]="['/security/login']">Ingresar</a>
-  </div>
-</form>
+    <a [routerLink]="['/security/login']">Ingresar</a>
+  </form>
+</section>

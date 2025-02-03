@@ -15,7 +15,6 @@ import { ToastModule } from 'primeng/toast';
   standalone: true,
   imports: [ToastModule, RouterModule, SecurityTopbarComponent, MessageComponent],
   templateUrl: './security.component.html',
-  styleUrls: ['./security.component.css'],
   providers: [ MessageService ]
 })
 export class SecurityComponent implements OnDestroy {

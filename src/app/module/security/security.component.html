@@ -1,12 +1,10 @@
-<div [class]="">
-    <header >
-        <app-security-topbar></app-security-topbar>
+<section class="h-screen w-screen">
+    <header class="w-screen h-24">
+        <app-security-topbar class="h-full w-full"></app-security-topbar>
     </header>
-    <section >
-        <div >
-            <router-outlet (activate)="onActivate($event)"></router-outlet>
-        </div>
-    </section>
-</div>
+    <main class="w-screen">
+        <router-outlet (activate)="onActivate($event)"></router-outlet>
+    </main>
+</section>
 <p-toast></p-toast>
 <app-message #messageComponent></app-message>

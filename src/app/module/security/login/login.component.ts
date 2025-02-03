@@ -1,21 +1,26 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
 import { InputPasswordComponent } from '@component/shared/inputs/input-password/input-password.component';
 import { InputTextComponent } from '@component/shared/inputs/input-text/input-text.component';
-import { ButtonIconPosition } from '@enums/primeng.enum';
+
 import { FormErrors } from '@models/security/security-error.model';
 import { LoginRequest } from '@models/security/security-request.model';
+
 import { ToastModule } from 'primeng/toast';
+import { DividerModule } from 'primeng/divider';
+
 import { SecurityService } from 'src/app/core/services/api/security/security.service';
 import { SessionService } from 'src/app/core/services/session/session.service';
 import { ThemeService } from 'src/app/core/services/utils/theme/theme.service';
+import { ButtonIconPosition } from '@enums/primeng.enum';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ToastModule, RouterModule, ReactiveFormsModule, InputTextComponent, InputPasswordComponent, ButtonComponent],
+  imports: [ToastModule, DividerModule, RouterModule, ReactiveFormsModule, InputTextComponent, InputPasswordComponent, ButtonComponent],
   templateUrl: './login.component.html'
 })
 export class LoginComponent {

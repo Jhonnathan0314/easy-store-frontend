@@ -30,35 +30,30 @@ export class SecurityTopbarComponent {
         items: [
           {
             label: 'Verde',
-            escape: true,
             command: () => { 
               this.themeService.switchTheme('green');
             }
           },
           {
             label: 'Azul',
-            escape: true,
             command: () => { 
               this.themeService.switchTheme('sky');
             }
           },
           {
             label: 'Naranja',
-            escape: true,
             command: () => { 
               this.themeService.switchTheme('amber');
             }
           },
           {
             label: 'Rosado',
-            escape: true,
             command: () => { 
               this.themeService.switchTheme('pink');
             }
           },
           {
             label: 'Violeta',
-            escape: true,
             command: () => { 
               this.themeService.switchTheme('violet');
             }
