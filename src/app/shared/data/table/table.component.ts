@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { DataObject, DataObjectValidation } from '@models/utils/object.data-view.model';
 import { TableModule } from 'primeng/table';
 import { ButtonComponent } from "../../inputs/button/button.component";
@@ -10,7 +10,7 @@ import { Router, RouterModule } from '@angular/router';
   imports: [RouterModule, TableModule, ButtonComponent],
   templateUrl: './table.component.html'
 })
-export class TableComponent implements OnInit {
+export class TableComponent implements OnChanges {
 
   @Input() objects: DataObject[] = [];
   @Input() updateButton: boolean = false;
@@ -23,7 +23,7 @@ export class TableComponent implements OnInit {
 
   constructor(private router: Router) { }
 
-  ngOnInit(): void {
+  ngOnChanges(changes: SimpleChanges): void {
     this.validateHasFields();
   }
 

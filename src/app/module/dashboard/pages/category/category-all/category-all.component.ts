@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Category } from '@models/data/category.model';
 import { DataObject } from '@models/utils/object.data-view.model';
 import { Subscription } from 'rxjs';
@@ -11,7 +11,7 @@ import { TableComponent } from "../../../../../shared/data/table/table.component
   imports: [ TableComponent ],
   templateUrl: './category-all.component.html'
 })
-export class CategoryAllComponent implements OnInit {
+export class CategoryAllComponent implements OnInit, OnDestroy {
 
   categories: Category[] = [];
   mappedCategories: DataObject[] = [];
@@ -24,6 +24,10 @@ export class CategoryAllComponent implements OnInit {
     this.openSubscriptions();
   }
 
+  ngOnDestroy(): void {
+    this.closeSubscriptions();
+  }
+
   openSubscriptions() {
     this.categorySubscription = this.categoryService.storedCategories$.subscribe({
       next: (categories) => {
@@ -34,6 +38,10 @@ export class CategoryAllComponent implements OnInit {
         console.log('Ha ocurrido un error: ', {error});
       }
     })
+  }
+
+  closeSubscriptions() {
+    this.categorySubscription.unsubscribe();
   }
 
   convertToDataObject() {
