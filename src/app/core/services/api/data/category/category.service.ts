@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, find, map, Observable } from 'rxjs';
+import { BehaviorSubject, find, map, Observable, tap } from 'rxjs';
 import { Category } from 'src/app/core/models/data-types/data/category.model';
 import { ApiResponse } from 'src/app/core/models/data-types/data/general.model';
 import { environment } from 'src/environments/environment';
@@ -44,42 +44,39 @@ export class CategoryService {
     );
   }
 
-  create(category: Category) {
+  create(category: Category): Observable<ApiResponse<Category>> {
     const userId = this.sessionService.getUserId();
-    console.log({userId});
-    this.http.post<ApiResponse<Category>>(`${this.apiUrl}/category`, category, {
+    return this.http.post<ApiResponse<Category>>(`${this.apiUrl}/category`, category, {
       headers: {
         'Create-By': `${userId}`
       }
-    }).subscribe({
-      next: (response) => {
+    }).pipe(
+      tap(response => {
         this.categories.push(response.data);
         this.categoriesSubject.next(this.categories);
-      },
-      error: (error) => {
-        console.log("Ha ocurrido un error al crear la categoria.", error);
-      }
-    })
+      })
+    )
   }
 
-  update(category: Category) {
-    this.http.put<ApiResponse<Category>>(`${this.apiUrl}/category`, category).subscribe({
-      next: (response) => {
-        const index = this.categories.findIndex(cat => response.data.id == cat.id);
+  update(category: Category): Observable<ApiResponse<Category>> {
+    const userId = this.sessionService.getUserId();
+    return this.http.put<ApiResponse<Category>>(`${this.apiUrl}/category`, category, {
+      headers: {
+        'Update-By': `${userId}`
+      }
+    }).pipe(
+      tap(response => {
+        const index = this.categories.findIndex(cat => cat.id == category?.id);
         this.categories[index] = response.data;
         this.categoriesSubject.next(this.categories);
-      },
-      error: (error) => {
-        console.log("Ha ocurrido un error al actualizar la categoria.", error);
-      }
-    })
+      })
+    )
   }
 
   deleteById(id: number) {
-    this.http.get<ApiResponse<Object>>(`${this.apiUrl}/category/delete/${id}`).subscribe({
+    this.http.delete<ApiResponse<Object>>(`${this.apiUrl}/category/delete/${id}`).subscribe({
       next: (response) => {
         this.categoriesSubject.next(this.categories.filter(cat => cat.id != id));
-        console.log("Eliminé y actualicé lista con éxito. ", response);
       },
       error: (error) => {
         if(error.error.code === 404) 

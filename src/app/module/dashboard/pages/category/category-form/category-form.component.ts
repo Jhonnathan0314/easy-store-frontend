@@ -1,12 +1,13 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Category } from '@models/data/category.model';
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
 import { InputTextComponent } from "../../../../../shared/inputs/input-text/input-text.component";
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
 import { InputNumberComponent } from "../../../../../shared/inputs/input-number/input-number.component";
 import { FormErrors } from '@models/security/security-error.model';
+import { SessionService } from 'src/app/core/services/session/session.service';
 
 @Component({
   selector: 'app-category-form',
@@ -27,7 +28,13 @@ export class CategoryFormComponent implements OnInit {
 
   @Output() categoryErrorEvent = new EventEmitter<FormErrors>();
 
-  constructor(private activatedRoute: ActivatedRoute, private formBuilder: FormBuilder, private categoryService: CategoryService) { }
+  constructor(
+    private activatedRoute: ActivatedRoute, 
+    private router: Router, 
+    private formBuilder: FormBuilder, 
+    private categoryService: CategoryService,
+    private sessionService: SessionService
+  ) { }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -42,6 +49,7 @@ export class CategoryFormComponent implements OnInit {
   findCategoryById() {
     if(this.isCreate()) {
       this.prepareCreateForm();
+      return;
     }
     this.setUpdateTitles();
     this.categoryService.getById(this.category.id).subscribe({
@@ -101,7 +109,12 @@ export class CategoryFormComponent implements OnInit {
       this.getFormErrors();
       return;
     }
-    this.createCategory();
+    this.getCategoryObject();
+    if(this.buttonLabel === 'Crear') {
+      this.createCategory();
+    }else {
+      this.updateCategory();
+    }
   }
 
   getFormErrors() {
@@ -118,17 +131,31 @@ export class CategoryFormComponent implements OnInit {
   errorEvent() { this.categoryErrorEvent.emit(this.formErrors); }
 
   createCategory() {
-    this.getCategoryObject();
-    this.categoryService.create(this.category)
+    this.categoryService.create(this.category).subscribe({
+      next: (response) => {
+        this.router.navigateByUrl('/dashboard/category');
+      },
+      error: (error) => {
+        console.log("Ha ocurrido un error al crear la categoria.", error);
+      }
+    })
   }
 
   updateCategory() {
-    this.getCategoryObject();
-    console.log({category: this.category});
+    this.categoryService.update(this.category).subscribe({
+      next: (response) => {
+        this.router.navigateByUrl('/dashboard/category');
+      },
+      error: (error) => {
+        console.log("Ha ocurrido un error al crear la categoria.", error);
+      }
+    })
   }
 
   getCategoryObject() {
     this.category = { ...this.categoryForm.value };
+    this.category.userId = this.sessionService.getUserId();
+    this.category.accountId = this.sessionService.getAccountId();
   }
 
 }

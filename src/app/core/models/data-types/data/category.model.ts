@@ -3,4 +3,6 @@ export class Category {
     name: string;
     description: string;
     imageName: string;
+    userId: number;
+    accountId: number;
 }
