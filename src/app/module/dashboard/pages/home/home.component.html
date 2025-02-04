@@ -5,17 +5,31 @@
         <app-carousel-home></app-carousel-home>
     </section>
     <section class="border-section px-4 flex flex-wrap justify-center items-center gap-4 md:justify-start">
+        <h2 class="h2 w-full">Gestionar tiendas</h2>
+        <p class="w-full">En este apartado usted podra ver, crear, actualizar y eliminar las tiendas creadas.</p>
+        <app-button 
+            label="Gestionar tiendas"
+            icon="pi pi-list"
+            (clickEvent)="redirectTo('/dashboard/category')"
+        />
+        <app-button 
+            label="Crear tienda"
+            icon="pi pi-plus"
+            (clickEvent)="redirectTo('/dashboard/category/form/0')"
+        />
+    </section>
+    <section class="border-section px-4 flex flex-wrap justify-center items-center gap-4 md:justify-start">
         <h2 class="h2 w-full">Gestionar categorias</h2>
         <p class="w-full">En este apartado usted podra ver, crear, actualizar y eliminar las categorias encontradas en sus tiendas.</p>
         <app-button 
             label="Ver categorias"
             icon="pi pi-list"
-            (clickEvent)="redirectTo('/dashboard/category')"
+            (clickEvent)="redirectTo('/dashboard/subcategory')"
         />
         <app-button 
             label="Crear categoria"
             icon="pi pi-plus"
-            (clickEvent)="redirectTo('/dashboard/category/form/0')"
+            (clickEvent)="redirectTo('/dashboard/subcategory/form/0')"
         />
     </section>
     <section class="border-section px-4 flex flex-wrap justify-center items-center gap-4 md:justify-start">
