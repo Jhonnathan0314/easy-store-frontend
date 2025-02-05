@@ -1,0 +1,18 @@
+
+<p-floatlabel class="w-60">
+  <p-select
+    [inputId]="'inputSelect'+componentId"
+    [id]="'inputSelect'+componentId"
+    [options]="options"
+    [formControl]="controlValue"
+    size="large"
+    [showClear]="showClear"
+    [filter]="filter"
+    filterBy="name"
+    optionLabel="name"
+    optionValue="value"
+    styleClass="w-full"
+    (ngModelChange)="sendValue()"
+  ></p-select>
+  <label [for]="'inputSelect'+componentId">{{ label }}</label>
+</p-floatlabel>

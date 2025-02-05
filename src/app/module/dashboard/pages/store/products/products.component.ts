@@ -71,7 +71,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   productsSubscribe() {
     this.productsSubscription = this.productService.storedProducts$.subscribe({
       next: (value) => {
-        this.products = value.filter(product => product.subcategory.category.id == 1);
+        this.products = value.filter(product => product.subcategory.categoryId == 1);
       }
     });
   }

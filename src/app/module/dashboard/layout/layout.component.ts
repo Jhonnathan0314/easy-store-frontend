@@ -7,6 +7,7 @@ import { FormErrors } from '@models/security/security-error.model';
 import { MessageComponent } from '@component/shared/informative/message/message.component';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { SubcategoryFormComponent } from '../pages/subcategory/subcategory-form/subcategory-form.component';
 
 @Component({
   selector: 'app-layout',
@@ -20,13 +21,18 @@ export class LayoutComponent {
   @ViewChild(MessageComponent) messageComponent: MessageComponent;
 
   categorySubscription: Subscription | undefined;
+  subcategorySubscription: Subscription | undefined;
 
   detailError: string = '';
 
   onActivate(componentRef: Component) {
     this.categorySubscription = undefined;
+    this.subcategorySubscription = undefined;
     if (componentRef instanceof CategoryFormComponent) {
       this.categorySubscription = componentRef.categoryErrorEvent.subscribe((errors) => this.showFormErrors(errors));
+    }
+    if (componentRef instanceof SubcategoryFormComponent) {
+      this.subcategorySubscription = componentRef.subcategoryErrorEvent.subscribe((errors) => this.showFormErrors(errors));
     }
   }
 

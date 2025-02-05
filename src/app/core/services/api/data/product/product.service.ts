@@ -41,7 +41,7 @@ export class ProductService {
     return this.storedProducts$
       .pipe(
         map(products => products.filter(product => 
-          product.subcategory.category.id == categoryId &&
+          product.subcategory.categoryId == categoryId &&
           product.name.toLowerCase().includes(name.toLowerCase()))
         )
       );
@@ -58,7 +58,7 @@ export class ProductService {
     return this.storedProducts$
       .pipe(
         map(products => products.filter(product => 
-          product.subcategory.category.id == categoryId &&
+          product.subcategory.categoryId == categoryId &&
           product.price >= min)
         )
       );
@@ -68,7 +68,7 @@ export class ProductService {
     return this.storedProducts$
       .pipe(
         map(products => products.filter(product => 
-          product.subcategory.category.id == categoryId &&
+          product.subcategory.categoryId == categoryId &&
           product.price <= max)
         )
       );
@@ -78,7 +78,7 @@ export class ProductService {
     return this.storedProducts$
       .pipe(
         map(products => products.filter(product => 
-          product.subcategory.category.id == categoryId &&
+          product.subcategory.categoryId == categoryId &&
           product.price >= min && product.price <= max)
         )
       );
@@ -95,7 +95,7 @@ export class ProductService {
     return this.storedProducts$
       .pipe(
         map(products => products.filter(product => 
-          product.subcategory.category.id == categoryId &&
+          product.subcategory.categoryId == categoryId &&
           product.subcategory.name.toLowerCase() == subcategory.toLowerCase())
         )
       );

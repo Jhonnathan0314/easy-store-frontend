@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { PrimeNGObject } from 'src/app/core/models/data-types/primeng-object.model';
+import { PrimeNGObject } from '@models/utils/primeng-object.model';
 import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({

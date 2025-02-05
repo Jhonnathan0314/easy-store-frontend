@@ -85,7 +85,7 @@
                 <th>
                     <p-columnFilter
                         type="text"
-                        field="subcategoryName"
+                        field="categoryName"
                         placeholder="Buscar por categoria"
                         ariaLabel="Buscar por categoria"
                     ></p-columnFilter>
@@ -95,7 +95,7 @@
                 <th>
                     <p-columnFilter
                         type="text"
-                        field="categoryName"
+                        field="subcategoryName"
                         placeholder="Buscar por tienda"
                         ariaLabel="Buscar por tienda"
                     ></p-columnFilter>
@@ -113,8 +113,8 @@
             @if(hasFields.price) { <td>{{ obj.price }}</td> }
             @if(hasFields.quantity) { <td>{{ obj.quantity }}</td> }
             @if(hasFields.qualification) { <td>{{ obj.qualification }}</td> }
-            @if(hasFields.categoryName) { <td>{{ obj.subcategoryName }}</td> }
-            @if(hasFields.subcategoryName) { <td>{{ obj.categoryName }}</td> }
+            @if(hasFields.categoryName) { <td>{{ obj.categoryName }}</td> }
+            @if(hasFields.subcategoryName) { <td>{{ obj.subcategoryName }}</td> }
             @if(updateButton) { 
                 <td>
                     <app-button icon="pi pi-pencil" [rounded]="true" (clickEvent)="updateAction(obj.id)" />
