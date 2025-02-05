@@ -48,7 +48,7 @@ export class CarouselHomeComponent implements OnInit, OnDestroy {
     this.categories.forEach(category => {
       this.items.push({
         title: category.name,
-        img: `../../../../../../public/assets/img/${category.imageName}`,
+        img: `/assets/img/${category.imageName}`,
         body: category.description,
         value: category.id,
         // route: category.imageName.split('.')[0],
