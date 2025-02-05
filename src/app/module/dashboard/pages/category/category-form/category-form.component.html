@@ -1,5 +1,11 @@
 <section class="w-full h-fit px-4 pt-4 flex flex-col gap-4 justify-center lg:flex-row lg:px-40 lg:pt-20">
     <form class="py-8 w-full bg-section gap-8 grow-0 lg:w-8/12" [formGroup]="categoryForm">
+      <app-button 
+        class="self-start"
+        icon="pi pi-arrow-left"
+        [rounded]="true"
+        (clickEvent)="goBack()"
+      />
         <h1 class="w-full text-center">{{ title }}</h1>
     
         @if(categoryForm.value.id != 0) {

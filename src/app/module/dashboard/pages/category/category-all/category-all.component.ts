@@ -4,11 +4,13 @@ import { DataObject } from '@models/utils/object.data-view.model';
 import { Subscription } from 'rxjs';
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
 import { TableComponent } from "../../../../../shared/data/table/table.component";
+import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-category-all',
   standalone: true,
-  imports: [ TableComponent ],
+  imports: [RouterModule, TableComponent, ButtonComponent],
   templateUrl: './category-all.component.html'
 })
 export class CategoryAllComponent implements OnInit, OnDestroy {
@@ -18,7 +20,10 @@ export class CategoryAllComponent implements OnInit, OnDestroy {
 
   categorySubscription: Subscription;
 
-  constructor(private categoryService: CategoryService) { }
+  constructor(
+    private router: Router,
+    private categoryService: CategoryService
+  ) { }
 
   ngOnInit(): void {
     this.openSubscriptions();
@@ -56,6 +61,10 @@ export class CategoryAllComponent implements OnInit, OnDestroy {
 
   deleteById(category: DataObject) {
     this.categoryService.deleteById(category.id);
+  }
+
+  goBack() {
+    this.router.navigateByUrl('/dashboard/home');
   }
 
 }

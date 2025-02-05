@@ -158,4 +158,8 @@ export class CategoryFormComponent implements OnInit {
     this.category.accountId = this.sessionService.getAccountId();
   }
 
+  goBack() {
+    this.router.navigateByUrl('/dashboard/home');
+  }
+
 }
