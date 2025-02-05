@@ -23,7 +23,7 @@ import { InputNumberComponent } from "../../../shared/inputs/input-number/input-
   standalone: true,
   imports: [ToastModule, DividerModule, RouterModule, ReactiveFormsModule, InputTextComponent, InputPasswordComponent, ButtonComponent, InputNumberComponent],
   templateUrl: './login.component.html',
-  styleUrls: ['../../../../assets/css/layout.css']
+  styleUrls: ['../../../../../public/assets/css/layout.css']
 })
 export class LoginComponent {
 

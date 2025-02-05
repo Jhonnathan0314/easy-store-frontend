@@ -4,7 +4,6 @@ import { RouterModule } from '@angular/router';
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
 import { InputPasswordComponent } from '@component/shared/inputs/input-password/input-password.component';
 import { InputTextComponent } from '@component/shared/inputs/input-text/input-text.component';
-import { Role } from '@models/security/role.model';
 import { FormErrors } from '@models/security/security-error.model';
 import { RegisterRequest } from '@models/security/security-request.model';
 import { SecurityService } from 'src/app/core/services/api/security/security.service';
@@ -15,7 +14,7 @@ import { SessionService } from 'src/app/core/services/session/session.service';
   standalone: true,
   imports: [RouterModule, ReactiveFormsModule, InputTextComponent, InputPasswordComponent, ButtonComponent],
   templateUrl: './register.component.html',
-  styleUrls: ['../../../../assets/css/layout.css']
+  styleUrls: ['../../../../../public/assets/css/layout.css']
 })
 export class RegisterComponent {
 

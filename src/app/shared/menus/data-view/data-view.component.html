@@ -9,7 +9,7 @@
   </ng-template>
   <ng-template pTemplate="listItem">
     @for (object of objects; track object.id) {
-      <img class="w-12" src="assets/img/product.jpg" [alt]="object.name" />
+      <img class="w-12" src="/assets/img/product.jpg" [alt]="object.name" />
       <p>{{ object.name }}</p>
       <p-tag [value]="object.quantity + ''" [severity]="getSeverity(object)"></p-tag>
       <i class="pi pi-tag"></i>
@@ -28,7 +28,7 @@
       <span>{{
         object.subcategory.name
         }}</span>
-      <img src="assets/img/product.jpg" [alt]="object.name" />
+      <img src="/assets/img/product.jpg" [alt]="object.name" />
       <p>{{ object.name }}</p>
       <app-input-rating [value]="object.qualification" [disabled]="true"></app-input-rating>
       <span>{{ "$" + object.price }}</span>

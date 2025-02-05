@@ -14,7 +14,7 @@ import { SessionService } from 'src/app/core/services/session/session.service';
   standalone: true,
   imports: [RouterModule, ReactiveFormsModule, InputTextComponent, ButtonComponent, InputNumberComponent],
   templateUrl: './category-form.component.html',
-  styleUrls: ['../../../../../../assets/css/layout.css']
+  styleUrls: ['../../../../../../../public/assets/css/layout.css']
 })
 export class CategoryFormComponent implements OnInit {
 

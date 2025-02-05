@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChildren } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Category } from 'src/app/core/models/data-types/data/category.model';
-import { CarouselHomeObject, ResponsiveCarouselOptions } from 'src/app/core/models/data-types/primeng-object.model';
+import { CarouselHomeObject, ResponsiveCarouselOptions } from '@models/utils/primeng-object.model';
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
 import { CarouselModule } from 'primeng/carousel';
 import { RouterModule } from '@angular/router';
@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [CarouselModule, RouterModule],
   templateUrl: './carousel-home.component.html',
-  styleUrls: ['../../../../../assets/css/layout.css']
+  styleUrls: ['../../../../../../public/assets/css/layout.css']
 })
 export class CarouselHomeComponent implements OnInit, OnDestroy {
 
@@ -48,7 +48,7 @@ export class CarouselHomeComponent implements OnInit, OnDestroy {
     this.categories.forEach(category => {
       this.items.push({
         title: category.name,
-        img: `../../../../../assets/img/${category.imageName}`,
+        img: `../../../../../../public/assets/img/${category.imageName}`,
         body: category.description,
         value: category.id,
         // route: category.imageName.split('.')[0],

@@ -14,10 +14,11 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
+    "isolatedModules": true,
     "sourceMap": true,
     "declaration": false,
     "experimentalDecorators": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "importHelpers": true,
     "target": "ES2022",
     "module": "ES2022",
@@ -27,7 +28,7 @@
       "dom"
     ],
     "paths": {
-      "@img/*": ["src/assets/img/*"],
+      "@img/*": ["public/assets/img/*"],
       "@interceptor/*": ["src/app/core/interceptors/*"],
       "@models/*": ["src/app/core/models/data-types/*"],
       "@enums/*": ["src/app/core/models/enums/*"],
@@ -35,7 +36,7 @@
       "@guard/*": ["src/app/core/guards/*"],
       "@component/core/*": ["src/app/core/components/*"],
       "@component/shared/*": ["src/app/shared/*"],
-      "@theme/*": ["src/assets/themes/*"]
+      "@theme/*": ["public/assets/themes/*"]
     }
   },
   "angularCompilerOptions": {

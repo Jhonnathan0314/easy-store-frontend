@@ -8,7 +8,7 @@ import { ButtonComponent } from '@component/shared/inputs/button/button.componen
   standalone: true,
   imports: [RouterModule, CarouselHomeComponent, ButtonComponent],
   templateUrl: './home.component.html',
-  styleUrls: ['../../../../../assets/css/layout.css']
+  styleUrls: ['../../../../../../public/assets/css/layout.css']
 })
 export class HomeComponent {
 
