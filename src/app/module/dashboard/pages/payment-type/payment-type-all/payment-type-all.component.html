@@ -1,0 +1,14 @@
+<app-button 
+    class="pl-4 md:pl-8 lg:pl-24"
+    icon="pi pi-arrow-left"
+    [rounded]="true"
+    (clickEvent)="goBack()"
+/>
+<h1 class="text-center font-bold !py-4">Gestion de tipos de pago</h1>
+<app-table
+    [objects]="mappedPaymentTypes"
+    [updateButton]="true"
+    [deleteButton]="true"
+    updateRedirectPath="payment-type/form"
+    (deleteEvent)="deleteById($event)"
+/>

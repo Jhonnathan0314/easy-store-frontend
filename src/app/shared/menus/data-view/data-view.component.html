@@ -13,7 +13,7 @@
       <p>{{ object.name }}</p>
       <p-tag [value]="object.quantity + ''" [severity]="getSeverity(object)"></p-tag>
       <i class="pi pi-tag"></i>
-      <p>{{ object.subcategory.name }}</p>
+      <p>{{ object.subcategoryId }}</p>
       <app-input-rating [value]="object.qualification" [disabled]="true"></app-input-rating>
       <span>{{ "$" + object.price }}</span>
       <p-button icon="pi pi-shopping-cart" [disabled]="object.quantity == 0"></p-button>
@@ -26,7 +26,7 @@
       <p-tag [value]="object.quantity + ''" [severity]="getSeverity(object)"></p-tag>
       <i class="pi pi-tag"></i>
       <span>{{
-        object.subcategory.name
+        object.subcategoryId
         }}</span>
       <img src="/assets/img/product.jpg" [alt]="object.name" />
       <p>{{ object.name }}</p>

@@ -12,6 +12,7 @@ export const routes: Routes = [
       { path: 'category', loadChildren: () => import('./pages/category/category.routes').then(m => m.routes) },
       { path: 'subcategory', loadChildren: () => import('./pages/subcategory/subcategory.routes').then(m => m.routes) },
       { path: 'product', loadChildren: () => import('./pages/product/product.routes').then(m => m.routes) },
+      { path: 'payment-type', loadChildren: () => import('./pages/payment-type/payment-type.routes').then(m => m.routes) },
       { path: '**', redirectTo: 'home', pathMatch: 'full' }
     ]
   },

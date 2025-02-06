@@ -1,0 +1,38 @@
+<section class="w-full h-fit px-4 pt-4 flex flex-col gap-4 justify-center lg:flex-row lg:px-40 lg:pt-20">
+    <form class="py-8 w-full bg-section gap-8 grow-0 lg:w-8/12" [formGroup]="paymentTypeForm">
+      <app-button 
+        class="self-start"
+        icon="pi pi-arrow-left"
+        [rounded]="true"
+        (clickEvent)="goBack()"
+      />
+        <h1 class="w-full text-center">{{ title }}</h1>
+    
+        @if(paymentTypeForm.value.id != 0) {
+          <app-input-number
+            [value]="paymentTypeForm.value.id"
+            label="Id"
+            [hasError]="paymentTypeForm.controls['id'].status === 'INVALID'"
+            [isDisabled]="true"
+            (valueEvent)="receiveValueNumber('id', $event)"
+            formControlName="name"
+            ngDefaultControl
+          ></app-input-number>
+        }
+        
+        <app-input-text
+          [value]="paymentTypeForm.value.name"
+          label="Nombre"
+          [hasError]="paymentTypeForm.controls['name'].status === 'INVALID'"
+          (valueEvent)="receiveValueString('name', $event)"
+          formControlName="name"
+          ngDefaultControl
+        />
+    
+        <app-button
+          [label]="buttonLabel"
+          [confirmClick]="true"
+          (clickEvent)="validateForm()"
+        />
+    </form>
+</section>

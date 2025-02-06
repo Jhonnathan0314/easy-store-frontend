@@ -8,6 +8,8 @@ import { MessageComponent } from '@component/shared/informative/message/message.
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { SubcategoryFormComponent } from '../pages/subcategory/subcategory-form/subcategory-form.component';
+import { ProductFormComponent } from '../pages/product/product-form/product-form.component';
+import { PaymentTypeFormComponent } from '../pages/payment-type/payment-type-form/payment-type-form.component';
 
 @Component({
   selector: 'app-layout',
@@ -22,6 +24,8 @@ export class LayoutComponent {
 
   categorySubscription: Subscription | undefined;
   subcategorySubscription: Subscription | undefined;
+  productSubscription: Subscription | undefined;
+  paymentTypeSubscription: Subscription | undefined;
 
   detailError: string = '';
 
@@ -33,6 +37,12 @@ export class LayoutComponent {
     }
     if (componentRef instanceof SubcategoryFormComponent) {
       this.subcategorySubscription = componentRef.subcategoryErrorEvent.subscribe((errors) => this.showFormErrors(errors));
+    }
+    if (componentRef instanceof ProductFormComponent) {
+      this.productSubscription = componentRef.productErrorEvent.subscribe((errors) => this.showFormErrors(errors));
+    }
+    if (componentRef instanceof PaymentTypeFormComponent) {
+      this.paymentTypeSubscription = componentRef.paymentTypeErrorEvent.subscribe((errors) => this.showFormErrors(errors));
     }
   }
 
