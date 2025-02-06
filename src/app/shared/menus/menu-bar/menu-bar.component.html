@@ -1,8 +1,14 @@
 <p-menubar [model]="items">
     <ng-template pTemplate="end">
-        <a [routerLink]="['/dashboard']" class="flex justify-center items-center gap-2 font-semibold md:text-xl lg:text-2xl">
-            <img src="/assets/img/store.png" alt="store.png" class="h-8 lg:h-10" />
-            <p>Easy store</p>
-        </a>
+        <div class="flex items-center gap-4">
+            @if (isAdmin) {
+                <span>Modo admin</span>
+                <p-toggleswitch [(ngModel)]="adminMode" (ngModelChange)="eventAdminMode()" />
+            }
+            <a [routerLink]="['/dashboard']" class="flex justify-center items-center gap-2 font-semibold md:text-xl lg:text-2xl">
+                <img src="/assets/img/store.png" alt="store.png" class="h-8 lg:h-10" />
+                <p>Easy store</p>
+            </a>
+        </div>
     </ng-template>
 </p-menubar>
