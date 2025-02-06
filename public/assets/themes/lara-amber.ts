@@ -418,7 +418,9 @@ export const LaraAmberPreset = definePreset(Lara, {
                     700: "#334155",
                     800: "#1e293b",
                     900: "#0f172a",
-                    950: "#020617"
+                    950: "#020617",
+                    'card-background': "#e2e8f0",
+                    'card-border': "#cbd5e1"
                 },
                 primary: {
                     color: "{primary.500}",
@@ -543,7 +545,9 @@ export const LaraAmberPreset = definePreset(Lara, {
                     700: "#3f3f46",
                     800: "#27272a",
                     900: "#18181b",
-                    950: "#09090b"
+                    950: "#09090b",
+                    'card-background': "#27272a",
+                    'card-border': "#3f3f46"
                 },
                 primary: {
                     color: "{primary.400}",

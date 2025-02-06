@@ -1,13 +1,16 @@
 @layer tailwind-utilities {
     .border-section {
-        @apply !w-full !py-2 !border !border-surface-300 !rounded-border;
+        @apply !w-full !py-2 !border !rounded-border;
+        border-color: var(--p-surface-card-border);
     }
 
     .bg-section {
-        @apply !rounded-border !flex !flex-col !justify-center !items-center !px-8 !py-8 !bg-surface-200
+        @apply !rounded-border !flex !flex-col !justify-center !items-center !px-8 !py-8;
+        background-color: var(--p-surface-card-background)
+
     }
 
     .h2 {
-        @apply !pl-4 !pb-4 text-2xl font-semibold
+        @apply !pl-4 !pb-4 text-2xl font-semibold;
     }
 }

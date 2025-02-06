@@ -36,13 +36,13 @@ export class ThemeService {
     const actualMode = this.getMode();
     const classList = this.getClasslist();
     if(
-      (actualMode === 'claro' && !classList?.contains('my-app-dark')) ||
-      (actualMode === 'oscuro' && classList?.contains('my-app-dark'))
+      (actualMode === 'claro' && !classList?.contains('dark')) ||
+      (actualMode === 'oscuro' && classList?.contains('dark'))
     ) return;
 
     if(
-      (actualMode === 'oscuro' && !classList?.contains('my-app-dark')) || 
-      (actualMode === 'claro' && classList?.contains('my-app-dark'))
+      (actualMode === 'oscuro' && !classList?.contains('dark')) || 
+      (actualMode === 'claro' && classList?.contains('dark'))
     ) {
       this.switchMode(actualMode)
     }
@@ -63,7 +63,7 @@ export class ThemeService {
   }
 
   switchMode(newState: string) {
-    this.document.querySelector('html')?.classList.toggle('my-app-dark');;
+    this.document.querySelector('html')?.classList.toggle('dark');;
     this.localStorage?.setItem('mode', newState);
   }
 
@@ -71,7 +71,7 @@ export class ThemeService {
     this.primeng.theme.set({
       preset: this.themes[theme],
       options: {
-        darkModeSelector: '.my-app-dark',
+        darkModeSelector: '.dark',
         cssLayer: {
           name: 'primeng',
           order: 'tailwind-base, primeng, tailwind-utilities'

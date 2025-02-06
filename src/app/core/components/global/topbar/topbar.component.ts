@@ -38,6 +38,70 @@ export class TopbarComponent {
     this.mode = this.themeService.getMode() === 'claro' ? 'oscuro' : 'claro';
 
     this.items = [
+      { 
+        label: 'Tiendas', 
+        icon: 'pi pi-shop',
+        items: [
+          {
+            label: 'Gestionar',
+            icon: 'pi pi-list',
+            command: () => this.router.navigateByUrl('/dashboard/category')
+          },
+          {
+            label: 'Crear',
+            icon: 'pi pi-plus',
+            command: () => this.router.navigateByUrl('/dashboard/category/form/0')
+          }
+        ]
+      },
+      { 
+        label: 'Categorias', 
+        icon: 'pi pi-objects-column',
+        items: [
+          {
+            label: 'Gestionar',
+            icon: 'pi pi-list',
+            command: () => this.router.navigateByUrl('/dashboard/subcategory')
+          },
+          {
+            label: 'Crear',
+            icon: 'pi pi-plus',
+            command: () => this.router.navigateByUrl('/dashboard/subcategory/form/0')
+          }
+        ]
+      },
+      { 
+        label: 'Productos', 
+        icon: 'pi pi-box',
+        items: [
+          {
+            label: 'Gestionar',
+            icon: 'pi pi-list',
+            command: () => this.router.navigateByUrl('/dashboard/product')
+          },
+          {
+            label: 'Crear',
+            icon: 'pi pi-plus',
+            command: () => this.router.navigateByUrl('/dashboard/product/form/0')
+          }
+        ]
+      },
+      { 
+        label: 'Tipos de pago', 
+        icon: 'pi pi-credit-card',
+        items: [
+          {
+            label: 'Gestionar',
+            icon: 'pi pi-list',
+            command: () => this.router.navigateByUrl('/dashboard/payment-type')
+          },
+          {
+            label: 'Crear',
+            icon: 'pi pi-plus',
+            command: () => this.router.navigateByUrl('/dashboard/payment-type/form/0')
+          }
+        ]
+      },
       {
         label: 'Temas',
         icon: 'pi pi-fw pi-palette',
@@ -82,7 +146,11 @@ export class TopbarComponent {
           this.configMenuItems();
         }
       },
-      { label: 'Salir', icon: 'pi pi-fw pi-sign-out text-primary', command: () => { this.sessionService.logout(); } },
+      { 
+        label: 'Salir', 
+        icon: 'pi pi-fw pi-sign-out text-primary', 
+        command: () => { this.sessionService.logout(); } 
+      },
     ];
   }
 
