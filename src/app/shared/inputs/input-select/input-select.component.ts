@@ -57,7 +57,6 @@ export class InputSelectComponent implements OnChanges {
   }
 
   sendValue() { 
-    console.log({contro: this.controlValue, value: this.controlValue.value});
     this.valueEvent.emit(this.controlValue.value);
   }
 

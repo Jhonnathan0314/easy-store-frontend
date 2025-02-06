@@ -1,0 +1,14 @@
+<app-button
+    class="pl-4 md:pl-8 lg:pl-24"
+    icon="pi pi-arrow-left"
+    [rounded]="true"
+    (clickEvent)="goBack()"
+/>
+<h1 class="text-center font-bold !py-4">Gestion de productos</h1>
+<app-table
+    [objects]="mappedProducts"
+    [updateButton]="true"
+    [deleteButton]="true"
+    updateRedirectPath="product/form"
+    (deleteEvent)="deleteById($event)"
+/>

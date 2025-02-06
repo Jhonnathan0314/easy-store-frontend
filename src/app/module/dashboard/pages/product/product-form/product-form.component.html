@@ -1,0 +1,85 @@
+<section class="w-full h-fit px-4 pt-4 flex flex-col gap-4 justify-center lg:flex-row lg:px-40 lg:pt-20">
+    <form class="py-8 w-full bg-section gap-8 grow-0 lg:w-8/12" [formGroup]="productForm">
+      <app-button
+        class="self-start"
+        icon="pi pi-arrow-left"
+        [rounded]="true"
+        (clickEvent)="goBack()"
+      />
+        <h1 class="w-full text-center">{{ title }}</h1>
+    
+        @if(productForm.value.id != 0) {
+          <app-input-number
+            [value]="productForm.value.id"
+            label="Id"
+            [hasError]="productForm.controls['id'].status === 'INVALID'"
+            [isDisabled]="true"
+            (valueEvent)="receiveValueNumber('id', $event)"
+            formControlName="name"
+            ngDefaultControl
+          />
+        }
+        
+        <app-input-text
+          [value]="productForm.value.name"
+          label="Nombre"
+          [hasError]="productForm.controls['name'].status === 'INVALID'"
+          (valueEvent)="receiveValueString('name', $event)"
+          formControlName="name"
+          ngDefaultControl
+        />
+        
+        <app-input-text
+          [value]="productForm.value.description"
+          label="Descripción"
+          [hasError]="productForm.controls['description'].status === 'INVALID'"
+          (valueEvent)="receiveValueString('description', $event)"
+          formControlName="description"
+          ngDefaultControl
+        />
+
+        <app-input-number
+          [value]="productForm.value.price"
+          label="Precio"
+          [hasError]="productForm.controls['price'].status === 'INVALID'"
+          (valueEvent)="receiveValueNumber('price', $event)"
+          formControlName="price"
+          ngDefaultControl
+        />
+
+        <app-input-number
+          [value]="productForm.value.quantity"
+          label="Cantidad"
+          [hasError]="productForm.controls['quantity'].status === 'INVALID'"
+          (valueEvent)="receiveValueNumber('quantity', $event)"
+          formControlName="quantity"
+          ngDefaultControl
+        />
+
+        <app-input-number
+          [value]="productForm.value.qualification"
+          label="Calificación"
+          [hasError]="productForm.controls['qualification'].status === 'INVALID'"
+          (valueEvent)="receiveValueNumber('qualification', $event)"
+          formControlName="qualification"
+          ngDefaultControl
+        />
+    
+        <app-input-select
+          [options]="mappedSubcategories"
+          [selectedOption]="productForm.value.subcategoryId"
+          label="Categoria"
+          [showClear]="true"
+          [hasError]="productForm.controls['subcategoryId'].status === 'INVALID'"
+          (valueEvent)="receiveValueString('subcategoryId', $event)"
+          formControlName="subcategoryId"
+          ngDefaultControl
+        />
+    
+        <app-button
+          [label]="buttonLabel"
+          [confirmClick]="true"
+          (clickEvent)="validateForm()"
+        />
+    </form>
+</section>

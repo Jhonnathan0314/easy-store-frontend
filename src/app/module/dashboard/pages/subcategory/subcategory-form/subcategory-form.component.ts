@@ -103,11 +103,10 @@ export class SubcategoryFormComponent {
   }
 
   prepareUpdateForm() {
-    const index = this.mappedCategories.findIndex(cat => cat.value == `${this.subcategory.categoryId}`);
     this.subcategoryForm.patchValue({
       id: this.subcategory.id,
       name: this.subcategory.name,
-      categoryId: this.mappedCategories[index].value
+      categoryId: `${this.subcategory.categoryId}`
     })
   }
 

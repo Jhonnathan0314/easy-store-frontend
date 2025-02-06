@@ -71,7 +71,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   productsSubscribe() {
     this.productsSubscription = this.productService.storedProducts$.subscribe({
       next: (value) => {
-        this.products = value.filter(product => product.subcategory.categoryId == 1);
+        this.products = value;
       }
     });
   }
@@ -82,21 +82,21 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   async applyFilter(value: string) {
-    this.products = await (firstValueFrom(this.productService.getByCategoryLikeName(1, value)));
+    // this.products = await (firstValueFrom(this.productService.getByCategoryLikeName(1, value)));
   }
 
   async applyPriceFilter(value: number[]) {
-    if(value[0] == 0) {
-      this.products = await (firstValueFrom(this.productService.getByCategoryAndMaxPrice(1, value[1])));
-    } else if (value[1] == 0){
-      this.products = await (firstValueFrom(this.productService.getByCategoryAndMinPrice(1, value[0])));
-    } else {
-      this.products = await (firstValueFrom(this.productService.getByCategoryBetweenPrice(1, value[0], value[1])));
-    }
+    // if(value[0] == 0) {
+    //   this.products = await (firstValueFrom(this.productService.getByCategoryAndMaxPrice(1, value[1])));
+    // } else if (value[1] == 0){
+    //   this.products = await (firstValueFrom(this.productService.getByCategoryAndMinPrice(1, value[0])));
+    // } else {
+    //   this.products = await (firstValueFrom(this.productService.getByCategoryBetweenPrice(1, value[0], value[1])));
+    // }
   }
 
   async applySubcategoryFilter(value: string) {
-    this.products = await (firstValueFrom(this.productService.getByCategoryAndSubcategory(1, value)));
+    // this.products = await (firstValueFrom(this.productService.getByCategoryAndSubcategory(1, value)));
   }
 
 }

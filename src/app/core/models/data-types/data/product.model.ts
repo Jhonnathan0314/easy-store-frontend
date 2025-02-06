@@ -1,5 +1,3 @@
-import { Subcategory } from "./subcategory.model";
-
 export class Product {
     id: number;
     name: string;
@@ -7,5 +5,5 @@ export class Product {
     quantity: number;
     qualification: number;
     description: string;
-    subcategory: Subcategory;
+    subcategoryId: number;
 }

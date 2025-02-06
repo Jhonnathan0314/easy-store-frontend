@@ -17,13 +17,17 @@ export class SubcategoryService {
   private subcategoriesSubject = new BehaviorSubject<Subcategory[]>(this.subcategories);
   storedSubcategories$: Observable<Subcategory[]> = this.subcategoriesSubject.asObservable();
   
-  constructor(private http: HttpClient, private sessionService: SessionService) {
+  constructor(
+    private http: HttpClient, 
+    private sessionService: SessionService
+  ) {
     this.apiUrl = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
-    this.findAll();
+    this.findAllByAccountId();
   }
 
-  private findAll() {
-    this.http.get<ApiResponse<Subcategory[]>>(`${this.apiUrl}/subcategory`).subscribe({
+  private findAllByAccountId() {
+    const accountId = this.sessionService.getAccountId();
+    this.http.get<ApiResponse<Subcategory[]>>(`${this.apiUrl}/subcategory/account/${accountId}`).subscribe({
       next: (apiResponse) => {
         this.subcategories = apiResponse.data;
         this.subcategoriesSubject.next(this.subcategories);

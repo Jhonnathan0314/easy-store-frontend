@@ -17,13 +17,18 @@ export class CategoryService {
   private categoriesSubject = new BehaviorSubject<Category[]>(this.categories);
   storedCategories$: Observable<Category[]> = this.categoriesSubject.asObservable();
   
-  constructor(private http: HttpClient, private sessionService: SessionService) {
+  constructor(
+    private http: HttpClient, 
+    private sessionService: SessionService
+  ) {
     this.apiUrl = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
     this.findAll();
   }
 
   private findAll() {
-    this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/category`).subscribe({
+    const userId = this.sessionService.getUserId();
+    const accountId = this.sessionService.getUserId();
+    this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/category/user/${userId}/account/${accountId}`).subscribe({
       next: (apiResponse) => {
         this.categories = apiResponse.data;
         this.categoriesSubject.next(this.categories);
