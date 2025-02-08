@@ -59,7 +59,7 @@ export class PaymentTypeAllComponent {
   }
 
   deleteById(paymentType: DataObject) {
-    this.paymentTypeService.deleteById(paymentType.id);
+    this.paymentTypeService.deleteById(paymentType?.id ?? 0);
   }
 
   goBack() {

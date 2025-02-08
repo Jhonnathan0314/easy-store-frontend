@@ -65,9 +65,14 @@
             <h2 class="h2 w-full">Gestionar compras</h2>
             <p class="w-full">En este apartado usted podra gestionar las compras realizadas en sus tiendas.</p>
             <app-button 
-                label="Ver compras"
+                label="Gestionar compras"
                 icon="pi pi-list"
                 (clickEvent)="redirectTo('/dashboard/purchase')"
+            />
+            <app-button 
+                label="Ver reportes"
+                icon="pi pi-list"
+                (clickEvent)="redirectTo('/dashboard/purchase/report')"
             />
         </section>
         <section class="border-section px-4 flex flex-wrap justify-center items-center gap-4 md:justify-start">

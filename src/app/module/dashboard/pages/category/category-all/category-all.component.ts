@@ -60,7 +60,7 @@ export class CategoryAllComponent implements OnInit, OnDestroy {
   }
 
   deleteById(category: DataObject) {
-    this.categoryService.deleteById(category.id);
+    this.categoryService.deleteById(category?.id ?? 0);
   }
 
   goBack() {

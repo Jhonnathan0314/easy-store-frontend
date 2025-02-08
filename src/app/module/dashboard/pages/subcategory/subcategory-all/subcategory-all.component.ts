@@ -82,7 +82,7 @@ export class SubcategoryAllComponent {
   }
 
   deleteById(subcategory: DataObject) {
-    this.subcategoryService.deleteById(subcategory.id);
+    this.subcategoryService.deleteById(subcategory?.id ?? 0);
   }
 
   goBack() {

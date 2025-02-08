@@ -86,8 +86,8 @@ export class ProductAllComponent {
     })
   }
 
-  deleteById(subcategory: DataObject) {
-    this.productService.deleteById(subcategory.id);
+  deleteById(product: DataObject) {
+    this.productService.deleteById(product?.id ?? 0);
   }
 
   goBack() {

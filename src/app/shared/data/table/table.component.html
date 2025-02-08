@@ -9,6 +9,17 @@
 >
     <ng-template pTemplate="header">
         <tr>
+            @if(hasFields.purchase) {
+                <th style="width:auto" pResizableColumn>Id</th>
+                <th style="width:auto" pResizableColumn>Tienda</th>
+                <th style="width:auto" pResizableColumn>Usuario</th>
+                <th style="width:auto" pResizableColumn>Estado</th>
+                <th style="width:auto" pResizableColumn>Valor total</th>
+                <th style="width:auto" pResizableColumn>Fecha de creacion</th>
+                <th style="width:auto" pResizableColumn>Tipo de pago</th>
+                <th style="width:auto" pResizableColumn>Ver productos</th>
+            }
+
             @if(hasFields.id) { <th style="width:auto" pResizableColumn>Id</th> }
             @if(hasFields.name) { <th style="width:auto" pResizableColumn>Nombre</th> }
             @if(hasFields.description) { <th style="width:auto" pResizableColumn>Descripción</th> }
@@ -21,6 +32,65 @@
             @if(deleteButton) { <th style="width:auto" pResizableColumn>Eliminar</th> }
         </tr>
         <tr>
+            @if(hasFields.purchase) {
+                <th>
+                    <p-columnFilter
+                        type="numeric"
+                        field="purchase.id"
+                        placeholder="Buscar por id"
+                        ariaLabel="Buscar por id"
+                    ></p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter
+                        type="text"
+                        field="purchase.category.name"
+                        placeholder="Buscar por tienda"
+                        ariaLabel="Buscar por tienda"
+                    ></p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter
+                        type="text"
+                        field="purchase.user.username"
+                        placeholder="Buscar por email"
+                        ariaLabel="Buscar por email"
+                    ></p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter
+                        type="text"
+                        field="purchase.state"
+                        placeholder="Buscar por estado"
+                        ariaLabel="Buscar por estado"
+                    ></p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter
+                        type="numeric"
+                        field="purchase.total"
+                        placeholder="Buscar por valor total"
+                        ariaLabel="Buscar por valor total"
+                    ></p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter
+                        type="text"
+                        field="purchase.creationDate"
+                        placeholder="Buscar por fecha de creación"
+                        ariaLabel="Buscar por fecha de creación"
+                    ></p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter
+                        type="text"
+                        field="purchase.paymentType.name"
+                        placeholder="Buscar por tipo de pago"
+                        ariaLabel="Buscar por tipo de pago"
+                    ></p-columnFilter>
+                </th>
+                <th></th>
+            }
             @if(hasFields.id) { 
                 <th>
                     <p-columnFilter
@@ -107,6 +177,18 @@
     </ng-template>
     <ng-template #body let-obj>
         <tr>
+            @if(hasFields.purchase) {
+                <td>{{ obj.purchase.id }}</td>
+                <td>{{ obj.purchase.category.name }}</td>
+                <td>{{ obj.purchase.user.username }}</td>
+                <td>{{ obj.purchase.state }}</td>
+                <td>{{ obj.purchase.total }}</td>
+                <td>{{ obj.purchase.creationDate }}</td>
+                <td>{{ obj.purchase.paymentType.name }}</td>
+                <td>
+                    <app-button icon="pi pi-eye" [rounded]="true" (clickEvent)="viewDetail(obj.purchase.id)" />
+                </td>
+            }
             @if(hasFields.id) { <td>{{ obj.id }}</td> }
             @if(hasFields.name) { <td>{{ obj.name }}</td> }
             @if(hasFields.description) { <td>{{ obj.description }}</td> }

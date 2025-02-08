@@ -3,6 +3,7 @@ import { DataObject, DataObjectValidation } from '@models/utils/object.data-view
 import { TableModule } from 'primeng/table';
 import { ButtonComponent } from "../../inputs/button/button.component";
 import { Router, RouterModule } from '@angular/router';
+import { PurchaseHasProductId } from '@models/data/purchase.model';
 
 @Component({
   selector: 'app-table',
@@ -37,12 +38,17 @@ export class TableComponent implements OnChanges {
     this.hasFields.qualification = this.objects[0].qualification != undefined && this.objects[0].qualification != null;
     this.hasFields.subcategoryName = this.objects[0].subcategoryName != undefined && this.objects[0].subcategoryName != null;
     this.hasFields.categoryName = this.objects[0].categoryName != undefined && this.objects[0].categoryName != null;
+    this.hasFields.purchase = this.objects[0].purchase != undefined && this.objects[0].purchase != null;
   }
 
   areValidObjects(): boolean {
     if(this.objects == undefined || this.objects == null) return false;
     if(this.objects.length == 0) return false;
     return true;
+  }
+
+  viewDetail(id: number) {
+    console.log("view detail: ", {id});
   }
 
   updateAction(id: number) {
