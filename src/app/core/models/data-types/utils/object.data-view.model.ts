@@ -30,4 +30,5 @@ export class DataObjectValidation {
     categoryName: boolean;
 
     purchase: boolean;
+    purchaseHasProduct: boolean;
 }

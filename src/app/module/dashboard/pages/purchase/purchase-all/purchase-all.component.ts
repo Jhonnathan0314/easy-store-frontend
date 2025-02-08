@@ -46,6 +46,10 @@ export class PurchaseAllComponent {
   productSubscription: Subscription;
   purchaseSubscription: Subscription;
 
+  isDetailSelected: boolean = false;
+  detailSelectedId: number = 0;
+  detailSelectedIndex: number = 0;
+
   constructor(
     private router: Router,
     private userService: UserService,
@@ -57,10 +61,6 @@ export class PurchaseAllComponent {
 
   ngOnInit(): void {
     this.openUserSubscription();
-    this.openPaymentTypeSubscription();
-    this.openCategorySubscription();
-    this.openProductSubscription();
-    this.openPurchaseSubscription();
   }
 
   ngOnDestroy(): void {
@@ -71,6 +71,7 @@ export class PurchaseAllComponent {
     this.userSubscription = this.userService.storedUsers$.subscribe({
       next: (users) => {
         this.users = users;
+        this.openPaymentTypeSubscription();
       },
       error: (error) => {
         console.log('Ha ocurrido un error consultando usuarios.', {error});
@@ -82,6 +83,7 @@ export class PurchaseAllComponent {
     this.paymentTypeSubscription = this.paymentTypeService.storedPaymentTypes$.subscribe({
       next: (paymentTypes) => {
         this.paymentTypes = paymentTypes;
+        this.openCategorySubscription();
       },
       error: (error) => {
         console.log('Ha ocurrido un error consultando tipos de pago.', {error});
@@ -93,6 +95,7 @@ export class PurchaseAllComponent {
     this.categorySubscription = this.categoryService.storedCategories$.subscribe({
       next: (categories) => {
         this.categories = categories;
+        this.openProductSubscription();
       },
       error: (error) => {
         console.log('Ha ocurrido un error consultando categorias.', {error});
@@ -104,6 +107,7 @@ export class PurchaseAllComponent {
     this.productSubscription = this.productService.storedProducts$.subscribe({
       next: (products) => {
         this.products = products;
+        this.openPurchaseSubscription();
       },
       error: (error) => {
         console.log('Ha ocurrido un error consultando productos.', {error});
@@ -132,6 +136,9 @@ export class PurchaseAllComponent {
   }
 
   convertToDataObject() {
+    if(this.users.length === 0 || this.paymentTypes.length === 0 || 
+      this.categories.length === 0 || this.products.length === 0 || 
+      this.purchases.length === 0) return;
     this.mappedPurchases = this.purchases.map(purch => {
       this.user = this.users.find(us => us.id == purch.userId) ?? new User();
       this.paymentType = this.paymentTypes.find(pay => pay.id == purch.paymentTypeId) ?? new PaymentType();
@@ -165,11 +172,16 @@ export class PurchaseAllComponent {
        purchase: this.purchaseMap
       }
     })
-    console.log({mappedPurchases: this.mappedPurchases});
   }
 
   deleteById(purchase: DataObject) {
     this.purchaseService.deleteById(purchase.purchase?.id ?? 0);
+  }
+
+  viewDetail($event: number) {
+    this.isDetailSelected = true;
+    this.detailSelectedId = $event;
+    this.detailSelectedIndex = this.mappedPurchases.findIndex(map => map.purchase?.id === $event);
   }
 
   goBack() {

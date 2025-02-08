@@ -1,15 +1,76 @@
-<p-table
-    [value]="objects"
-    [paginator]="true"
-    [rows]="20"
-    [resizableColumns]="true"
-    [tableStyle]="{ 'min-width': '50rem' }"
-    styleClass="p-datatable-lg px-4 md:px-8 lg:px-24"
-    [rowsPerPageOptions]="[5, 10, 20, 50, 100, 500]"
->
-    <ng-template pTemplate="header">
-        <tr>
-            @if(hasFields.purchase) {
+@if (purchaseHasProduct) {
+    <p-table
+        [value]="objects[purchaseHasProductIndex].purchase?.products ?? objects"
+        [paginator]="true"
+        [rows]="20"
+        [resizableColumns]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        styleClass="p-datatable-lg px-4 md:px-8 lg:px-24"
+        [rowsPerPageOptions]="[5, 10, 20, 50, 100, 500]"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width:auto" pResizableColumn>Producto</th>
+                <th style="width:auto" pResizableColumn>Cantidad</th>
+                <th style="width:auto" pResizableColumn>Precio unitario</th>
+                <th style="width:auto" pResizableColumn>Precio total</th>
+            </tr>
+            <tr>
+                <th>
+                    <p-columnFilter
+                        type="text"
+                        field="product.name"
+                        placeholder="Buscar por estado"
+                        ariaLabel="Buscar por estado"
+                    ></p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter
+                        type="numeric"
+                        field="quantity"
+                        placeholder="Buscar por valor total"
+                        ariaLabel="Buscar por valor total"
+                    ></p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter
+                        type="numeric"
+                        field="unitPrice"
+                        placeholder="Buscar por valor total"
+                        ariaLabel="Buscar por valor total"
+                    ></p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter
+                        type="numeric"
+                        field="subtotal"
+                        placeholder="Buscar por valor total"
+                        ariaLabel="Buscar por valor total"
+                    ></p-columnFilter>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-obj>
+            <tr>
+                <td>{{ obj.product.name }}</td>
+                <td>{{ obj.quantity }}</td>
+                <td>{{ obj.unitPrice }}</td>
+                <td>{{ obj.subtotal }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+} @else if (hasFields.purchase) {
+    <p-table
+        [value]="objects"
+        [paginator]="true"
+        [rows]="20"
+        [resizableColumns]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        styleClass="p-datatable-lg px-4 md:px-8 lg:px-24"
+        [rowsPerPageOptions]="[5, 10, 20, 50, 100, 500]"
+    >
+        <ng-template pTemplate="header">
+            <tr>
                 <th style="width:auto" pResizableColumn>Id</th>
                 <th style="width:auto" pResizableColumn>Tienda</th>
                 <th style="width:auto" pResizableColumn>Usuario</th>
@@ -18,21 +79,8 @@
                 <th style="width:auto" pResizableColumn>Fecha de creacion</th>
                 <th style="width:auto" pResizableColumn>Tipo de pago</th>
                 <th style="width:auto" pResizableColumn>Ver productos</th>
-            }
-
-            @if(hasFields.id) { <th style="width:auto" pResizableColumn>Id</th> }
-            @if(hasFields.name) { <th style="width:auto" pResizableColumn>Nombre</th> }
-            @if(hasFields.description) { <th style="width:auto" pResizableColumn>Descripción</th> }
-            @if(hasFields.price) { <th style="width:auto" pResizableColumn>Precio</th> }
-            @if(hasFields.quantity) { <th style="width:auto" pResizableColumn>Cantidad</th> }
-            @if(hasFields.qualification) { <th style="width:auto" pResizableColumn>Calificación</th> }
-            @if(hasFields.categoryName) { <th style="width:auto" pResizableColumn>Tienda</th> }
-            @if(hasFields.subcategoryName) { <th style="width:auto" pResizableColumn>Categoria</th> }
-            @if(updateButton) { <th style="width:auto" pResizableColumn>Actualizar</th> }
-            @if(deleteButton) { <th style="width:auto" pResizableColumn>Eliminar</th> }
-        </tr>
-        <tr>
-            @if(hasFields.purchase) {
+            </tr>
+            <tr>
                 <th>
                     <p-columnFilter
                         type="numeric"
@@ -90,94 +138,10 @@
                     ></p-columnFilter>
                 </th>
                 <th></th>
-            }
-            @if(hasFields.id) { 
-                <th>
-                    <p-columnFilter
-                        type="numeric"
-                        field="id"
-                        placeholder="Buscar por id"
-                        ariaLabel="Buscar por id"
-                    ></p-columnFilter>
-                </th>
-            }
-            @if(hasFields.name) {
-                <th>
-                    <p-columnFilter
-                        type="text"
-                        field="name"
-                        placeholder="Buscar por nombre"
-                        ariaLabel="Buscar por nombre"
-                    ></p-columnFilter>
-                </th>
-            }
-            @if(hasFields.description) {
-                <th>
-                    <p-columnFilter
-                        type="text"
-                        field="description"
-                        placeholder="Buscar por descripción"
-                        ariaLabel="Buscar por descripción"
-                    ></p-columnFilter>
-                </th>
-            }
-            @if(hasFields.price) {
-                <th>
-                    <p-columnFilter
-                        type="numeric"
-                        field="price"
-                        placeholder="Buscar por precio"
-                        ariaLabel="Buscar por precio"
-                    ></p-columnFilter>
-                </th>
-            }
-            @if(hasFields.quantity) {
-                <th>
-                    <p-columnFilter
-                        type="numeric"
-                        field="quantity"
-                        placeholder="Buscar por cantidad"
-                        ariaLabel="Buscar por cantidad"
-                    ></p-columnFilter>
-                </th>
-            }
-            @if(hasFields.qualification) {
-                <th>
-                    <p-columnFilter
-                        type="numeric"
-                        field="qualification"
-                        placeholder="Buscar por calificacion"
-                        ariaLabel="Buscar por calificacion"
-                    ></p-columnFilter>
-                </th>
-            }
-            @if(hasFields.categoryName) {
-                <th>
-                    <p-columnFilter
-                        type="text"
-                        field="categoryName"
-                        placeholder="Buscar por categoria"
-                        ariaLabel="Buscar por categoria"
-                    ></p-columnFilter>
-                </th>
-            }
-            @if(hasFields.subcategoryName) {
-                <th>
-                    <p-columnFilter
-                        type="text"
-                        field="subcategoryName"
-                        placeholder="Buscar por tienda"
-                        ariaLabel="Buscar por tienda"
-                    ></p-columnFilter>
-                </th>
-            }
-            @if(updateButton) { <th></th> }
-            @if(deleteButton) { <th></th> }
-        </tr>
-    </ng-template>
-    <ng-template #body let-obj>
-        <tr>
-            @if(hasFields.purchase) {
+            </tr>
+        </ng-template>
+        <ng-template #body let-obj>
+            <tr>
                 <td>{{ obj.purchase.id }}</td>
                 <td>{{ obj.purchase.category.name }}</td>
                 <td>{{ obj.purchase.user.username }}</td>
@@ -188,25 +152,138 @@
                 <td>
                     <app-button icon="pi pi-eye" [rounded]="true" (clickEvent)="viewDetail(obj.purchase.id)" />
                 </td>
-            }
-            @if(hasFields.id) { <td>{{ obj.id }}</td> }
-            @if(hasFields.name) { <td>{{ obj.name }}</td> }
-            @if(hasFields.description) { <td>{{ obj.description }}</td> }
-            @if(hasFields.price) { <td>{{ obj.price }}</td> }
-            @if(hasFields.quantity) { <td>{{ obj.quantity }}</td> }
-            @if(hasFields.qualification) { <td>{{ obj.qualification }}</td> }
-            @if(hasFields.categoryName) { <td>{{ obj.categoryName }}</td> }
-            @if(hasFields.subcategoryName) { <td>{{ obj.subcategoryName }}</td> }
-            @if(updateButton) { 
-                <td>
-                    <app-button icon="pi pi-pencil" [rounded]="true" (clickEvent)="updateAction(obj.id)" />
-                </td>
-            }
-            @if(deleteButton) {
-                <td>
-                    <app-button icon="pi pi-trash" [rounded]="true" severity="danger" [confirmClick]="true" (clickEvent)="deleteAction(obj.id)" />
-                </td>
-            }
-        </tr>
-    </ng-template>
-</p-table>
+            </tr>
+        </ng-template>
+    </p-table>
+} @else {
+    <p-table
+        [value]="objects"
+        [paginator]="true"
+        [rows]="20"
+        [resizableColumns]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        styleClass="p-datatable-lg px-4 md:px-8 lg:px-24"
+        [rowsPerPageOptions]="[5, 10, 20, 50, 100, 500]"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                @if(hasFields.id) { <th style="width:auto" pResizableColumn>Id</th> }
+                @if(hasFields.name) { <th style="width:auto" pResizableColumn>Nombre</th> }
+                @if(hasFields.description) { <th style="width:auto" pResizableColumn>Descripción</th> }
+                @if(hasFields.price) { <th style="width:auto" pResizableColumn>Precio</th> }
+                @if(hasFields.quantity) { <th style="width:auto" pResizableColumn>Cantidad</th> }
+                @if(hasFields.qualification) { <th style="width:auto" pResizableColumn>Calificación</th> }
+                @if(hasFields.categoryName) { <th style="width:auto" pResizableColumn>Tienda</th> }
+                @if(hasFields.subcategoryName) { <th style="width:auto" pResizableColumn>Categoria</th> }
+                @if(updateButton) { <th style="width:auto" pResizableColumn>Actualizar</th> }
+                @if(deleteButton) { <th style="width:auto" pResizableColumn>Eliminar</th> }
+            </tr>
+            <tr>
+                @if(hasFields.id) { 
+                    <th>
+                        <p-columnFilter
+                            type="numeric"
+                            field="id"
+                            placeholder="Buscar por id"
+                            ariaLabel="Buscar por id"
+                        ></p-columnFilter>
+                    </th>
+                }
+                @if(hasFields.name) {
+                    <th>
+                        <p-columnFilter
+                            type="text"
+                            field="name"
+                            placeholder="Buscar por nombre"
+                            ariaLabel="Buscar por nombre"
+                        ></p-columnFilter>
+                    </th>
+                }
+                @if(hasFields.description) {
+                    <th>
+                        <p-columnFilter
+                            type="text"
+                            field="description"
+                            placeholder="Buscar por descripción"
+                            ariaLabel="Buscar por descripción"
+                        ></p-columnFilter>
+                    </th>
+                }
+                @if(hasFields.price) {
+                    <th>
+                        <p-columnFilter
+                            type="numeric"
+                            field="price"
+                            placeholder="Buscar por precio"
+                            ariaLabel="Buscar por precio"
+                        ></p-columnFilter>
+                    </th>
+                }
+                @if(hasFields.quantity) {
+                    <th>
+                        <p-columnFilter
+                            type="numeric"
+                            field="quantity"
+                            placeholder="Buscar por cantidad"
+                            ariaLabel="Buscar por cantidad"
+                        ></p-columnFilter>
+                    </th>
+                }
+                @if(hasFields.qualification) {
+                    <th>
+                        <p-columnFilter
+                            type="numeric"
+                            field="qualification"
+                            placeholder="Buscar por calificacion"
+                            ariaLabel="Buscar por calificacion"
+                        ></p-columnFilter>
+                    </th>
+                }
+                @if(hasFields.categoryName) {
+                    <th>
+                        <p-columnFilter
+                            type="text"
+                            field="categoryName"
+                            placeholder="Buscar por categoria"
+                            ariaLabel="Buscar por categoria"
+                        ></p-columnFilter>
+                    </th>
+                }
+                @if(hasFields.subcategoryName) {
+                    <th>
+                        <p-columnFilter
+                            type="text"
+                            field="subcategoryName"
+                            placeholder="Buscar por tienda"
+                            ariaLabel="Buscar por tienda"
+                        ></p-columnFilter>
+                    </th>
+                }
+                @if(updateButton) { <th></th> }
+                @if(deleteButton) { <th></th> }
+            </tr>
+        </ng-template>
+        <ng-template #body let-obj>
+            <tr>
+                @if(hasFields.id) { <td>{{ obj.id }}</td> }
+                @if(hasFields.name) { <td>{{ obj.name }}</td> }
+                @if(hasFields.description) { <td>{{ obj.description }}</td> }
+                @if(hasFields.price) { <td>{{ obj.price }}</td> }
+                @if(hasFields.quantity) { <td>{{ obj.quantity }}</td> }
+                @if(hasFields.qualification) { <td>{{ obj.qualification }}</td> }
+                @if(hasFields.categoryName) { <td>{{ obj.categoryName }}</td> }
+                @if(hasFields.subcategoryName) { <td>{{ obj.subcategoryName }}</td> }
+                @if(updateButton) { 
+                    <td>
+                        <app-button icon="pi pi-pencil" [rounded]="true" (clickEvent)="updateAction(obj.id)" />
+                    </td>
+                }
+                @if(deleteButton) {
+                    <td>
+                        <app-button icon="pi pi-trash" [rounded]="true" severity="danger" [confirmClick]="true" (clickEvent)="deleteAction(obj.id)" />
+                    </td>
+                }
+            </tr>
+        </ng-template>
+    </p-table>
+}

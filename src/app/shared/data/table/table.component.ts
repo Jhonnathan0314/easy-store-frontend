@@ -3,7 +3,6 @@ import { DataObject, DataObjectValidation } from '@models/utils/object.data-view
 import { TableModule } from 'primeng/table';
 import { ButtonComponent } from "../../inputs/button/button.component";
 import { Router, RouterModule } from '@angular/router';
-import { PurchaseHasProductId } from '@models/data/purchase.model';
 
 @Component({
   selector: 'app-table',
@@ -14,11 +13,14 @@ import { PurchaseHasProductId } from '@models/data/purchase.model';
 export class TableComponent implements OnChanges {
 
   @Input() objects: DataObject[] = [];
+  @Input() purchaseHasProduct: boolean = false;
+  @Input() purchaseHasProductIndex: number = -1;
   @Input() updateButton: boolean = false;
   @Input() deleteButton: boolean = false;
   @Input() updateRedirectPath: string = 'home';
 
   @Output() deleteEvent = new EventEmitter<DataObject>();
+  @Output() detailEvent = new EventEmitter<number>();
 
   hasFields: DataObjectValidation = new DataObjectValidation();
 
@@ -48,7 +50,7 @@ export class TableComponent implements OnChanges {
   }
 
   viewDetail(id: number) {
-    console.log("view detail: ", {id});
+    this.detailEvent.emit(id)
   }
 
   updateAction(id: number) {

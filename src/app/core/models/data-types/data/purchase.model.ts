@@ -1,6 +1,7 @@
 import { User } from "@models/security/user.model";
 import { Category } from "./category.model";
 import { PaymentType } from "./payment-type.model";
+import { Product } from "./product.model";
 
 export class Purchase {
     id: number;
@@ -20,6 +21,8 @@ export class PurchaseHasProductId {
 
 export class PurchaseHasProduct {
     id: PurchaseHasProductId;
+    product?: Product;
+    purchase?: Purchase;
     quantity: number;
     unitPrice: number;
     subtotal: number;

@@ -8,4 +8,14 @@
 <app-table
     [objects]="mappedPurchases"
     (deleteEvent)="deleteById($event)"
+    (detailEvent)="viewDetail($event)"
 />
+
+@if(isDetailSelected) {
+    <h1 class="text-center font-bold !py-4">Compra con id {{ detailSelectedId }}</h1>
+    <app-table
+        [purchaseHasProduct]="true"
+        [purchaseHasProductIndex]="detailSelectedIndex"
+        [objects]="mappedPurchases"
+    />
+}
