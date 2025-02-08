@@ -1,6 +1,8 @@
+import { PurchaseMap } from "@models/data/purchase.model";
+
 export class DataObject {
-    id: number;
-    name: string;
+    id?: number;
+    name?: string;
     description?: string;
     image?: string;
     price?: number;
@@ -10,6 +12,8 @@ export class DataObject {
     subcategoryName?: string;
     categoryId?: number;
     categoryName?: string;
+
+    purchase?: PurchaseMap;
 }
 
 export class DataObjectValidation {
@@ -24,4 +28,6 @@ export class DataObjectValidation {
     subcategoryName: boolean;
     categoryId: boolean;
     categoryName: boolean;
+
+    purchase: boolean;
 }
