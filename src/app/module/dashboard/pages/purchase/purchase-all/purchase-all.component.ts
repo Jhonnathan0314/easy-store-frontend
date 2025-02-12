@@ -14,11 +14,12 @@ import { CategoryService } from 'src/app/core/services/api/data/category/categor
 import { ProductService } from 'src/app/core/services/api/data/product/product.service';
 import { PurchaseService } from 'src/app/core/services/api/data/purchase/purchase.service';
 import { UserService } from 'src/app/core/services/api/data/user/user.service';
+import { PurchaseReportComponent } from "../purchase-report/purchase-report.component";
 
 @Component({
   selector: 'app-purchase-all',
   standalone: true,
-  imports: [ButtonComponent, TableComponent],
+  imports: [ButtonComponent, TableComponent, PurchaseReportComponent],
   templateUrl: './purchase-all.component.html'
 })
 export class PurchaseAllComponent {
@@ -49,6 +50,8 @@ export class PurchaseAllComponent {
   isDetailSelected: boolean = false;
   detailSelectedId: number = 0;
   detailSelectedIndex: number = 0;
+
+  viewChart: boolean = false;
 
   constructor(
     private router: Router,
@@ -182,6 +185,10 @@ export class PurchaseAllComponent {
     this.isDetailSelected = true;
     this.detailSelectedId = $event;
     this.detailSelectedIndex = this.mappedPurchases.findIndex(map => map.purchase?.id === $event);
+  }
+
+  eventViewChart() {
+    this.viewChart = !this.viewChart;
   }
 
   goBack() {

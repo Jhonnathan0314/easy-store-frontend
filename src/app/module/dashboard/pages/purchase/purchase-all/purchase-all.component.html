@@ -1,21 +1,46 @@
-<app-button
-    class="pl-4 md:pl-8 lg:pl-24"
-    icon="pi pi-arrow-left"
-    [rounded]="true"
-    (clickEvent)="goBack()"
-/>
-<h1 class="text-center font-bold !py-4">Gestion de compras</h1>
-<app-table
-    [objects]="mappedPurchases"
-    (deleteEvent)="deleteById($event)"
-    (detailEvent)="viewDetail($event)"
-/>
-
-@if(isDetailSelected) {
-    <h1 class="text-center font-bold !py-4">Compra con id {{ detailSelectedId }}</h1>
-    <app-table
-        [purchaseHasProduct]="true"
-        [purchaseHasProductIndex]="detailSelectedIndex"
-        [objects]="mappedPurchases"
+<div class="flex justify-between">
+    <app-button
+        class="pl-4 md:pl-8 lg:pl-24"
+        icon="pi pi-arrow-left"
+        [rounded]="true"
+        (clickEvent)="goBack()"
     />
+@if (viewChart) {
+    <app-button
+        class="pr-4 md:pr-8 lg:pr-24"
+        label="Listado"
+        icon="pi pi-list"
+        [rounded]="true"
+        (clickEvent)="eventViewChart()"
+    />
+} @else {
+    <app-button
+        class="pr-4 md:pr-8 lg:pr-24"
+        label="Reportes"
+        icon="pi pi-chart-bar"
+        [rounded]="true"
+        (clickEvent)="eventViewChart()"
+    />
+}
+</div>
+
+@if(viewChart) {
+    <h1 class="text-center font-bold !py-4">Reportes de compras</h1>
+    <app-purchase-report />
+} @else {
+    <h1 class="text-center font-bold !py-4">Gestion de compras</h1>
+    <app-table
+        [objects]="mappedPurchases"
+        (deleteEvent)="deleteById($event)"
+        (detailEvent)="viewDetail($event)"
+    />
+    
+    @if(isDetailSelected) {
+        <h1 class="text-center font-bold !py-4">Compra con id {{ detailSelectedId }}</h1>
+        <app-table
+            [purchaseHasProduct]="true"
+            [purchaseHasProductIndex]="detailSelectedIndex"
+            [objects]="mappedPurchases"
+        />
+    }
 }
