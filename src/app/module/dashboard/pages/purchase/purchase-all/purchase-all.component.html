@@ -26,7 +26,7 @@
 
 @if(viewChart) {
     <h1 class="text-center font-bold !py-4">Reportes de compras</h1>
-    <app-purchase-report />
+    <app-purchase-report [purchases]="mappedPurchases" [categories]="categories" />
 } @else {
     <h1 class="text-center font-bold !py-4">Gestion de compras</h1>
     <app-table
