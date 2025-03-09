@@ -8,7 +8,7 @@ describe('DataViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DataViewComponent ]
+      imports: [DataViewComponent]
     })
     .compileComponents();
 

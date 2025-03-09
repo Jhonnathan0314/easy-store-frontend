@@ -1,66 +1,31 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { InputGroupTextComponent } from '@component/shared/inputs/input-group-text/input-group-text.component';
-import { DataViewComponent } from '@component/shared/menus/data-view/data-view.component';
-import { FiltersMenuComponent } from '@component/shared/menus/filters-menu/filters-menu.component';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { DataViewComponent } from '@component/shared/data/data-view/data-view.component';
 import { Product } from '@models/data/product.model';
-import { MessageService } from 'primeng/api';
-import { Subscription, firstValueFrom } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ProductService } from 'src/app/core/services/api/data/product/product.service';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [RouterModule, FiltersMenuComponent, InputGroupTextComponent, DataViewComponent],
-  templateUrl: './products.component.html',
-  styleUrls: ['./products.component.css'],
-  providers: [ MessageService ],
-  animations: [
-    trigger('fadeInOut', [
-      state('hidden', style({
-        opacity: 0,
-        transform: 'translateX(-100%)',
-        width: '0%'
-      })),
-      state('visible', style({
-        opacity: 1,
-        transform: 'translateX(0%)'
-      })),
-      transition('visible <=> hidden', [
-        animate(300)
-      ])
-    ]),
-    trigger('resize', [
-      state('full', style({
-        width: '100%'
-      })),
-      state('partial', style({
-        width: '83.3333%'
-      })),
-      transition('full <=> partial', [
-        animate(300)
-      ])
-    ])
-  ]
+  imports: [RouterModule, DataViewComponent],
+  templateUrl: './products.component.html'
 })
 export class ProductsComponent implements OnInit, OnDestroy {
-
-  @ViewChild("filtersRef") filtersContainer: ElementRef;
-  @ViewChild("productsRef") productsContainer: ElementRef;
   
   products: Product[] = [];
 
+  categoryId: number;
+
   productsSubscription: Subscription;
 
-  filtersState = 'hidden';
-  productsState  = 'full';
-
   constructor(
-    private productService: ProductService
+    private productService: ProductService,
+    private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.getIdFromPath();
     this.productsSubscribe();
   }
 
@@ -68,35 +33,19 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this.productsSubscription.unsubscribe();
   }
 
+  getIdFromPath() {
+    this.categoryId = parseInt(this.activatedRoute.snapshot.params['_id']);
+  }
+
   productsSubscribe() {
-    this.productsSubscription = this.productService.storedProducts$.subscribe({
-      next: (value) => {
-        this.products = value;
+    this.productsSubscription = this.productService.getByCategoryId(this.categoryId).subscribe({
+      next: (products) => {
+        this.products = products;
+      },
+      error: (error) => {
+        console.log("Ha ocurrido un error en productos.", error);
       }
-    });
-  }
-
-  showHideFilters() {
-    this.filtersState = this.filtersState === 'hidden' ? 'visible' : 'hidden';
-    this.productsState = this.productsState === 'full' ? 'partial' : 'full';
-  }
-
-  async applyFilter(value: string) {
-    // this.products = await (firstValueFrom(this.productService.getByCategoryLikeName(1, value)));
-  }
-
-  async applyPriceFilter(value: number[]) {
-    // if(value[0] == 0) {
-    //   this.products = await (firstValueFrom(this.productService.getByCategoryAndMaxPrice(1, value[1])));
-    // } else if (value[1] == 0){
-    //   this.products = await (firstValueFrom(this.productService.getByCategoryAndMinPrice(1, value[0])));
-    // } else {
-    //   this.products = await (firstValueFrom(this.productService.getByCategoryBetweenPrice(1, value[0], value[1])));
-    // }
-  }
-
-  async applySubcategoryFilter(value: string) {
-    // this.products = await (firstValueFrom(this.productService.getByCategoryAndSubcategory(1, value)));
+    })
   }
 
 }

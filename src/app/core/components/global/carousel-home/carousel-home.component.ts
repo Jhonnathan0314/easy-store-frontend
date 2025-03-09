@@ -51,8 +51,7 @@ export class CarouselHomeComponent implements OnInit, OnDestroy {
         img: `/assets/img/${category.imageName}`,
         body: category.description,
         value: category.id,
-        // route: category.imageName.split('.')[0],
-        route: 'store',
+        route: `store/${category.id}`,
         hidden: '',
         classes: ''
       });
