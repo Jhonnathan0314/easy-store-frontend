@@ -32,6 +32,7 @@ export class TableComponent implements OnChanges {
 
   validateHasFields() {
     if(!this.areValidObjects()) return;
+    this.hasFields.imageName = this.objects[0].imageName != undefined && this.objects[0].imageName != null;
     this.hasFields.id = this.objects[0].id != undefined && this.objects[0].id != null;
     this.hasFields.name = this.objects[0].name != undefined && this.objects[0].name != null;
     this.hasFields.description = this.objects[0].description != undefined && this.objects[0].description != null;

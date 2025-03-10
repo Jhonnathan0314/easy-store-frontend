@@ -1,10 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, find, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, find, forkJoin, map, Observable, of, tap } from 'rxjs';
 import { Category } from 'src/app/core/models/data-types/data/category.model';
 import { ApiResponse } from 'src/app/core/models/data-types/data/general.model';
 import { environment } from 'src/environments/environment';
 import { SessionService } from '../../../session/session.service';
+import { FileService } from '../../utils/file/file.service';
+import { S3File } from '@models/utils/file.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,19 +21,19 @@ export class CategoryService {
   
   constructor(
     private http: HttpClient, 
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private fileService: FileService
   ) {
     this.apiUrl = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
     this.findAll();
   }
 
   private findAll() {
-    const userId = this.sessionService.getUserId();
-    const accountId = this.sessionService.getUserId();
-    this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/category/user/${userId}/account/${accountId}`).subscribe({
+    const accountId = this.sessionService.getAccountId();
+    this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/category/account/${accountId}`).subscribe({
       next: (apiResponse) => {
         this.categories = apiResponse.data;
-        this.categoriesSubject.next(this.categories);
+        this.findImages();
       },
       error: (error) => {
         console.log("error finding categories: ", error);
@@ -88,6 +90,37 @@ export class CategoryService {
           console.error("Id no encontrado para eliminar categoria.", error);
       }
     })
+  }
+
+  private findImages() {
+    const requests = this.getRequestObject();
+  
+    forkJoin(requests).subscribe({
+      next: (responses) => {
+        responses.forEach((response, index) => {
+          if (response) {
+            this.categories[index].image = response;
+          }
+        });
+        this.categoriesSubject.next(this.categories);
+      },
+      error: (error) => {
+        console.error("Error al cargar imágenes", error);
+      }
+    });
+  }
+
+  private getRequestObject() {
+    return this.categories.map(category => {
+      if (category.imageName != 'store.png') {
+        const file = new S3File();
+        file.context = "category";
+        file.name = category.imageName;
+        return this.fileService.getFile(file);
+      } else {
+        return of(null);
+      }
+    });
   }
 
 }

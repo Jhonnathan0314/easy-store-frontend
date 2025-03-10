@@ -37,20 +37,35 @@
           formControlName="description"
           ngDefaultControl
         />
-    
+
         <app-input-text
           [value]="categoryForm.value.imageName"
-          label="Imagen"
-          [hasError]="categoryForm.controls['imageName'].status === 'INVALID'"
-          (valueEvent)="receiveValueString('imageName', $event)"
+          label="Imagen asociada"
+          [isDisabled]="true"
           formControlName="imageName"
           ngDefaultControl
         />
+
+        @if(viewInputFile) {
+          <app-input-file 
+            class="w-4/5"
+            [fileLimit]="1"
+            [filesUploaded]="filesUploaded"
+            (uploadFilesEvent)="uploadFiles($event)"
+          />
+        } @else {
+          <app-button
+            label="Actualizar imagen"
+            icon="pi pi-image"
+            (clickEvent)="setViewInputFile(true)"
+          />
+        }
     
         <app-button
           [label]="buttonLabel"
           [confirmClick]="true"
           (clickEvent)="validateForm()"
         />
+        <p-toast />
     </form>
 </section>

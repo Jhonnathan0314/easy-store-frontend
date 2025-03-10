@@ -19,7 +19,7 @@ export class InputTextComponent implements OnChanges {
   @Input() icon: string = '';
   @Input() hasError: boolean = true;
   @Input() showIcon: boolean = false;
-  @Input() disabled: boolean = false;
+  @Input() isDisabled: boolean = false;
 
   @Output() valueEvent = new EventEmitter<string>();
 
@@ -50,7 +50,7 @@ export class InputTextComponent implements OnChanges {
    * otherwise it enables it.
    */
   validateState() {
-    if (this.disabled) {
+    if (this.isDisabled) {
       this.controlValue.disable();
     } else {
       this.controlValue.enable();

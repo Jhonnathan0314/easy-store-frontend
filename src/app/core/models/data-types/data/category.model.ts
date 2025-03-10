@@ -1,3 +1,5 @@
+import { S3File } from "@models/utils/file.model";
+
 export class Category {
     id: number;
     name: string;
@@ -5,4 +7,5 @@ export class Category {
     imageName: string;
     userId: number;
     accountId: number;
+    image?: S3File;
 }

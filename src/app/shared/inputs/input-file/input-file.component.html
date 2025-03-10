@@ -1,0 +1,113 @@
+<p-fileupload
+  class="w-full"
+  name="myfile[]"
+  url="./upload.php"
+  [multiple]="true"
+  accept="image/*"
+  maxFileSize="1000000"
+  (onSelect)="onSelect($event)"
+>
+  <ng-template
+    #header
+    let-files
+    let-chooseCallback="chooseCallback"
+    let-clearCallback="clearCallback"
+  >
+    <div class="flex flex-wrap justify-between items-center flex-1 gap-4">
+      <div class="flex gap-2">
+        <app-button
+          (clickEvent)="callback(chooseCallback)"
+          icon="pi pi-images"
+          [rounded]="true"
+        />
+        <app-button
+          (clickEvent)="onSend()"
+          icon="pi pi-cloud-upload"
+          [rounded]="true"
+          severity="success"
+          [disabled]="!sendEnable"
+        />
+        <app-button
+          (clickEvent)="callback(clearCallback)"
+          icon="pi pi-times"
+          [rounded]="true"
+          severity="danger"
+          [disabled]="!clearEnable"
+        />
+      </div>
+    </div>
+  </ng-template>
+  <ng-template
+    #content
+    let-files
+    let-uploadedFiles="uploadedFiles"
+    let-removeFileCallback="removeFileCallback"
+  >
+    <div class="flex flex-col gap-8 pt-4">
+      <div *ngIf="files?.length > 0">
+        <div class="flex flex-wrap gap-4">
+          <div
+            *ngFor="let file of files; let i = index"
+            class="p-8 rounded-border flex flex-col border border-surface items-center gap-4"
+          >
+            <div>
+              <img
+                role="presentation"
+                [alt]="file.name"
+                [src]="file.objectURL"
+                width="100"
+                height="50"
+              />
+            </div>
+            <span
+              class="font-semibold text-ellipsis max-w-60 whitespace-nowrap overflow-hidden"
+              >{{ file.name }}</span
+            >
+            <div>{{ file.size }}</div>
+            @if (removeEnable) {
+              <app-button
+                icon="pi pi-times"
+                (clickEvent)="callback(removeFileCallback)"
+                [rounded]="true"
+                severity="danger"
+              />
+            }
+          </div>
+        </div>
+      </div>
+      <div *ngIf="uploadedFiles?.length > 0">
+        <h5>Completed</h5>
+        <div class="flex flex-wrap gap-4">
+          <div
+            *ngFor="let file of uploadedFiles; let i = index"
+            class="card m-0 px-12 flex flex-col border border-surface items-center gap-4"
+          >
+            <div>
+              <img
+                role="presentation"
+                [alt]="file.name"
+                [src]="file.objectURL"
+                width="100"
+                height="50"
+              />
+            </div>
+            <span
+              class="font-semibold text-ellipsis max-w-60 whitespace-nowrap overflow-hidden"
+              >{{ file.name }}</span
+            >
+            <div>{{ file.size }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #file></ng-template>
+  <ng-template #empty>
+    <div class="flex items-center justify-center flex-col">
+      <i
+        class="pi pi-cloud-upload !border-2 !rounded-full !p-8 !text-4xl !text-muted-color"
+      ></i>
+      <p class="mt-6 mb-0">Drag and drop files to here to upload.</p>
+    </div>
+  </ng-template>
+</p-fileupload>

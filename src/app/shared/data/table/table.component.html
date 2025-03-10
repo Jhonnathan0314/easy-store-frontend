@@ -167,6 +167,7 @@
     >
         <ng-template pTemplate="header">
             <tr>
+                @if(hasFields.imageName) { <th style="width:auto" pResizableColumn>Imagen</th> }
                 @if(hasFields.id) { <th style="width:auto" pResizableColumn>Id</th> }
                 @if(hasFields.name) { <th style="width:auto" pResizableColumn>Nombre</th> }
                 @if(hasFields.description) { <th style="width:auto" pResizableColumn>Descripción</th> }
@@ -179,6 +180,7 @@
                 @if(deleteButton) { <th style="width:auto" pResizableColumn>Eliminar</th> }
             </tr>
             <tr>
+                @if(hasFields.imageName) { <th></th> }
                 @if(hasFields.id) { 
                     <th>
                         <p-columnFilter
@@ -265,6 +267,16 @@
         </ng-template>
         <ng-template #body let-obj>
             <tr>
+                @if(hasFields.imageName) { 
+                    <td>
+                        @if (obj.imageObj?.content) {
+                            <img [src]="'data:' + obj.imageObj.extension + ';base64,' + obj.imageObj.content" [alt]="obj.imageObj.name" class="w-20" />
+                        } @else {
+                            <img src="/assets/img/store.png" alt="store.png" class="w-20" />
+                        }
+                        
+                    </td> 
+                }
                 @if(hasFields.id) { <td>{{ obj.id }}</td> }
                 @if(hasFields.name) { <td>{{ obj.name }}</td> }
                 @if(hasFields.description) { <td>{{ obj.description }}</td> }

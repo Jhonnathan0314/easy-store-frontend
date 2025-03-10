@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChildren } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Category } from 'src/app/core/models/data-types/data/category.model';
 import { CarouselHomeObject, ResponsiveCarouselOptions } from '@models/utils/primeng-object.model';
@@ -37,9 +37,9 @@ export class CarouselHomeComponent implements OnInit, OnDestroy {
   categoriesSubscribe() {
     this.categoriesSuscription = this.categoryService.storedCategories$.subscribe({
       next: (value) => {
+        if(value.length == 0) return;
         this.categories = value;
         this.defineItems();
-        this.defineResponsiveOptions();
       }
     });
   }
@@ -48,14 +48,15 @@ export class CarouselHomeComponent implements OnInit, OnDestroy {
     this.categories.forEach(category => {
       this.items.push({
         title: category.name,
-        img: `/assets/img/${category.imageName}`,
+        img: category.imageName != 'store.png' && category.image ? `data:${category.image?.extension};base64,${category.image?.content}` : '/assets/img/store.png',
         body: category.description,
         value: category.id,
-        route: `store/${category.id}`,
+        route: `store/products/${category.id}`,
         hidden: '',
         classes: ''
       });
     });
+    this.defineResponsiveOptions();
   }
 
   defineResponsiveOptions() {

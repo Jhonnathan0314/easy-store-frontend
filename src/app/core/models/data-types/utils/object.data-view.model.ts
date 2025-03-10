@@ -1,10 +1,13 @@
 import { PurchaseMap } from "@models/data/purchase.model";
+import { S3File } from "./file.model";
 
 export class DataObject {
     id?: number;
     name?: string;
     description?: string;
     image?: string;
+    imageName?: string;
+    imageObj?: S3File;
     price?: number;
     quantity?: number;
     qualification?: number;
@@ -21,6 +24,7 @@ export class DataObjectValidation {
     name: boolean;
     description: boolean;
     image: boolean;
+    imageName: boolean;
     price: boolean;
     quantity: boolean;
     qualification: boolean;

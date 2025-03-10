@@ -54,7 +54,9 @@ export class CategoryAllComponent implements OnInit, OnDestroy {
       return {
         id: cat.id,
         name: cat.name,
-        description: cat.description
+        description: cat.description,
+        imageName: cat.imageName,
+        imageObj: cat.image ?? undefined
       }
     })
   }
