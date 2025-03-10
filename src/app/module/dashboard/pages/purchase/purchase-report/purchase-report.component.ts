@@ -26,7 +26,6 @@ export class PurchaseReportComponent implements OnInit {
 
   ngOnInit(): void {
     this.graphicData();
-    console.log({purchases: this.purchases});
   }
 
   graphicData() {

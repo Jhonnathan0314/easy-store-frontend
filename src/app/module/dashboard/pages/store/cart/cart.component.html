@@ -1,1 +1,51 @@
-<p>shoes-cart works!</p>
+<section class="px-12 md:px-20">
+    <p-accordion [value]="[]" [multiple]="true">
+        @for (category of categories; track category.id) {
+            @for (cart of carts; track cart.id) {
+                @if (cart.categoryId == category.id) {
+                    <p-accordion-panel [value]="category.id">
+                        <p-accordion-header>
+                            <section class="flex gap-4 items-center justify-start">
+                                <i class="pi pi-shopping-cart"></i>
+                                {{ category.name }}
+                            </section>
+                        </p-accordion-header>
+                        <p-accordion-content>
+                            <section class="w-full flex justify-between items-center">
+                                <p class="m-0">
+                                    Tienes {{ cart.products.length }} productos 😊
+                                </p>
+                                <app-button 
+                                    label="Buscar más productos"
+                                    class="w-1/6"
+                                    (clickEvent)="goToStore(category.id)"
+                                />
+                            </section>
+                        </p-accordion-content>
+                    </p-accordion-panel>
+                } @else {
+                    <p-accordion-panel [value]="category.id">
+                        <p-accordion-header>
+                            <section class="flex gap-4 items-center justify-start">
+                                <i class="pi pi-shopping-cart"></i>
+                                {{ category.name }}
+                            </section>
+                        </p-accordion-header>
+                        <p-accordion-content>
+                            <section class="w-full flex justify-between items-center">
+                                <p class="w-4/6">
+                                    No tienes productos 😞
+                                </p>
+                                <app-button 
+                                    label="Buscar productos"
+                                    class="w-1/6"
+                                    (clickEvent)="goToStore(category.id)"
+                                />
+                            </section>
+                        </p-accordion-content>
+                    </p-accordion-panel>
+                }
+            }
+        }
+    </p-accordion>
+</section>

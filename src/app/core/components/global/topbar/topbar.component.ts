@@ -134,6 +134,11 @@ export class TopbarComponent implements OnInit, OnDestroy {
           }
         ]
       },
+      { 
+        label: 'Mis carritos', 
+        icon: 'pi pi-shopping-cart',
+        command: () => this.router.navigateByUrl('/dashboard/store/cart')
+      },
       {
         label: 'Temas',
         icon: 'pi pi-fw pi-palette',
@@ -188,6 +193,11 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   buildItemsObjectClient() {
     this.items = [
+      { 
+        label: 'Mis carritos', 
+        icon: 'pi pi-shopping-cart',
+        command: () => this.router.navigateByUrl('/dashboard/store/cart')
+      },
       {
         label: 'Temas',
         icon: 'pi pi-fw pi-palette',
