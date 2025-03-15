@@ -12,13 +12,18 @@ import { ButtonComponent } from "../../../../../shared/inputs/button/button.comp
 import { InputNumberComponent } from "../../../../../shared/inputs/input-number/input-number.component";
 import { InputTextComponent } from "../../../../../shared/inputs/input-text/input-text.component";
 import { InputSelectComponent } from "../../../../../shared/inputs/input-select/input-select.component";
+import { InputFileComponent } from "../../../../../shared/inputs/input-file/input-file.component";
+import { S3File } from '@models/utils/file.model';
+import { MessageService } from 'primeng/api';
+import { FileService } from 'src/app/core/services/api/utils/file/file.service';
 
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule, ButtonComponent, InputNumberComponent, InputTextComponent, InputSelectComponent],
+  imports: [ReactiveFormsModule, RouterModule, ButtonComponent, InputNumberComponent, InputTextComponent, InputSelectComponent, InputFileComponent],
   templateUrl: './product-form.component.html',
-  styleUrls: ['../../../../../../../public/assets/css/layout.css']
+  styleUrls: ['../../../../../../../public/assets/css/layout.css'],
+  providers: [MessageService]
 })
 export class ProductFormComponent {
 
@@ -28,9 +33,14 @@ export class ProductFormComponent {
   product: Product = new Product();
   subcategories: Subcategory[] = [];
   mappedSubcategories: PrimeNGObject[] = [];
+  
+  filesToUpload: S3File[] = [];
+  filesUploaded: S3File[] = [];
 
   buttonLabel: string = 'Crear';
   title: string = 'Crear producto';
+
+  viewInputFile: boolean = true;
 
   subcategorySubscription: Subscription;
 
@@ -40,8 +50,10 @@ export class ProductFormComponent {
     private activatedRoute: ActivatedRoute, 
     private router: Router, 
     private formBuilder: FormBuilder, 
+    private messageService: MessageService,
     private productService: ProductService,
-    private subcategoryService: SubcategoryService
+    private subcategoryService: SubcategoryService,
+    private fileService: FileService
   ) { }
 
   ngOnInit(): void {
@@ -104,11 +116,15 @@ export class ProductFormComponent {
       price: null,
       quantity: null,
       qualification: null,
-      subcategoryId: null
+      subcategoryId: null,
+      imageName: null
     })
   }
 
   prepareUpdateForm() {
+    if(this.product.imageName != 'store.png') {
+      this.viewInputFile = false;
+    }
     this.productForm.patchValue({
       id: this.product.id,
       name: this.product.name,
@@ -116,7 +132,8 @@ export class ProductFormComponent {
       price: this.product.price,
       quantity: this.product.quantity,
       qualification: this.product.qualification,
-      subcategoryId: `${this.product.subcategoryId}`
+      subcategoryId: `${this.product.subcategoryId}`,
+      imageName: `${this.product.imageName}`
     })
   }
 
@@ -133,7 +150,8 @@ export class ProductFormComponent {
       price: [null, [Validators.required]],
       quantity: [null, [Validators.required]],
       qualification: [null, [Validators.required]],
-      subcategoryId: [null, [Validators.required]]
+      subcategoryId: [null, [Validators.required]],
+      imageName: ['']
     });
   }
 
@@ -174,7 +192,10 @@ export class ProductFormComponent {
   createProduct() {
     this.productService.create(this.product).subscribe({
       next: (response) => {
-        this.router.navigateByUrl('/dashboard/product');
+        if(this.filesToUpload.length > 0) {
+          this.product.id = response.data.id;
+          this.uploadFiles(this.filesToUpload);
+        }
       },
       error: (error) => {
         console.log("Ha ocurrido un error al crear el producto.", error);
@@ -201,8 +222,40 @@ export class ProductFormComponent {
       price: this.productForm.value.price,
       quantity: this.productForm.value.quantity,
       qualification: this.productForm.value.qualification,
-      subcategoryId: this.productForm.value.subcategoryId
+      subcategoryId: this.productForm.value.subcategoryId,
+      imageName: this.filesToUpload.length > 0 ? this.filesToUpload[0].name : 'product.png'
     };
+  }
+
+  uploadFiles(files: S3File[]) {
+    if(this.product.id == 0) {
+      this.filesToUpload = files;
+      this.messageService.add({severity: 'info', summary: `Información.`, detail: `Las imagenes serán cargadas automaticamente cuando cree el producto.`});
+      return;
+    }
+    files.forEach(file  => {
+      file.context = "product";
+      file.name = `${this.product.id}.png`;
+      this.product.imageName = file.name;
+      this.fileService.putFile(file).subscribe({
+        next: (response) => {
+          if(response) {
+            this.filesUploaded.push(file);
+            this.messageService.add({severity: 'success', summary: `Cargue exitoso.`, detail: `Imagen ${file.name} cargada con éxito.`});
+            // if(this.buttonLabel == 'Crear')
+              this.updateProduct();
+          }
+        },
+        error: (error) => {
+          console.log("Ha ocurrido un error al cargar el archivo ", {name: file.name, error});
+        }
+      })
+    })
+    this.filesToUpload = [];
+  }
+
+  setViewInputFile(value: boolean) {
+    this.viewInputFile = value;
   }
 
   goBack() {

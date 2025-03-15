@@ -2,11 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ApiResponse } from '@models/data/general.model';
 import { Product } from '@models/data/product.model';
-import { BehaviorSubject, map, Observable, Subscription, tap } from 'rxjs';
+import { BehaviorSubject, forkJoin, map, Observable, of, Subscription, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SessionService } from '../../../session/session.service';
 import { SubcategoryService } from '../subcategory/subcategory.service';
 import { Subcategory } from '@models/data/subcategory.model';
+import { S3File } from '@models/utils/file.model';
+import { FileService } from '../../utils/file/file.service';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +27,8 @@ export class ProductService {
   constructor(
     private http: HttpClient,
     private sessionService: SessionService,
-    private subcategoryService: SubcategoryService
+    private subcategoryService: SubcategoryService,
+    private fileService: FileService
   ) {
     this.apiUrl = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
     this.openSubscription();
@@ -48,7 +51,7 @@ export class ProductService {
     this.http.get<ApiResponse<Product[]>>(`${this.apiUrl}/product/account/${accountId}`).subscribe({
       next: (products) => {
         this.products = products.data;
-        this.productsSubject.next(this.products);
+        this.findImages();
       },
       error: (error) => {
         console.log("error finding products: ", error);
@@ -137,6 +140,37 @@ export class ProductService {
           console.error("Id no encontrado para eliminar producto.", error);
       }
     })
+  }
+
+  private findImages() {
+    const requests = this.getRequestObject();
+  
+    forkJoin(requests).subscribe({
+      next: (responses) => {
+        responses.forEach((response, index) => {
+          if (response) {
+            this.products[index].image = response;
+          }
+        });
+        this.productsSubject.next(this.products);
+      },
+      error: (error) => {
+        console.error("Error al cargar imágenes", error);
+      }
+    });
+  }
+
+  private getRequestObject() {
+    return this.products.map(product => {
+      if (product.imageName != 'product.png') {
+        const file = new S3File();
+        file.context = "product";
+        file.name = product.imageName;
+        return this.fileService.getFile(file);
+      } else {
+        return of(null);
+      }
+    });
   }
 
 }

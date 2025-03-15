@@ -271,8 +271,10 @@
                     <td>
                         @if (obj.imageObj?.content) {
                             <img [src]="'data:' + obj.imageObj.extension + ';base64,' + obj.imageObj.content" [alt]="obj.imageObj.name" class="w-20" />
-                        } @else {
+                        } @else if( obj.imageName == 'store.png') {
                             <img src="/assets/img/store.png" alt="store.png" class="w-20" />
+                        } @else if( obj.imageName == 'product.png') {
+                            <img src="/assets/img/product.png" alt="product.png" class="w-20" />
                         }
                         
                     </td> 

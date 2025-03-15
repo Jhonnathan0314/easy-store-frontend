@@ -75,6 +75,29 @@
           formControlName="subcategoryId"
           ngDefaultControl
         />
+
+        <app-input-text
+          [value]="productForm.value.imageName"
+          label="Imagen asociada"
+          [isDisabled]="true"
+          formControlName="imageName"
+          ngDefaultControl
+        />
+
+        @if(viewInputFile) {
+          <app-input-file 
+            class="w-4/5"
+            [fileLimit]="1"
+            [filesUploaded]="filesUploaded"
+            (uploadFilesEvent)="uploadFiles($event)"
+          />
+        } @else {
+          <app-button
+            label="Actualizar imagen"
+            icon="pi pi-image"
+            (clickEvent)="setViewInputFile(true)"
+          />
+        }
     
         <app-button
           [label]="buttonLabel"

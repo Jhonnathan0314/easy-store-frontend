@@ -196,8 +196,7 @@ export class CategoryFormComponent implements OnInit {
           if(response) {
             this.filesUploaded.push(file);
             this.messageService.add({severity: 'success', summary: `Cargue exitoso.`, detail: `Imagen ${file.name} cargada con éxito.`});
-            if(this.buttonLabel == 'Crear')
-              this.updateCategory(true);
+            this.updateCategory(true);
           }
         },
         error: (error) => {

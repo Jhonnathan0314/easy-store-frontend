@@ -1,3 +1,5 @@
+import { S3File } from "@models/utils/file.model";
+
 export class Product {
     id: number;
     name: string;
@@ -6,4 +8,6 @@ export class Product {
     qualification: number;
     description: string;
     subcategoryId: number;
+    imageName: string;
+    image?: S3File;
 }

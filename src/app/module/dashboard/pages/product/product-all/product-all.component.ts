@@ -32,18 +32,18 @@ export class ProductAllComponent {
   ) { }
 
   ngOnInit(): void {
-    this.openSubscriptions();
+    this.openSubcategorySubscription();
   }
 
   ngOnDestroy(): void {
     this.closeSubscriptions();
   }
 
-  openSubscriptions() {
+  openSubcategorySubscription() {
     this.subcategorySubscription = this.subcategoryService.storedSubcategories$.subscribe({
       next: (subcategories) => {
         this.subcategories = subcategories;
-        this.openSubcategorySubscription();
+        this.openProductSubscription();
       },
       error: (error) => {
         console.log('Ha ocurrido un error en categorias: ', {error});
@@ -51,7 +51,7 @@ export class ProductAllComponent {
     })
   }
 
-  openSubcategorySubscription() {
+  openProductSubscription() {
     if(this.subcategories.length == 0) return;
     this.productSubscription = this.productService.storedProducts$.subscribe({
       next: (products) => {
@@ -79,6 +79,8 @@ export class ProductAllComponent {
         quantity: prod.quantity,
         qualification: prod.qualification,
         description: prod.description,
+        imageName: prod.imageName,
+        imageObj: prod.image,
         subcategoryId: subcategory.id,
         subcategoryName: subcategory.name,
         categoryId: subcategory.categoryId
