@@ -19,8 +19,9 @@ export class InputNumberComponent implements OnChanges {
   @Input() prefix: string = '';
   @Input() suffix: string = '';
   @Input() icon: string = '';
+  @Input() classes: string = '';
+  @Input() errorMessage: string = '';
   @Input() isDisabled: boolean = false;
-  @Input() hasError: boolean = true;
 
   @Output() valueEvent = new EventEmitter<number>();
 
@@ -36,7 +37,6 @@ export class InputNumberComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this.controlValue.setValue(this.value);
     this.validateState();
-    this.validateError();
   }
 
   validateState() {
@@ -44,16 +44,6 @@ export class InputNumberComponent implements OnChanges {
       this.controlValue.disable();
     } else {
       this.controlValue.enable();
-    }
-  }
-
-  validateError() {
-    if(this.hasError) {
-      this.document.getElementById('inputNumber'+this.componentId)?.classList.replace('ng-valid', 'ng-invalid');
-      this.document.getElementById('inputNumber'+this.componentId)?.classList.add('ng-dirty');
-    } else {
-      this.document.getElementById('inputNumber'+this.componentId)?.classList.replace('ng-invalid', 'ng-valid');
-      this.document.getElementById('inputNumber'+this.componentId)?.classList.remove('ng-dirty');
     }
   }
 

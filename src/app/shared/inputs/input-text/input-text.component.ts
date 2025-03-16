@@ -17,9 +17,10 @@ export class InputTextComponent implements OnChanges {
   @Input() value: string = '';
   @Input() label: string = '';
   @Input() icon: string = '';
-  @Input() hasError: boolean = true;
   @Input() showIcon: boolean = false;
   @Input() isDisabled: boolean = false;
+  @Input() classes: string = '';
+  @Input() errorMessage: string = '';
 
   @Output() valueEvent = new EventEmitter<string>();
 
@@ -28,27 +29,15 @@ export class InputTextComponent implements OnChanges {
   static nextId = 0;
   componentId: number;
 
-  constructor(@Inject(DOCUMENT) private document: Document) {
+  constructor() {
     this.componentId = InputTextComponent.nextId++;
   }
 
-  /**
-   * The ngOnChanges function sets the control value to the current value, and
-   * validates the state and error.
-   * @param {SimpleChanges} changes - The `changes` parameter is an object of type `SimpleChanges` that
-   * contains the changes detected in the input properties of the component. It is used in the
-   * `ngOnChanges` lifecycle hook to perform actions based on the changes detected.
-   */
   ngOnChanges(changes: SimpleChanges): void {
     this.controlValue.setValue(this.value);
     this.validateState();
-    this.validateError();
   }
 
-  /**
-   * The function checks if the "disabled" property is true and disables the "controlValue" if it is,
-   * otherwise it enables it.
-   */
   validateState() {
     if (this.isDisabled) {
       this.controlValue.disable();
@@ -57,23 +46,6 @@ export class InputTextComponent implements OnChanges {
     }
   }
 
-  /**
-   * The function `validateError()` toggles the CSS classes of an element with the id 'inputText' based
-   * on the value of the variable `hasError`.
-   */
-  validateError() {
-    if(this.hasError) {
-      this.document.getElementById('inputText'+this.componentId)?.classList.replace('ng-valid', 'ng-invalid');
-      this.document.getElementById('inputText'+this.componentId)?.classList.add('ng-dirty');
-    } else {
-      this.document.getElementById('inputText'+this.componentId)?.classList.replace('ng-invalid', 'ng-valid');
-      this.document.getElementById('inputText'+this.componentId)?.classList.remove('ng-dirty');
-    }
-  }
-
-  /**
-   * The sendValue function emits the value of the controlValue property.
-   */
   sendValue() {
     this.valueEvent.emit(this.controlValue.value);
   }

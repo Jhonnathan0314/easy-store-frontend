@@ -16,10 +16,11 @@ export class InputSelectComponent implements OnChanges {
   @Input() options: PrimeNGObject[] = [];
   @Input() selectedOption: string = '';
   @Input() label: string = '';
+  @Input() classes: string = '';
+  @Input() errorMessage: string = '';
   @Input() showClear: boolean = false;
   @Input() filter: boolean = false;
   @Input() disabled: boolean = false;
-  @Input() hasError: boolean = true;
 
   @Output() valueEvent = new EventEmitter<string>();
 
@@ -35,7 +36,6 @@ export class InputSelectComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this.controlValue.setValue(this.selectedOption);
     this.validateState();
-    this.validateError();
   }
 
   validateState() {
@@ -43,16 +43,6 @@ export class InputSelectComponent implements OnChanges {
       this.controlValue.disable();
     } else {
       this.controlValue.enable();
-    }
-  }
-
-  validateError() {
-    if(this.hasError) {
-      this.document.getElementById('inputSelect'+this.componentId)?.classList.replace('ng-valid', 'ng-invalid');
-      this.document.getElementById('inputSelect'+this.componentId)?.classList.add('ng-dirty');
-    } else {
-      this.document.getElementById('inputSelect'+this.componentId)?.classList.replace('ng-invalid', 'ng-valid');
-      this.document.getElementById('inputSelect'+this.componentId)?.classList.remove('ng-dirty');
     }
   }
 

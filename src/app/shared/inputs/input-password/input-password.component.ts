@@ -25,7 +25,7 @@ export class InputPasswordComponent implements OnChanges {
   @Input() classes: string = '';
   @Input() pattern: string = '';
   @Input() promptLabel: string = '';
-  @Input() hasError: boolean = false;
+  @Input() errorMessage: string = '';
   @Input() toggleMask: boolean = false;
   @Input() feedback: boolean = false;
   @Input() disabled: boolean = false;
@@ -51,7 +51,6 @@ export class InputPasswordComponent implements OnChanges {
     this.controlValue.setValue(this.value);
     this.validateState();
     this.validatePassword();
-    this.validateError();
   }
   
   validateState() {
@@ -77,20 +76,6 @@ export class InputPasswordComponent implements OnChanges {
       this.hasUppercase &&
       this.hasLowercase &&
       this.controlValue.value.length >= 12 && this.controlValue.value.length <= 24;
-  }
-
-  /**
-   * The function `validateError()` toggles the CSS classes of an element with the id 'inputText' based
-   * on the value of the variable `hasError`.
-   */
-  validateError() {
-    if(!this.isValidPassword) {
-      this.document.getElementById('inputPassword'+this.componentId)?.classList.replace('ng-valid', 'ng-invalid');
-      this.document.getElementById('inputPassword'+this.componentId)?.classList.add('ng-dirty');
-    } else {
-      this.document.getElementById('inputPassword'+this.componentId)?.classList.replace('ng-invalid', 'ng-valid');
-      this.document.getElementById('inputPassword'+this.componentId)?.classList.remove('ng-dirty');
-    }
   }
 
   sendValue() {

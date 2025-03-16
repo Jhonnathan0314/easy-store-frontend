@@ -1,4 +1,4 @@
-<p-floatlabel>
+<p-floatlabel class="w-full">
   <p-iconfield>
       <input 
         [id]="'inputText'+componentId"
@@ -7,9 +7,12 @@
         [formControl]="controlValue"
         (ngModelChange)="sendValue()"
         autocomplete="off"
-        [disabled]="isDisabled"
+        [class]="'w-full ' + classes"
       />
       <p-inputicon [class]="icon"/>
   </p-iconfield>
   <label [for]="'inputText'+componentId">{{label}}</label>
 </p-floatlabel>
+@if (classes !== '') {
+  <small class="text-red-700">{{ errorMessage }}</small>
+}

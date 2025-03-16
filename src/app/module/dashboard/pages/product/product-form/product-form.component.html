@@ -12,7 +12,7 @@
           <app-input-number
             [value]="productForm.value.id"
             label="Id"
-            [hasError]="productForm.controls['id'].status === 'INVALID'"
+            [classes]="productForm.controls['id'].status === 'INVALID' ? 'ng-invalid ng-dirty' : ''"
             [isDisabled]="true"
             (valueEvent)="receiveValueNumber('id', $event)"
             formControlName="name"
@@ -23,7 +23,7 @@
         <app-input-text
           [value]="productForm.value.name"
           label="Nombre"
-          [hasError]="productForm.controls['name'].status === 'INVALID'"
+          [classes]="productForm.controls['name'].status === 'INVALID' ? 'ng-invalid ng-dirty' : ''"
           (valueEvent)="receiveValueString('name', $event)"
           formControlName="name"
           ngDefaultControl
@@ -32,7 +32,7 @@
         <app-input-text
           [value]="productForm.value.description"
           label="Descripción"
-          [hasError]="productForm.controls['description'].status === 'INVALID'"
+          [classes]="productForm.controls['description'].status === 'INVALID' ? 'ng-invalid ng-dirty' : ''"
           (valueEvent)="receiveValueString('description', $event)"
           formControlName="description"
           ngDefaultControl
@@ -41,7 +41,7 @@
         <app-input-number
           [value]="productForm.value.price"
           label="Precio"
-          [hasError]="productForm.controls['price'].status === 'INVALID'"
+          [classes]="productForm.controls['price'].status === 'INVALID' ? 'ng-invalid ng-dirty' : ''"
           (valueEvent)="receiveValueNumber('price', $event)"
           formControlName="price"
           ngDefaultControl
@@ -50,7 +50,7 @@
         <app-input-number
           [value]="productForm.value.quantity"
           label="Cantidad"
-          [hasError]="productForm.controls['quantity'].status === 'INVALID'"
+          [classes]="productForm.controls['quantity'].status === 'INVALID' ? 'ng-invalid ng-dirty' : ''"
           (valueEvent)="receiveValueNumber('quantity', $event)"
           formControlName="quantity"
           ngDefaultControl
@@ -59,7 +59,7 @@
         <app-input-number
           [value]="productForm.value.qualification"
           label="Calificación"
-          [hasError]="productForm.controls['qualification'].status === 'INVALID'"
+          [classes]="productForm.controls['qualification'].status === 'INVALID' ? 'ng-invalid ng-dirty' : ''"
           (valueEvent)="receiveValueNumber('qualification', $event)"
           formControlName="qualification"
           ngDefaultControl
@@ -70,7 +70,7 @@
           [selectedOption]="productForm.value.subcategoryId"
           label="Categoria"
           [showClear]="true"
-          [hasError]="productForm.controls['subcategoryId'].status === 'INVALID'"
+          [classes]="productForm.controls['subcategoryId'].status === 'INVALID' ? 'ng-invalid ng-dirty' : ''"
           (valueEvent)="receiveValueString('subcategoryId', $event)"
           formControlName="subcategoryId"
           ngDefaultControl

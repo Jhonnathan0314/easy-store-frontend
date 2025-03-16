@@ -1,13 +1,15 @@
-<div >
-  <span >
-    <p-datepicker
-      [formControl]="controlValue"
-      [showButtonBar]="showButtonBar"
-      [dateFormat]="dateFormat"
-      [showIcon]="showIcon"
-      [selectionMode]="selectionMode"
-      (ngModelChange)="sendValue()"
-    ></p-datepicker>
-    <label>{{ label }}</label>
-  </span>
-</div>
+<p-floatlabel class="w-full">
+  <p-datepicker
+    [formControl]="controlValue"
+    [showButtonBar]="showButtonBar"
+    [dateFormat]="dateFormat"
+    [showIcon]="showIcon"
+    [selectionMode]="selectionMode"
+    (ngModelChange)="sendValue()"
+    [class]="'w-full ' + classes"
+  />
+  <label [for]="'inputText'+componentId">{{ label }}</label>
+</p-floatlabel>
+@if (classes !== '') {
+  <small class="text-red-700">{{ errorMessage }}</small>
+}

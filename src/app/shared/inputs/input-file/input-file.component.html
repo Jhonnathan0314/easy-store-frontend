@@ -13,16 +13,20 @@
     let-chooseCallback="chooseCallback"
     let-clearCallback="clearCallback"
   >
-    <div class="flex flex-wrap justify-between items-center flex-1 gap-4">
-      <div class="flex gap-2">
+    <div class="flex flex-col justify-center items-start gap-4">
+      <label>{{ label }}</label>
+      <div class="flex flex-wrap gap-4">
         <app-button
           (clickEvent)="callback(chooseCallback)"
           icon="pi pi-images"
+          label="Seleccionar"
           [rounded]="true"
+          [disabled]="!selectEnable"
         />
         <app-button
           (clickEvent)="onSend()"
           icon="pi pi-cloud-upload"
+          label="Subir"
           [rounded]="true"
           severity="success"
           [disabled]="!sendEnable"
@@ -30,6 +34,7 @@
         <app-button
           (clickEvent)="callback(clearCallback)"
           icon="pi pi-times"
+          label="Cancelar"
           [rounded]="true"
           severity="danger"
           [disabled]="!clearEnable"

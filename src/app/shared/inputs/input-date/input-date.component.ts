@@ -2,11 +2,12 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { DateSelectionMode } from 'src/app/core/models/enums/primeng.enum';
 import { DatePicker } from 'primeng/datepicker';
+import { FloatLabel } from 'primeng/floatlabel';
 
 @Component({
   selector: 'app-input-date',
   standalone: true,
-  imports: [DatePicker, ReactiveFormsModule],
+  imports: [DatePicker, FloatLabel, ReactiveFormsModule],
   templateUrl: './input-date.component.html'
 })
 export class InputDateComponent implements OnChanges {
@@ -16,25 +17,25 @@ export class InputDateComponent implements OnChanges {
   @Input() value: Date | null = new Date();
   @Input() label: string = '';
   @Input() dateFormat: string = '';
+  @Input() classes: string = '';
+  @Input() errorMessage: string = '';
   @Input() selectionMode: DateSelectionMode = DateSelectionMode.SINGLE;
   @Input() showButtonBar: boolean = false;
   @Input() showIcon: boolean = false;
 
   @Output() valueEvent = new EventEmitter<FormControl<Date | null>>();
 
-  /**
-   * The ngOnChanges function sets the value of a control and validates its state when changes occur.
-   * @param {SimpleChanges} changes - The `changes` parameter is an object of type `SimpleChanges` that
-   * contains the changes detected in the input properties of the component. It is used in the
-   * `ngOnChanges` lifecycle hook to perform actions based on the changes in the input properties.
-   */
+  static nextId = 0;
+  componentId: number;
+
+  constructor() {
+    this.componentId = InputDateComponent.nextId++;
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     this.controlValue.setValue(this.value);
   }
 
-  /**
-   * The sendValue function emits the value of the controlValue property.
-   */
   sendValue() {
     this.valueEvent.emit(this.controlValue);
   }

@@ -12,7 +12,7 @@
           <app-input-number
             [value]="subcategoryForm.value.id"
             label="Id"
-            [hasError]="subcategoryForm.controls['id'].status === 'INVALID'"
+            [classes]="subcategoryForm.controls['id'].status === 'INVALID' ? 'ng-invalid ng-dirty' : ''"
             [isDisabled]="true"
             (valueEvent)="receiveValueNumber('id', $event)"
             formControlName="name"
@@ -23,7 +23,7 @@
         <app-input-text
           [value]="subcategoryForm.value.name"
           label="Nombre"
-          [hasError]="subcategoryForm.controls['name'].status === 'INVALID'"
+          [classes]="subcategoryForm.controls['name'].status === 'INVALID' ? 'ng-invalid ng-dirty' : ''"
           (valueEvent)="receiveValueString('name', $event)"
           formControlName="name"
           ngDefaultControl
@@ -34,7 +34,7 @@
           [selectedOption]="subcategoryForm.value.categoryId"
           label="Tienda"
           [showClear]="true"
-          [hasError]="subcategoryForm.controls['categoryId'].status === 'INVALID'"
+          [classes]="subcategoryForm.controls['categoryId'].status === 'INVALID' ? 'ng-invalid ng-dirty' : ''"
           (valueEvent)="receiveValueString('categoryId', $event)"
           formControlName="categoryId"
           ngDefaultControl

@@ -4,7 +4,6 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PaymentType } from '@models/data/payment-type.model';
 import { FormErrors } from '@models/security/security-error.model';
 import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/payment-type.service';
-import { SessionService } from 'src/app/core/services/session/session.service';
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
 import { InputNumberComponent } from "../../../../../shared/inputs/input-number/input-number.component";
 import { InputTextComponent } from "../../../../../shared/inputs/input-text/input-text.component";

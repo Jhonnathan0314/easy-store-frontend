@@ -1,47 +1,53 @@
 <section class="w-full h-fit px-4 pt-4 flex flex-col gap-4 justify-center lg:flex-row lg:px-40 lg:pt-20">
-  <form class="py-8 w-full bg-section gap-8 grow-0 lg:w-8/12" [formGroup]="loginForm">
-      <h1 class="w-full text-center">¡Bienvenido de vuelta!</h1>
+  <form class="py-8 w-full bg-section gap-10 flex flex-col items-center justify-center" [formGroup]="loginForm">
+    <h1 class="w-full text-center">¡Bienvenido de vuelta!</h1>
   
-      <app-input-number
-        [value]="loginForm.value.accountId"
-        label="Id de la cuenta"
-        [hasError]="loginForm.controls['accountId'].status === 'INVALID'"
-        (valueEvent)="receiveValueNumber('accountId', $event)"
-        formControlName="accountId"
-        ngDefaultControl
-      />
+    <app-input-number
+      class="w-1/2"
+      [value]="loginForm.value.accountId"
+      label="Id de la cuenta"
+      [classes]="loginForm.controls['accountId'].status === 'INVALID' && loginForm.touched ? 'ng-invalid ng-dirty' : ''"
+      errorMessage="Id de cuenta inválido"
+      (valueEvent)="receiveValueNumber('accountId', $event)"
+      formControlName="accountId"
+      ngDefaultControl
+    />
 
-      <app-input-text
-        [value]="loginForm.value.username"
-        label="Correo electronico"
-        [hasError]="loginForm.controls['username'].status === 'INVALID'"
-        (valueEvent)="receiveValueString('username', $event)"
-        formControlName="username"
-        ngDefaultControl
-      ></app-input-text>
+    <app-input-text
+      class="w-1/2"
+      [value]="loginForm.value.username"
+      label="Correo electronico"
+      [classes]="loginForm.controls['username'].status === 'INVALID' && loginForm.touched ? 'ng-invalid ng-dirty' : ''"
+      errorMessage="Correo electrónico inválido"
+      (valueEvent)="receiveValueString('username', $event)"
+      formControlName="username"
+      ngDefaultControl
+    />
   
-      <app-input-password
-        [value]="loginForm.value.password"
-        label="Contraseña"
-        [hasError]="loginForm.controls['password'].status === 'INVALID'"
-        [feedback]="false"
-        [toggleMask]="true"
-        (valueEvent)="receiveValueString('password', $event)"
-        formControlName="password"
-        ngDefaultControl
-      ></app-input-password>
+    <app-input-password
+      class="w-1/2"
+      [value]="loginForm.value.password"
+      label="Contraseña"
+      [classes]="loginForm.controls['password'].status === 'INVALID' && loginForm.touched ? 'ng-invalid ng-dirty' : ''"
+      errorMessage="Contraseña inválida"
+      [feedback]="false"
+      [toggleMask]="true"
+      (valueEvent)="receiveValueString('password', $event)"
+      formControlName="password"
+      ngDefaultControl
+    />
   
-      <app-button
-        label="Ingresar"
-        (clickEvent)="validateForm()"
-      ></app-button>
+    <app-button
+      label="Ingresar"
+      (clickEvent)="validateForm()"
+    />
 
-      @if(loginError) {
-        <span class="text-red-600 text-center">Error al ingresar, por favor verifique los datos ingresados.</span>
-      }
+    @if(loginError) {
+      <span class="text-red-600 text-center">Error al ingresar, por favor verifique los datos ingresados.</span>
+    }
   
-      <a class="text-center">Olvide mi contraseña</a>
-      <a class="text-center" [routerLink]="['/security/register']">Crear cuenta</a>
+    <a class="text-center">Olvide mi contraseña</a>
+    <a class="text-center" [routerLink]="['/security/register']">Crear cuenta</a>
   </form>
   <section class="py-8 w-full bg-section lg:w-4/12">
     <app-button label="Ingresar con Google" icon="pi pi-google"></app-button>

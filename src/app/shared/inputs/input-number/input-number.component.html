@@ -1,4 +1,4 @@
-<p-floatlabel>
+<p-floatlabel class="w-full">
   <p-iconfield>
     <p-inputNumber
       [id]="'inputNumber'+componentId"
@@ -10,9 +10,13 @@
       [prefix]="prefix"
       [suffix]="suffix"
       (ngModelChange)="sendValue()"
+      [class]="'w-full ' + classes"
       autocomplete="off"
     />
     <p-inputicon [class]="icon"/>
   </p-iconfield>
   <label [for]="'inputNumber'+componentId">{{label}}</label>
 </p-floatlabel>
+@if (classes !== '') {
+  <small class="text-red-700">{{ errorMessage }}</small>
+}

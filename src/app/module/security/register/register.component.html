@@ -1,51 +1,65 @@
 <section class="w-full h-fit px-4 pt-4 flex flex-col gap-4 justify-center lg:flex-row lg:px-40 lg:pt-20">
   <form class="py-8 w-full bg-section gap-8" [formGroup]="registerForm">
+
     <h1 class="w-full text-center">¡Bienvenido de vuelta!</h1>
+
     <app-input-text
       [value]="registerForm.value.name"
-      label="Nombre"
-      [hasError]="registerForm.controls['name'].status === 'INVALID'"
+      label="Nombre/s"
+      [classes]="registerForm.controls['name'].status === 'INVALID' && registerForm.touched ? 'ng-invalid ng-dirty' : ''"
+      errorMessage="Nombre/s inválido"
       (valueEvent)="receiveValue('name', $event)"
       formControlName="name"
       ngDefaultControl
-    ></app-input-text>
+    />
+
     <app-input-text
       [value]="registerForm.value.lastName"
-      label="Apellidos"
-      [hasError]="registerForm.controls['lastName'].status === 'INVALID'"
+      label="Apellido/s"
+      [classes]="registerForm.controls['lastName'].status === 'INVALID' && registerForm.touched ? 'ng-invalid ng-dirty' : ''"
+      errorMessage="Apellido/s inválido"
       (valueEvent)="receiveValue('lastName', $event)"
       formControlName="lastName"
       ngDefaultControl
-    ></app-input-text>
+    />
+
     <app-input-text
       [value]="registerForm.value.username"
-      label="Correo electronico"
-      [hasError]="registerForm.controls['username'].status === 'INVALID'"
+      label="Correo electrónico"
+      [classes]="registerForm.controls['username'].status === 'INVALID' && registerForm.touched ? 'ng-invalid ng-dirty' : ''"
+      errorMessage="Correo electrónico inválido"
       (valueEvent)="receiveValue('username', $event)"
       formControlName="username"
       ngDefaultControl
-    ></app-input-text>
+    />
+
     <app-input-password
       [value]="registerForm.value.password"
       label="Contraseña"
-      [hasError]="registerForm.controls['password'].status === 'INVALID'"
+      [classes]="registerForm.controls['password'].status === 'INVALID' && registerForm.touched ? 'ng-invalid ng-dirty' : ''"
+      errorMessage="Contraseña inválido"
       (valueEvent)="receiveValue('password', $event)"
       [feedback]="true"
       [toggleMask]="true"
       formControlName="password"
       ngDefaultControl
-    ></app-input-password>
+    />
+
     <app-input-password
       [value]="registerForm.value.confirmPassword"
       label="Confirmar contraseña"
-      [hasError]="registerForm.controls['confirmPassword'].status === 'INVALID'"
+      [classes]="(registerForm.controls['confirmPassword'].status === 'INVALID' || !arePasswordEquals()) && registerForm.touched ? 'ng-invalid ng-dirty' : ''"
+      errorMessage="Las contraseñas no coinciden."
       (valueEvent)="receiveValue('confirmPassword', $event)"
       [feedback]="true"
       [toggleMask]="true"
       formControlName="confirmPassword"
       ngDefaultControl
-    ></app-input-password>
+    />
+
     <app-button [confirmClick]="true" label="Crear cuenta" (clickEvent)="validateForm()"></app-button>
+
     <a [routerLink]="['/security/login']">Ingresar</a>
+    
   </form>
 </section>

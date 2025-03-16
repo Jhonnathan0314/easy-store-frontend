@@ -1,5 +1,5 @@
 
-<p-floatlabel class="w-60">
+<p-floatlabel class="w-full">
   <p-select
     [inputId]="'inputSelect'+componentId"
     [id]="'inputSelect'+componentId"
@@ -12,7 +12,11 @@
     optionLabel="name"
     optionValue="value"
     styleClass="w-full"
+    [class]="classes"
     (ngModelChange)="sendValue()"
   ></p-select>
   <label [for]="'inputSelect'+componentId">{{ label }}</label>
 </p-floatlabel>
+@if (classes !== '') {
+  <small class="text-red-700">{{ errorMessage }}</small>
+}

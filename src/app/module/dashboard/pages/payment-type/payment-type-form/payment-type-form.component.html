@@ -12,7 +12,7 @@
           <app-input-number
             [value]="paymentTypeForm.value.id"
             label="Id"
-            [hasError]="paymentTypeForm.controls['id'].status === 'INVALID'"
+            [classes]="paymentTypeForm.controls['id'].status === 'INVALID' ? 'ng-invalid ng-dirty' : ''"
             [isDisabled]="true"
             (valueEvent)="receiveValueNumber('id', $event)"
             formControlName="name"
@@ -23,7 +23,7 @@
         <app-input-text
           [value]="paymentTypeForm.value.name"
           label="Nombre"
-          [hasError]="paymentTypeForm.controls['name'].status === 'INVALID'"
+          [classes]="paymentTypeForm.controls['name'].status === 'INVALID' ? 'ng-invalid ng-dirty' : ''"
           (valueEvent)="receiveValueString('name', $event)"
           formControlName="name"
           ngDefaultControl

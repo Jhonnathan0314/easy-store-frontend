@@ -44,27 +44,43 @@ export class CategoryFormComponent implements OnInit {
     private router: Router, 
     private formBuilder: FormBuilder, 
     private messageService: MessageService,
-    private categoryService: CategoryService,
-    private sessionService: SessionService,
-    private fileService: FileService
+    private categoryService: CategoryService
   ) { }
 
   ngOnInit(): void {
     this.initializeForm();
+    this.validateAction()
+  }
+
+  initializeForm() {
+    this.categoryForm = this.formBuilder.group({
+      id: [0],
+      name: ['', [Validators.required]],
+      description: ['', [Validators.required]]
+    });
+  }
+
+  validateAction() {
     this.obtainIdFromPath();
-    this.findCategoryById();
-  }
-
-  obtainIdFromPath() {
-    this.category.id = parseInt(this.activatedRoute.snapshot.params['_id']);
-  }
-
-  findCategoryById() {
-    if(this.isCreate()) {
+    if(this.category.id == 0) {
       this.prepareCreateForm();
       return;
     }
     this.setUpdateTitles();
+    this.findCategoryById();
+  }
+
+  obtainIdFromPath() {
+    this.category.id = parseInt(this.activatedRoute.snapshot.params['_id']) ?? 0;
+  }
+
+  prepareCreateForm() {
+    this.categoryForm.patchValue({
+      id: this.category.id
+    })
+  }
+
+  findCategoryById() {
     this.categoryService.getById(this.category.id).subscribe({
       next: (response) => {
         if(response) {
@@ -78,16 +94,6 @@ export class CategoryFormComponent implements OnInit {
     })
   }
 
-  isCreate(): boolean {
-    return this.category.id === 0;
-  }
-
-  prepareCreateForm() {
-    this.categoryForm.patchValue({
-      id: this.category.id
-    })
-  }
-
   prepareUpdateForm() {
     if(this.category.imageName != 'store.png') {
       this.viewInputFile = false;
@@ -95,8 +101,7 @@ export class CategoryFormComponent implements OnInit {
     this.categoryForm.patchValue({
       id: this.category.id,
       name: this.category.name,
-      description: this.category.description,
-      imageName: this.category.imageName
+      description: this.category.description
     });
   }
 
@@ -105,13 +110,56 @@ export class CategoryFormComponent implements OnInit {
     this.title = 'Actualizar tienda';
   }
 
-  initializeForm() {
-    this.categoryForm = this.formBuilder.group({
-      id: [0],
-      name: ['', [Validators.required]],
-      description: ['', [Validators.required]],
-      imageName: ['']
-    });
+  validateForm() {
+    if(!this.categoryForm.valid) {
+      this.categoryForm.markAllAsTouched();
+      return;
+    }
+    this.prepareRequest();
+  }
+
+  prepareRequest() {
+    this.category = { 
+      ...this.categoryForm.value, 
+      imageName: this.category.imageName ?? 'store.png' 
+    };
+    this.executeAction();
+  }
+
+  executeAction() {
+    if(this.category.id == 0) {
+      this.createCategory();
+      return;
+    }
+    this.updateCategory();
+  }
+
+  createCategory() {
+    this.categoryService.create(this.category, this.filesToUpload[0] ?? null).subscribe({
+      next: (response) => { },
+      error: (error) => {
+        console.log("Ha ocurrido un error al crear la categoria.", error);
+      },
+      complete: () => {
+        this.router.navigateByUrl('/dashboard/category');
+      }
+    })
+  }
+
+  updateCategory() {
+    this.categoryService.update(this.category, this.filesToUpload[0] ?? null).subscribe({
+      next: (response) => { },
+      error: (error) => {
+        console.log("Ha ocurrido un error al crear la categoria.", error);
+      },
+      complete: () => {
+        this.router.navigateByUrl('/dashboard/category');
+      }
+    })
+  }
+
+  uploadFiles(files: S3File[]) {
+    this.filesToUpload = files;
   }
 
   receiveValueString(key: string, value: string) {
@@ -120,93 +168,6 @@ export class CategoryFormComponent implements OnInit {
 
   receiveValueNumber(key: string, value: number) {
     this.categoryForm.value[key] = value;
-  }
-
-  validateForm() {
-    if(!this.categoryForm.valid) {
-      this.getFormErrors();
-      return;
-    }
-    this.getCategoryObject();
-    if(this.buttonLabel === 'Crear') {
-      this.createCategory();
-    }else {
-      this.updateCategory(true);
-    }
-  }
-
-  getFormErrors() {
-    this.formErrors = {};
-    Object.keys(this.categoryForm.controls).forEach(key => {
-      const controlErrors = this.categoryForm.get(key)?.errors;
-      if(!controlErrors) return;
-      this.formErrors[key] = [];
-      Object.keys(controlErrors).forEach(keyError => this.formErrors[key].push(keyError));
-    });
-    this.errorEvent();
-  }
-
-  errorEvent() { this.categoryErrorEvent.emit(this.formErrors); }
-
-  createCategory() {
-    this.categoryService.create(this.category).subscribe({
-      next: (response) => {
-        if(this.filesToUpload.length > 0) {
-          this.category.id = response.data.id;
-          this.uploadFiles(this.filesToUpload);
-        }else {
-          this.router.navigateByUrl('/dashboard/category');
-        }
-      },
-      error: (error) => {
-        console.log("Ha ocurrido un error al crear la categoria.", error);
-      }
-    })
-  }
-
-  updateCategory(redirect: boolean) {
-    this.categoryService.update(this.category).subscribe({
-      next: (response) => {
-        if(redirect)
-          this.router.navigateByUrl('/dashboard/category');
-      },
-      error: (error) => {
-        console.log("Ha ocurrido un error al crear la categoria.", error);
-      }
-    })
-  }
-
-  getCategoryObject() {
-    this.category = { ...this.categoryForm.value };
-    this.category.userId = this.sessionService.getUserId();
-    this.category.accountId = this.sessionService.getAccountId();
-    this.category.imageName = this.filesToUpload.length > 0 ? this.filesToUpload[0].name : 'store.png';
-  }
-
-  uploadFiles(files: S3File[]) {
-    if(this.category.id == 0) {
-      this.filesToUpload = files;
-      this.messageService.add({severity: 'info', summary: `Información.`, detail: `Las imagenes serán cargadas automaticamente cuando cree la tienda.`});
-      return;
-    }
-    files.forEach(file  => {
-      file.context = "category";
-      file.name = `${this.category.id}.png`;
-      this.category.imageName = file.name;
-      this.fileService.putFile(file).subscribe({
-        next: (response) => {
-          if(response) {
-            this.filesUploaded.push(file);
-            this.messageService.add({severity: 'success', summary: `Cargue exitoso.`, detail: `Imagen ${file.name} cargada con éxito.`});
-            this.updateCategory(true);
-          }
-        },
-        error: (error) => {
-          console.log("Ha ocurrido un error al cargar el archivo ", {name: file.name, error});
-        }
-      })
-    })
-    this.filesToUpload = [];
   }
 
   setViewInputFile(value: boolean) {

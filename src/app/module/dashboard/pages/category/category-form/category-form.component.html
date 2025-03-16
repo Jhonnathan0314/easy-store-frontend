@@ -12,18 +12,15 @@
           <app-input-number
             [value]="categoryForm.value.id"
             label="Id"
-            [hasError]="categoryForm.controls['id'].status === 'INVALID'"
             [isDisabled]="true"
-            (valueEvent)="receiveValueNumber('id', $event)"
-            formControlName="name"
-            ngDefaultControl
           ></app-input-number>
         }
         
         <app-input-text
           [value]="categoryForm.value.name"
           label="Nombre"
-          [hasError]="categoryForm.controls['name'].status === 'INVALID'"
+          [classes]="categoryForm.controls['name'].status === 'INVALID' && categoryForm.touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Nombre inválido"
           (valueEvent)="receiveValueString('name', $event)"
           formControlName="name"
           ngDefaultControl
@@ -31,24 +28,18 @@
     
         <app-input-text
           [value]="categoryForm.value.description"
-          label="Descripcion"
-          [hasError]="categoryForm.controls['description'].status === 'INVALID'"
+          label="Descripción"
+          [classes]="categoryForm.controls['description'].status === 'INVALID' && categoryForm.touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Descripción inválida"
           (valueEvent)="receiveValueString('description', $event)"
           formControlName="description"
-          ngDefaultControl
-        />
-
-        <app-input-text
-          [value]="categoryForm.value.imageName"
-          label="Imagen asociada"
-          [isDisabled]="true"
-          formControlName="imageName"
           ngDefaultControl
         />
 
         @if(viewInputFile) {
           <app-input-file 
             class="w-4/5"
+            label="Imagen"
             [fileLimit]="1"
             [filesUploaded]="filesUploaded"
             (uploadFilesEvent)="uploadFiles($event)"
@@ -63,7 +54,6 @@
     
         <app-button
           [label]="buttonLabel"
-          [confirmClick]="true"
           (clickEvent)="validateForm()"
         />
         <p-toast />

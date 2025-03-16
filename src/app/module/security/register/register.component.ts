@@ -49,8 +49,8 @@ export class RegisterComponent {
   }
 
   validateForm() {
-    if(!this.registerForm.valid || this.registerForm.value.password != this.registerForm.value.confirmPassword) {
-      this.getFormErrors();
+    this.registerForm.markAllAsTouched();
+    if(!this.registerForm.valid || !this.arePasswordEquals()) {
       return;
     }
 
@@ -68,16 +68,9 @@ export class RegisterComponent {
 
     this.register();
   }
-  
-  getFormErrors() {
-    this.formErrors = {};
-    Object.keys(this.registerForm.controls).forEach(key => {
-      const controlErrors = this.registerForm.get(key)?.errors;
-      if(!controlErrors) return;
-      this.formErrors[key] = [];
-      Object.keys(controlErrors).forEach(keyError => this.formErrors[key].push(keyError));
-    });
-    this.errorEvent();
+
+  arePasswordEquals() {
+    return this.registerForm.value.password == this.registerForm.value.confirmPassword;
   }
 
   register(){
@@ -86,7 +79,5 @@ export class RegisterComponent {
       error: (error) => console.log("Error en register: ", error)
     });
   }
-
-  errorEvent() { this.registerErrorEvent.emit(this.formErrors); }
 
 }

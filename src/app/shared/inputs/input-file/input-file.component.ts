@@ -13,12 +13,14 @@ import { ButtonComponent } from '../button/button.component';
 export class InputFileComponent {
 
   @Input() fileLimit: number = 1;
+  @Input() label: string = '';
   @Input() filesUploaded: S3File[] = [];
 
   @Output() uploadFilesEvent = new EventEmitter<S3File[]>();
 
   filesToUpload: S3File[] = [];
 
+  selectEnable: boolean = true;
   sendEnable: boolean = false;
   clearEnable: boolean = false;
   removeEnable: boolean = false;
@@ -52,6 +54,7 @@ export class InputFileComponent {
 
   onSend() {
     this.uploadFilesEvent.emit(this.filesToUpload);
+    this.selectEnable = false;
     this.sendEnable = false;
     this.clearEnable = false;
     this.removeEnable = false;
@@ -60,12 +63,14 @@ export class InputFileComponent {
   onRemove($event: any) {
     this.filesToUpload = this.filesToUpload.filter(file => file.name == $event.name)
     if(this.filesToUpload.length == 0) {  
+      this.selectEnable = true;
       this.sendEnable = false;
       this.clearEnable = false;
     }
   }
 
   onClear() {
+    this.selectEnable = true;
     this.sendEnable = false;
     this.clearEnable = false;
     this.filesToUpload = [];

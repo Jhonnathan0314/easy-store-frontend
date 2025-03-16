@@ -31,12 +31,9 @@ export class LoginComponent {
 
   loginForm: FormGroup;
   loginRequest: LoginRequest = new LoginRequest();
-  formErrors: FormErrors;
 
   loginError: boolean = false;
   
-  @Output() loginErrorEvent = new EventEmitter<FormErrors>();
-
   constructor(
     private formBuilder: FormBuilder,
     public themeService: ThemeService,
@@ -48,10 +45,6 @@ export class LoginComponent {
     this.initializeForm();
   }
 
-  /**
-   * The function initializes a form with two fields, username and password, and applies required and
-   * email validators to the username field.
-   */
   initializeForm() {
     this.loginForm = this.formBuilder.group({
       accountId: [null, [Validators.required]],
@@ -68,16 +61,9 @@ export class LoginComponent {
     this.loginForm.patchValue({ [key]: value });
   }
 
-  /**
-   * The function validates a form, retrieves form errors if the form is invalid, and then proceeds to
-   * perform a login request.
-   * @returns If the loginForm is not valid, the function will return after calling the getFormErrors()
-   * function. Otherwise, it will assign the value of the loginForm to the loginRequest variable and
-   * call the login() function.
-   */
   validateForm() {
     if(!this.loginForm.valid) {
-      this.getFormErrors();
+      this.loginForm.markAllAsTouched();
       return;
     }
 
@@ -85,24 +71,6 @@ export class LoginComponent {
     this.login();
   }
 
-  /**
-   * The function "getFormErrors" retrieves and stores any errors present in the login form controls.
-   */
-  getFormErrors() {
-    this.formErrors = {};
-    Object.keys(this.loginForm.controls).forEach(key => {
-      const controlErrors = this.loginForm.get(key)?.errors;
-      if(!controlErrors) return;
-      this.formErrors[key] = [];
-      Object.keys(controlErrors).forEach(keyError => this.formErrors[key].push(keyError));
-    });
-    this.errorEvent();
-  }
-
-  /**
-   * The login function calls the security service's login method with a login request, saves the
-   * session with the returned token, and logs any errors.
-   */
   login() {
     this.securityService.login(this.loginRequest).subscribe({
       next: (res) => this.sessionService.saveSession(this.loginRequest, res.data.token),
@@ -111,7 +79,5 @@ export class LoginComponent {
       }
     });
   }
-
-  errorEvent() { this.loginErrorEvent.emit(this.formErrors); }
 
 }

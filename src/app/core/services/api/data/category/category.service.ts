@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, find, forkJoin, map, Observable, of, tap } from 'rxjs';
+import { BehaviorSubject, catchError, forkJoin, map, Observable, of, tap } from 'rxjs';
 import { Category } from 'src/app/core/models/data-types/data/category.model';
 import { ApiResponse } from 'src/app/core/models/data-types/data/general.model';
 import { environment } from 'src/environments/environment';
@@ -25,10 +25,10 @@ export class CategoryService {
     private fileService: FileService
   ) {
     this.apiUrl = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
-    this.findAll();
+    this.findAllByAccoumt();
   }
 
-  private findAll() {
+  private findAllByAccoumt() {
     const accountId = this.sessionService.getAccountId();
     this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/category/account/${accountId}`).subscribe({
       next: (apiResponse) => {
@@ -37,57 +37,6 @@ export class CategoryService {
       },
       error: (error) => {
         console.log("error finding categories: ", error);
-      }
-    })
-  }
-
-  getAll(): Observable<Category[]> {
-    return this.storedCategories$.pipe();
-  }
-
-  getById(id: number): Observable<Category | undefined> {
-    return this.storedCategories$.pipe(
-      map(categories => categories.find(cat => cat.id === id))
-    );
-  }
-
-  create(category: Category): Observable<ApiResponse<Category>> {
-    const userId = this.sessionService.getUserId();
-    return this.http.post<ApiResponse<Category>>(`${this.apiUrl}/category`, category, {
-      headers: {
-        'Create-By': `${userId}`
-      }
-    }).pipe(
-      tap(response => {
-        this.categories.push(response.data);
-        this.categoriesSubject.next(this.categories);
-      })
-    )
-  }
-
-  update(category: Category): Observable<ApiResponse<Category>> {
-    const userId = this.sessionService.getUserId();
-    return this.http.put<ApiResponse<Category>>(`${this.apiUrl}/category`, category, {
-      headers: {
-        'Update-By': `${userId}`
-      }
-    }).pipe(
-      tap(response => {
-        const index = this.categories.findIndex(cat => cat.id == category?.id);
-        this.categories[index] = response.data;
-        this.categoriesSubject.next(this.categories);
-      })
-    )
-  }
-
-  deleteById(id: number) {
-    this.http.delete<ApiResponse<Object>>(`${this.apiUrl}/category/delete/${id}`).subscribe({
-      next: (response) => {
-        this.categoriesSubject.next(this.categories.filter(cat => cat.id != id));
-      },
-      error: (error) => {
-        if(error.error.code === 404) 
-          console.error("Id no encontrado para eliminar categoria.", error);
       }
     })
   }
@@ -121,6 +70,147 @@ export class CategoryService {
         return of(null);
       }
     });
+  }
+
+  getAll(): Observable<Category[]> {
+    return this.storedCategories$.pipe();
+  }
+
+  getById(id: number): Observable<Category | undefined> {
+    return this.storedCategories$.pipe(
+      map(categories => categories.find(cat => cat.id === id))
+    );
+  }
+
+  create(category: Category, file: S3File | null): Observable<ApiResponse<Category>> {
+    const userId = this.sessionService.getUserId();
+    const accountId = this.sessionService.getAccountId();
+    category.userId = userId;
+    category.accountId = accountId;
+    return this.http.post<ApiResponse<Category>>(`${this.apiUrl}/category`, category, {
+      headers: {
+        'Create-By': `${userId}`
+      }
+    }).pipe(
+      tap(response => {
+        if(file != null) {
+          const imgName = `${response.data.id}.png`
+          file.context = 'category';
+          file.name = imgName;
+          response.data.imageName = imgName;
+          response.data.image = file;
+          this.uploadFile(file);
+        }
+        return response;
+      }),
+      tap(response => {
+        this.categories.push(response.data);
+        this.categoriesSubject.next(this.categories);
+        return response;
+      }),
+      tap(response => {
+        this.update(response.data, null).subscribe();
+        return response;
+      })
+    )
+  }
+
+  update(category: Category, file: S3File | null): Observable<ApiResponse<Category>> {
+    const userId = this.sessionService.getUserId();
+    const accountId = this.sessionService.getAccountId();
+    category.userId = userId;
+    category.accountId = accountId;
+    return this.http.put<ApiResponse<Category>>(`${this.apiUrl}/category`, category, {
+      headers: {
+        'Update-By': `${userId}`
+      }
+    }).pipe(
+      tap(response => {
+        if(file != null) {
+          const imgName = `${response.data.id}.png`
+          file.context = 'category';
+          file.name = imgName;
+          response.data.imageName = imgName;
+          response.data.image = file;
+          this.uploadFile(file);
+        }
+        return response;
+      }),
+      tap(response => {
+        const index = this.categories.findIndex(cat => cat.id == category?.id);
+        this.categories[index] = {
+          ...response.data,
+          image: this.categories[index].image
+        };
+        this.categoriesSubject.next(this.categories);
+        return response;
+      }),
+      catchError((error: any) => {
+        if (error.error.error.code == 406 && file != null) {
+          const imgName = `${category.id}.png`
+          file.context = 'category';
+          file.name = imgName;
+          category.image = file;
+          this.uploadFile(file);
+          
+          const index = this.categories.findIndex(cat => cat.id == category?.id);
+          this.categories[index] = {
+            ...category,
+            image: file
+          };
+          this.categoriesSubject.next(this.categories);
+        }
+        const response: ApiResponse<Category> = new ApiResponse();
+        response.data = category;
+        return of(response);
+      })
+    )
+  }
+
+  private uploadFile(file: S3File) {
+    this.fileService.putFile(file).subscribe({
+      next: (response) => { },
+      error: (error) => {
+        console.log("Ha ocurrido un error al cargar el archivo ", {name: file.name, error});
+      }
+    })
+  }
+
+  deleteById(id: number) {
+    this.http.delete<ApiResponse<Object>>(`${this.apiUrl}/category/delete/${id}`)
+    .pipe(
+      tap(response => {
+        const index = this.categories.findIndex(cat => cat.id == id);
+        const category = this.categories[index];
+        let image = category.image;
+        if(image){
+          image.context = 'category';
+          this.deleteFile(image);
+        }
+        return response;
+      }),
+      tap(response => {
+        this.categories = this.categories.filter(cat => cat.id != id);
+        this.categoriesSubject.next(this.categories);
+        return response;
+      })
+    )
+    .subscribe({
+      next: (response) => { },
+      error: (error) => {
+        if(error.error.code === 404) 
+          console.error("Id no encontrado para eliminar categoria.", error);
+      }
+    })
+  }
+
+  private deleteFile(file: S3File) {
+    this.fileService.deleteFile(file).subscribe({
+      next: (response) => { },
+      error: (error) => {
+        console.log("Ha ocurrido un error al eliminar el archivo ", {name: file.name, error});
+      }
+    })
   }
 
 }

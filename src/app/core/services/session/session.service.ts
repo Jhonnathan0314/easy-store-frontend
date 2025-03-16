@@ -38,11 +38,9 @@ export class SessionService {
   }
 
   private validateSession() {
-    console.log("this.isLogged(): ", this.isLogged());
     if (this.isLogged()) {
       this.actualPath = window.location.href;
-      console.log("actualPath: ", this.actualPath);
-      if(!this.actualPath.includes('dasboard') && !this.actualPath.includes('security')) this.redirect('/dashboard');
+      if(!this.actualPath.includes('dashboard')) this.redirect('/dashboard');
     } else {
       this.logout();
     }
