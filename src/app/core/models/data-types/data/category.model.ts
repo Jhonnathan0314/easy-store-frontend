@@ -7,5 +7,5 @@ export class Category {
     imageName: string;
     userId: number;
     accountId: number;
-    image?: S3File;
+    image: S3File | null;
 }

@@ -109,7 +109,9 @@ export class CategoryService {
         return response;
       }),
       tap(response => {
-        this.update(response.data, null).subscribe();
+        if(file != null) {
+          this.update(response.data, null).subscribe();
+        }
         return response;
       })
     )
@@ -120,6 +122,9 @@ export class CategoryService {
     const accountId = this.sessionService.getAccountId();
     category.userId = userId;
     category.accountId = accountId;
+    if(file != null && category.imageName == 'store.png') {
+      category.imageName = `${category.id}.png`;
+    }
     return this.http.put<ApiResponse<Category>>(`${this.apiUrl}/category`, category, {
       headers: {
         'Update-By': `${userId}`
@@ -140,7 +145,7 @@ export class CategoryService {
         const index = this.categories.findIndex(cat => cat.id == category?.id);
         this.categories[index] = {
           ...response.data,
-          image: this.categories[index].image
+          image: this.categories[index].image ? this.categories[index].image : file
         };
         this.categoriesSubject.next(this.categories);
         return response;
