@@ -65,6 +65,10 @@ export class CategoryAllComponent implements OnInit, OnDestroy {
     this.categoryService.deleteById(category?.id ?? 0);
   }
 
+  goCreate() {
+    this.router.navigateByUrl('/dashboard/category/form/0');
+  }
+
   goBack() {
     this.router.navigateByUrl('/dashboard/home');
   }
