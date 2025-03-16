@@ -3,16 +3,16 @@
         [value]="objects[purchaseHasProductIndex].purchase?.products ?? objects"
         [paginator]="true"
         [rows]="20"
-        [resizableColumns]="true"
-        [tableStyle]="{ 'width': '100%' }"
+        paginatorPosition="both"
+        tableStyleClass="w-full"
         [rowsPerPageOptions]="[5, 10, 20, 50, 100, 500]"
     >
         <ng-template pTemplate="header">
             <tr>
-                <th style="width:auto" pResizableColumn>Producto</th>
-                <th style="width:auto" pResizableColumn>Cantidad</th>
-                <th style="width:auto" pResizableColumn>Precio unitario</th>
-                <th style="width:auto" pResizableColumn>Precio total</th>
+                <th style="width:auto">Producto</th>
+                <th style="width:auto">Cantidad</th>
+                <th style="width:auto">Precio unitario</th>
+                <th style="width:auto">Precio total</th>
             </tr>
             <tr>
                 <th>
@@ -63,20 +63,20 @@
         [value]="objects"
         [paginator]="true"
         [rows]="20"
-        [resizableColumns]="true"
-        [tableStyle]="{ 'width': '100%' }"
+        paginatorPosition="both"
+        tableStyleClass="w-full"
         [rowsPerPageOptions]="[5, 10, 20, 50, 100, 500]"
     >
         <ng-template pTemplate="header">
             <tr>
-                <th style="width:auto" pResizableColumn>Id</th>
-                <th style="width:auto" pResizableColumn>Tienda</th>
-                <th style="width:auto" pResizableColumn>Usuario</th>
-                <th style="width:auto" pResizableColumn>Estado</th>
-                <th style="width:auto" pResizableColumn>Valor total</th>
-                <th style="width:auto" pResizableColumn>Fecha de creacion</th>
-                <th style="width:auto" pResizableColumn>Tipo de pago</th>
-                <th style="width:auto" pResizableColumn>Ver productos</th>
+                <th style="width:auto">Id</th>
+                <th style="width:auto">Tienda</th>
+                <th style="width:auto">Usuario</th>
+                <th style="width:auto">Estado</th>
+                <th style="width:auto">Valor total</th>
+                <th style="width:auto">Fecha de creacion</th>
+                <th style="width:auto">Tipo de pago</th>
+                <th style="width:auto">Ver productos</th>
             </tr>
             <tr>
                 <th>
@@ -158,23 +158,23 @@
         [value]="objects"
         [paginator]="true"
         [rows]="20"
-        [resizableColumns]="true"
-        [tableStyle]="{ 'width': '100%' }"
+        paginatorPosition="both"
+        tableStyleClass="w-full"
         [rowsPerPageOptions]="[5, 10, 20, 50, 100, 500]"
     >
         <ng-template pTemplate="header">
             <tr>
-                @if(hasFields.imageName) { <th style="width:auto" pResizableColumn>Imagen</th> }
-                @if(hasFields.id) { <th style="width:auto" pResizableColumn>Id</th> }
-                @if(hasFields.name) { <th style="width:auto" pResizableColumn>Nombre</th> }
-                @if(hasFields.description) { <th style="width:auto" pResizableColumn>Descripción</th> }
-                @if(hasFields.price) { <th style="width:auto" pResizableColumn>Precio</th> }
-                @if(hasFields.quantity) { <th style="width:auto" pResizableColumn>Cantidad</th> }
-                @if(hasFields.qualification) { <th style="width:auto" pResizableColumn>Calificación</th> }
-                @if(hasFields.categoryName) { <th style="width:auto" pResizableColumn>Tienda</th> }
-                @if(hasFields.subcategoryName) { <th style="width:auto" pResizableColumn>Categoria</th> }
-                @if(updateButton) { <th style="width:auto" pResizableColumn>Actualizar</th> }
-                @if(deleteButton) { <th style="width:auto" pResizableColumn>Eliminar</th> }
+                @if(hasFields.imageName) { <th class="w-auto">Imagen</th> }
+                @if(hasFields.id) { <th class="w-auto" pSortableColumn="id">Id</th> }
+                @if(hasFields.name) { <th class="w-auto" pSortableColumn="name">Nombre</th> }
+                @if(hasFields.description) { <th class="w-auto" pSortableColumn="description">Descripción</th> }
+                @if(hasFields.price) { <th class="w-auto" pSortableColumn="price">Precio</th> }
+                @if(hasFields.quantity) { <th class="w-auto" pSortableColumn="quantity">Cantidad</th> }
+                @if(hasFields.qualification) { <th class="w-auto" pSortableColumn="qualification">Calificación</th> }
+                @if(hasFields.categoryName) { <th class="w-auto" pSortableColumn="categoryName">Tienda</th> }
+                @if(hasFields.subcategoryName) { <th class="w-auto" pSortableColumn="subcategoryName">Categoria</th> }
+                @if(updateButton) { <th class="w-auto">Actualizar</th> }
+                @if(deleteButton) { <th class="w-auto">Eliminar</th> }
             </tr>
             <tr>
                 @if(hasFields.imageName) { <th></th> }

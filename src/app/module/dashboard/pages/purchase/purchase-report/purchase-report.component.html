@@ -1,4 +1,6 @@
-<div class="">
-    <p-chart type="bar" [data]="valueData" />
-    <p-chart type="bar" [data]="numData" />
+<div class="w-full px-0 md:px-8 flex flex-col items-center justify-center gap-4">
+    <p-chart class="w-5/6" type="bar" [data]="valueData" />
+    <p-divider />
+    <p-chart class="w-full" type="bar" [data]="numData" />
+    <p-divider />
 </div>

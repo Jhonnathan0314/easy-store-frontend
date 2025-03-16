@@ -1,46 +1,47 @@
-<div class="flex justify-between">
-    <app-button
-        class="pl-4 md:pl-8 lg:pl-24"
-        icon="pi pi-arrow-left"
-        [rounded]="true"
-        (clickEvent)="goBack()"
-    />
-@if (viewChart) {
-    <app-button
-        class="pr-4 md:pr-8 lg:pr-24"
-        label="Listado"
-        icon="pi pi-list"
-        [rounded]="true"
-        (clickEvent)="eventViewChart()"
-    />
-} @else {
-    <app-button
-        class="pr-4 md:pr-8 lg:pr-24"
-        label="Reportes"
-        icon="pi pi-chart-bar"
-        [rounded]="true"
-        (clickEvent)="eventViewChart()"
-    />
-}
-</div>
-
-@if(viewChart) {
-    <h1 class="text-center font-bold !py-4">Reportes de compras</h1>
-    <app-purchase-report [purchases]="mappedPurchases" [categories]="categories" />
-} @else {
-    <h1 class="text-center font-bold !py-4">Gestion de compras</h1>
-    <app-table
-        [objects]="mappedPurchases"
-        (deleteEvent)="deleteById($event)"
-        (detailEvent)="viewDetail($event)"
-    />
-    
-    @if(isDetailSelected) {
-        <h1 class="text-center font-bold !py-4">Compra con id {{ detailSelectedId }}</h1>
-        <app-table
-            [purchaseHasProduct]="true"
-            [purchaseHasProductIndex]="detailSelectedIndex"
-            [objects]="mappedPurchases"
+<section class="flex flex-col items-start justify-center gap-8 px-4 md:px-8 lg:px-24">
+    <div class="w-full flex justify-between">
+        <app-button
+            icon="pi pi-arrow-left"
+            [rounded]="true"
+            (clickEvent)="goBack()"
         />
+        @if (viewChart) {
+            <app-button
+                label="Listado"
+                icon="pi pi-list"
+                [rounded]="true"
+                (clickEvent)="eventViewChart()"
+            />
+        } @else {
+            <app-button
+                label="Reportes"
+                icon="pi pi-chart-bar"
+                [rounded]="true"
+                (clickEvent)="eventViewChart()"
+            />
+        }
+    </div>
+
+    @if(viewChart) {
+        <h1 class="w-full text-center font-bold">Reportes de compras</h1>
+        <app-purchase-report class="w-full" [purchases]="mappedPurchases" [categories]="categories" />
+    } @else {
+        <h1 class="w-full text-center font-bold">Gestion de compras</h1>
+        <app-table
+            class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
+            [objects]="mappedPurchases"
+            (deleteEvent)="deleteById($event)"
+            (detailEvent)="viewDetail($event)"
+        />
+        
+        @if(isDetailSelected) {
+            <h1 class="w-full text-center font-bold">Compra con id {{ detailSelectedId }}</h1>
+            <app-table
+                class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
+                [purchaseHasProduct]="true"
+                [purchaseHasProductIndex]="detailSelectedIndex"
+                [objects]="mappedPurchases"
+            />
+        }
     }
-}
+</section>

@@ -55,8 +55,10 @@ export class ProductAllComponent {
     if(this.subcategories.length == 0) return;
     this.productSubscription = this.productService.storedProducts$.subscribe({
       next: (products) => {
-        this.products = products;
-        this.convertToDataObject();
+        if(products.length > 0) {
+          this.products = products;
+          this.convertToDataObject();
+        }
       },
       error: (error) => {
         console.log('Ha ocurrido un error en subcategorias: ', {error});
@@ -90,6 +92,10 @@ export class ProductAllComponent {
 
   deleteById(product: DataObject) {
     this.productService.deleteById(product?.id ?? 0);
+  }
+
+  goCreate() {
+    this.router.navigateByUrl('/dashboard/product/form/0');
   }
 
   goBack() {

@@ -62,6 +62,10 @@ export class PaymentTypeAllComponent {
     this.paymentTypeService.deleteById(paymentType?.id ?? 0);
   }
 
+  goCreate() {
+    this.router.navigateByUrl('/dashboard/payment-type/form/0');
+  }
+
   goBack() {
     this.router.navigateByUrl('/dashboard/home');
   }

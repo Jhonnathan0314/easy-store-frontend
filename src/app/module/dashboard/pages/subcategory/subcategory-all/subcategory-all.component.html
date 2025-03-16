@@ -1,14 +1,21 @@
-<app-button
-    class="pl-4 md:pl-8 lg:pl-24"
-    icon="pi pi-arrow-left"
-    [rounded]="true"
-    (clickEvent)="goBack()"
-/>
-<h1 class="text-center font-bold !py-4">Gestion de categorias</h1>
-<app-table
-    [objects]="mappedSubcategories"
-    [updateButton]="true"
-    [deleteButton]="true"
-    updateRedirectPath="subcategory/form"
-    (deleteEvent)="deleteById($event)"
-/>
+<section class="flex flex-col items-start justify-center gap-8 px-4 md:px-8 lg:px-24">
+    <app-button
+        icon="pi pi-arrow-left"
+        [rounded]="true"
+        (clickEvent)="goBack()"
+    />
+    <h1 class="w-full text-center font-bold">Gestion de categorias</h1>
+    <app-button 
+        label="Crear"
+        icon="pi pi-plus"
+        (clickEvent)="goCreate()"
+    />
+    <app-table
+        class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
+        [objects]="mappedSubcategories"
+        [updateButton]="true"
+        [deleteButton]="true"
+        updateRedirectPath="subcategory/form"
+        (deleteEvent)="deleteById($event)"
+    />
+</section>

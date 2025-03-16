@@ -85,6 +85,10 @@ export class SubcategoryAllComponent {
     this.subcategoryService.deleteById(subcategory?.id ?? 0);
   }
 
+  goCreate() {
+    this.router.navigateByUrl('/dashboard/subcategory/form/0');
+  }
+
   goBack() {
     this.router.navigateByUrl('/dashboard/home');
   }

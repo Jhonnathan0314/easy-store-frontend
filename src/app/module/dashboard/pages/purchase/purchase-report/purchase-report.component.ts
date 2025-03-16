@@ -2,13 +2,13 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Category } from '@models/data/category.model';
 import { DataObject } from '@models/utils/object.data-view.model';
-import { get } from 'node:http';
 import { ChartModule } from 'primeng/chart';
+import { DividerModule } from 'primeng/divider';
 
 @Component({
   selector: 'app-purchase-report',
   standalone: true,
-  imports: [RouterModule, ChartModule],
+  imports: [RouterModule, ChartModule, DividerModule],
   templateUrl: './purchase-report.component.html',
 })
 export class PurchaseReportComponent implements OnInit {
