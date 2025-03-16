@@ -133,7 +133,7 @@ export class SubcategoryFormComponent {
 
   validateForm() {
     if(!this.subcategoryForm.valid) {
-      this.getFormErrors();
+      this.subcategoryForm.markAllAsTouched();
       return;
     }
     this.getCategoryObject();
@@ -143,19 +143,6 @@ export class SubcategoryFormComponent {
       this.updateSubcategory();
     }
   }
-
-  getFormErrors() {
-    this.formErrors = {};
-    Object.keys(this.subcategoryForm.controls).forEach(key => {
-      const controlErrors = this.subcategoryForm.get(key)?.errors;
-      if(!controlErrors) return;
-      this.formErrors[key] = [];
-      Object.keys(controlErrors).forEach(keyError => this.formErrors[key].push(keyError));
-    });
-    this.errorEvent();
-  }
-
-  errorEvent() { this.subcategoryErrorEvent.emit(this.formErrors); }
 
   createSubcategory() {
     this.subcategoryService.create(this.subcategory).subscribe({

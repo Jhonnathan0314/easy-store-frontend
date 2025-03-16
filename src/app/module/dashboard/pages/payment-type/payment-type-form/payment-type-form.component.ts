@@ -100,7 +100,7 @@ export class PaymentTypeFormComponent {
 
   validateForm() {
     if(!this.paymentTypeForm.valid) {
-      this.getFormErrors();
+      this.paymentTypeForm.markAllAsTouched();
       return;
     }
     this.getCategoryObject();
@@ -110,19 +110,6 @@ export class PaymentTypeFormComponent {
       this.updateCategory();
     }
   }
-
-  getFormErrors() {
-    this.formErrors = {};
-    Object.keys(this.paymentTypeForm.controls).forEach(key => {
-      const controlErrors = this.paymentTypeForm.get(key)?.errors;
-      if(!controlErrors) return;
-      this.formErrors[key] = [];
-      Object.keys(controlErrors).forEach(keyError => this.formErrors[key].push(keyError));
-    });
-    this.errorEvent();
-  }
-
-  errorEvent() { this.paymentTypeErrorEvent.emit(this.formErrors); }
 
   createCategory() {
     this.paymentTypeService.create(this.paymentType).subscribe({

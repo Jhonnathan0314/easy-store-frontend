@@ -165,7 +165,7 @@ export class ProductFormComponent {
 
   validateForm() {
     if(!this.productForm.valid) {
-      this.getFormErrors();
+      this.productForm.markAllAsTouched();
       return;
     }
     this.getProductObject();
@@ -175,19 +175,6 @@ export class ProductFormComponent {
       this.updateProduct();
     }
   }
-
-  getFormErrors() {
-    this.formErrors = {};
-    Object.keys(this.productForm.controls).forEach(key => {
-      const controlErrors = this.productForm.get(key)?.errors;
-      if(!controlErrors) return;
-      this.formErrors[key] = [];
-      Object.keys(controlErrors).forEach(keyError => this.formErrors[key].push(keyError));
-    });
-    this.errorEvent();
-  }
-
-  errorEvent() { this.productErrorEvent.emit(this.formErrors); }
 
   createProduct() {
     this.productService.create(this.product).subscribe({

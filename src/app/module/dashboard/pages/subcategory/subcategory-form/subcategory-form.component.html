@@ -10,31 +10,34 @@
     
         @if(subcategoryForm.value.id != 0) {
           <app-input-number
+            class="w-1/2"
             [value]="subcategoryForm.value.id"
             label="Id"
-            [classes]="subcategoryForm.controls['id'].status === 'INVALID' ? 'ng-invalid ng-dirty' : ''"
             [isDisabled]="true"
-            (valueEvent)="receiveValueNumber('id', $event)"
-            formControlName="name"
+            formControlName="id"
             ngDefaultControl
           ></app-input-number>
         }
         
         <app-input-text
+          class="w-1/2"
           [value]="subcategoryForm.value.name"
           label="Nombre"
-          [classes]="subcategoryForm.controls['name'].status === 'INVALID' ? 'ng-invalid ng-dirty' : ''"
+          [classes]="subcategoryForm.controls['name'].status === 'INVALID' && subcategoryForm.touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Nombre inválido"
           (valueEvent)="receiveValueString('name', $event)"
           formControlName="name"
           ngDefaultControl
         />
     
         <app-input-select
+          class="w-1/2"
           [options]="mappedCategories"
           [selectedOption]="subcategoryForm.value.categoryId"
           label="Tienda"
           [showClear]="true"
-          [classes]="subcategoryForm.controls['categoryId'].status === 'INVALID' ? 'ng-invalid ng-dirty' : ''"
+          [classes]="subcategoryForm.controls['categoryId'].status === 'INVALID' && subcategoryForm.touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Tienda inválida"
           (valueEvent)="receiveValueString('categoryId', $event)"
           formControlName="categoryId"
           ngDefaultControl
@@ -42,7 +45,6 @@
     
         <app-button
           [label]="buttonLabel"
-          [confirmClick]="true"
           (clickEvent)="validateForm()"
         />
     </form>

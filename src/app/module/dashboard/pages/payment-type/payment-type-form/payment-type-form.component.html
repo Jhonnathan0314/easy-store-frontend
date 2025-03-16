@@ -10,20 +10,21 @@
     
         @if(paymentTypeForm.value.id != 0) {
           <app-input-number
+            class="w-1/2"
             [value]="paymentTypeForm.value.id"
             label="Id"
-            [classes]="paymentTypeForm.controls['id'].status === 'INVALID' ? 'ng-invalid ng-dirty' : ''"
             [isDisabled]="true"
-            (valueEvent)="receiveValueNumber('id', $event)"
             formControlName="name"
             ngDefaultControl
           ></app-input-number>
         }
         
         <app-input-text
+          class="w-1/2"
           [value]="paymentTypeForm.value.name"
           label="Nombre"
-          [classes]="paymentTypeForm.controls['name'].status === 'INVALID' ? 'ng-invalid ng-dirty' : ''"
+          [classes]="paymentTypeForm.controls['name'].status === 'INVALID' && paymentTypeForm.touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Nombre inválido"
           (valueEvent)="receiveValueString('name', $event)"
           formControlName="name"
           ngDefaultControl
@@ -31,7 +32,6 @@
     
         <app-button
           [label]="buttonLabel"
-          [confirmClick]="true"
           (clickEvent)="validateForm()"
         />
     </form>
