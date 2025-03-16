@@ -195,6 +195,8 @@ export class ProductFormComponent {
         if(this.filesToUpload.length > 0) {
           this.product.id = response.data.id;
           this.uploadFiles(this.filesToUpload);
+        }else {
+          this.router.navigateByUrl('/dashboard/category');
         }
       },
       error: (error) => {
@@ -242,8 +244,7 @@ export class ProductFormComponent {
           if(response) {
             this.filesUploaded.push(file);
             this.messageService.add({severity: 'success', summary: `Cargue exitoso.`, detail: `Imagen ${file.name} cargada con éxito.`});
-            // if(this.buttonLabel == 'Crear')
-              this.updateProduct();
+            this.updateProduct();
           }
         },
         error: (error) => {

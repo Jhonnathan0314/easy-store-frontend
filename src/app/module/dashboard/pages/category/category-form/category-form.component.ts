@@ -154,6 +154,8 @@ export class CategoryFormComponent implements OnInit {
         if(this.filesToUpload.length > 0) {
           this.category.id = response.data.id;
           this.uploadFiles(this.filesToUpload);
+        }else {
+          this.router.navigateByUrl('/dashboard/category');
         }
       },
       error: (error) => {
