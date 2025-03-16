@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Purchase } from '@models/data/purchase.model';
+import { Purchase, PurchaseHasProduct, PurchaseHasProductId, PurchaseHasProductRq, PurchaseRq } from '@models/data/purchase.model';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { SessionService } from '../../../session/session.service';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '@models/data/general.model';
+import { ProductService } from '../product/product.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,14 +20,15 @@ export class PurchaseService {
   
   constructor(
     private http: HttpClient, 
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private productService: ProductService
   ) {
     this.apiUrl = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
-    this.findAll();
+    this.findAllByUser();
   }
 
-  private findAll() {
-    const accountId = this.sessionService.getUserId();
+  findAllByAccount() {
+    const accountId = this.sessionService.getAccountId();
     this.http.get<ApiResponse<Purchase[]>>(`${this.apiUrl}/purchase/account/${accountId}`).subscribe({
       next: (apiResponse) => {
         this.purchases = apiResponse.data;
@@ -47,8 +49,21 @@ export class PurchaseService {
       map(purchases => purchases.find(purchase => purchase.id === id))
     );
   }
+  
+  private findAllByUser() {
+    const userId = this.sessionService.getUserId();
+    this.http.get<ApiResponse<Purchase[]>>(`${this.apiUrl}/purchase/user/${userId}`).subscribe({
+      next: (apiResponse) => {
+        this.purchases = apiResponse.data;
+        this.purchasesSubject.next(this.purchases);
+      },
+      error: (error) => {
+        console.log("error finding purchases: ", error);
+      }
+    })
+  }
 
-  generate(purchase: Purchase): Observable<ApiResponse<Purchase>> {
+  generate(purchase: PurchaseRq): Observable<ApiResponse<Purchase>> {
     const userId = this.sessionService.getUserId();
     purchase.userId = userId;
     return this.http.post<ApiResponse<Purchase>>(`${this.apiUrl}/purchase`, purchase, {
@@ -89,6 +104,42 @@ export class PurchaseService {
           console.error("Id no encontrado para eliminar compra.", error);
       }
     })
+  }
+
+  addPurchaseHasProduct(purchaseHasProduct: PurchaseHasProductRq): Observable<ApiResponse<PurchaseHasProduct>> {
+    return this.http.post<ApiResponse<PurchaseHasProduct>>(`${this.apiUrl}/purchase-has-product`, purchaseHasProduct)
+    .pipe(
+      tap(response => {
+        const purchaseIndex = this.purchases.findIndex(purchase => purchase.id == purchaseHasProduct.id.purchaseId);
+        this.purchases[purchaseIndex].products.push(response.data);
+        this.purchasesSubject.next(this.purchases);
+      })
+    );
+  }
+
+  updatePurchaseHasProduct(purchaseHasProduct: PurchaseHasProduct): Observable<ApiResponse<PurchaseHasProduct>> {
+    return this.http.put<ApiResponse<PurchaseHasProduct>>(`${this.apiUrl}/purchase-has-product`, purchaseHasProduct)
+    .pipe(
+      tap(response => {
+        const purchaseIndex = this.purchases.findIndex(purchase => purchase.id == purchaseHasProduct.id.purchaseId);
+        const productIndex = this.purchases[purchaseIndex].products.findIndex(prod => prod.id.productId == purchaseHasProduct.id.productId);
+        this.purchases[purchaseIndex].products[productIndex] = response.data;
+        this.purchasesSubject.next(this.purchases);
+        this.productService.findById(purchaseHasProduct.id.productId);
+      })
+    );
+  }
+
+  deletePurchaseHasProductById(id: PurchaseHasProductId): Observable<ApiResponse<Object>> {
+    return this.http.delete<ApiResponse<Object>>(`${this.apiUrl}/purchase-has-product/purchase/${id.purchaseId}/product/${id.productId}`)
+    .pipe(
+      tap(response => {
+        const purchaseIndex = this.purchases.findIndex(purchase => purchase.id == id.purchaseId);
+        this.purchases[purchaseIndex].products = this.purchases[purchaseIndex].products.filter(product => product.id.productId != id.productId);
+        this.purchasesSubject.next(this.purchases);
+        return response
+      })
+    );
   }
 
 }

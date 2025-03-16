@@ -38,3 +38,19 @@ export class PurchaseMap {
     creationDate: string;
     products: PurchaseHasProduct[];
 }
+
+export class PurchaseRq {
+    userId: number;
+    paymentTypeId: number;
+    categoryId: number;
+    state: string;
+}
+
+export class PurchaseCart extends Purchase {
+    category?: Category;
+}
+
+export class PurchaseHasProductRq {
+    id: PurchaseHasProductId;
+    quantity: number;
+}

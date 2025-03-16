@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
 import { InputSelectComponent } from '@component/shared/inputs/input-select/input-select.component';
@@ -18,8 +18,11 @@ import { TagModule } from 'primeng/tag';
 })
 export class DataViewComponent implements OnChanges {
 
-  originalObjects: Product[] = [];
+  @Output() addToCartEvent = new EventEmitter<Product>();
+  @Output() buyNowEvent = new EventEmitter<Product>();
+  
   @Input() objects: Product[] = [];
+  originalObjects: Product[] = [];
 
   layout: 'list' | 'grid' = 'grid';
   layoutOptions = ['list', 'grid'];
@@ -102,6 +105,14 @@ export class DataViewComponent implements OnChanges {
     if(text == 'none') {
       this.objects = [...this.originalObjects];
     }
+  }
+
+  addToCart(product: Product) {
+    this.addToCartEvent.emit(product);
+  }
+
+  buyNow(product: Product) {
+    this.buyNowEvent.emit(product);
   }
 
 }

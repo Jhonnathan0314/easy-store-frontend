@@ -58,12 +58,14 @@
                                     label="Agregar al carrito"
                                     [disabled]="item.quantity == 0"
                                     class="flex-auto md:flex-initial whitespace-nowrap"
+                                    (clickEvent)="addToCart(item)"
                                 ></app-button>
                                 <app-button
                                     icon="pi pi-shopping-cart"
                                     label="Comprar ahora"
                                     [disabled]="item.quantity == 0"
                                     class="flex-auto md:flex-initial whitespace-nowrap"
+                                    (clickEvent)="buyNow(item)"
                                 ></app-button>
                             </div>
                         </div>
@@ -112,12 +114,14 @@
                                             label="Agregar al carrito"
                                             [disabled]="item.quantity == 0"
                                             class="flex-auto md:flex-initial whitespace-nowrap"
+                                            (clickEvent)="addToCart(item)"
                                         ></app-button>
                                         <app-button
                                             icon="pi pi-shopping-cart"
                                             label="Comprar ahora"
                                             [disabled]="item.quantity == 0"
                                             class="flex-auto md:flex-initial whitespace-nowrap"
+                                            (clickEvent)="buyNow(item)"
                                         ></app-button>
                                     </div>
                                 </div>

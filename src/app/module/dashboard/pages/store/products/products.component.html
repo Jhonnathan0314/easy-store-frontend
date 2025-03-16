@@ -1,3 +1,3 @@
 @if (products) {
-    <app-data-view class="w-full" [objects]="products"></app-data-view>
+    <app-data-view class="w-full" [objects]="products" (addToCartEvent)="addToCart($event)" (buyNowEvent)="buyNow($event)"></app-data-view>
 }

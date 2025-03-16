@@ -59,6 +59,19 @@ export class ProductService {
     })
   }
 
+  findById(id: number) {
+    this.http.get<ApiResponse<Product>>(`${this.apiUrl}/product/${id}`).subscribe({
+      next: (product) => {
+        const index = this.products.findIndex(prod => prod.id == id);
+        this.products[index] = product.data;
+        this.productsSubject.next(this.products);
+      },
+      error: (error) => {
+        console.log("error finding products: ", error);
+      }
+    })
+  }
+
   getAll() {
     return this.storedProducts$.pipe();
   }
