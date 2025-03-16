@@ -4,7 +4,6 @@ import { LoginRequest } from '../../models/data-types/security/security-request.
 import { SessionData } from '../../models/data-types/security/security-data.model';
 import { CryptoService } from '../utils/crypto/crypto.service';
 import { DOCUMENT } from '@angular/common';
-import { log } from 'console';
 
 @Injectable({
   providedIn: 'root'
@@ -39,10 +38,11 @@ export class SessionService {
   }
 
   private validateSession() {
+    console.log("this.isLogged(): ", this.isLogged());
     if (this.isLogged()) {
       this.actualPath = window.location.href;
-      if(!this.actualPath.includes('security')) return;
-      this.redirect('/dashboard');
+      console.log("actualPath: ", this.actualPath);
+      if(!this.actualPath.includes('dasboard') && !this.actualPath.includes('security')) this.redirect('/dashboard');
     } else {
       this.logout();
     }
