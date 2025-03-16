@@ -26,6 +26,10 @@ export class DataViewComponent implements OnChanges {
 
   sortOptions: PrimeNGObject[] = [
     {
+      value: 'none',
+      name: 'Ninguno'
+    },
+    {
       value: 'lowPrice',
       name: 'Precio más bajo'
 
@@ -49,14 +53,10 @@ export class DataViewComponent implements OnChanges {
     {
       value: 'highQualification',
       name: 'Mayor calificación'
-    },
-    {
-      value: 'none',
-      name: 'Ninguno'
     }
   ];
 
-  selectedSortOption = this.sortOptions[this.sortOptions.length - 1].value;
+  selectedSortOption = this.sortOptions[0].value;
 
   ngOnChanges(): void {
     this.originalObjects = [...this.objects];
@@ -98,6 +98,9 @@ export class DataViewComponent implements OnChanges {
     }
     if(text == 'highQualification') {
       this.objects = this.objects.sort((a, b) => b.qualification - a.qualification);
+    }
+    if(text == 'none') {
+      this.objects = [...this.originalObjects];
     }
   }
 
