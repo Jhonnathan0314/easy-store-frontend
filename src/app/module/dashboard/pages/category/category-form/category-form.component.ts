@@ -162,11 +162,7 @@ export class CategoryFormComponent implements OnInit {
     this.filesToUpload = files;
   }
 
-  receiveValueString(key: string, value: string) {
-    this.categoryForm.value[key] = value;
-  }
-
-  receiveValueNumber(key: string, value: number) {
+  receiveValue(key: string, value: string | number) {
     this.categoryForm.value[key] = value;
   }
 

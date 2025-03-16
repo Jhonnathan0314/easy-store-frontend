@@ -21,7 +21,7 @@
           label="Nombre"
           [classes]="categoryForm.controls['name'].status === 'INVALID' && categoryForm.touched ? 'ng-invalid ng-dirty' : ''"
           errorMessage="Nombre inválido"
-          (valueEvent)="receiveValueString('name', $event)"
+          (valueEvent)="receiveValue('name', $event)"
           formControlName="name"
           ngDefaultControl
         />
@@ -31,7 +31,7 @@
           label="Descripción"
           [classes]="categoryForm.controls['description'].status === 'INVALID' && categoryForm.touched ? 'ng-invalid ng-dirty' : ''"
           errorMessage="Descripción inválida"
-          (valueEvent)="receiveValueString('description', $event)"
+          (valueEvent)="receiveValue('description', $event)"
           formControlName="description"
           ngDefaultControl
         />
