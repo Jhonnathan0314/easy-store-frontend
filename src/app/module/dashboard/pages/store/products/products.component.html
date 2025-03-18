@@ -1,3 +1,5 @@
-@if (products) {
+@if (isLoading) {
+    <app-loading-data-view />
+} @else {
     <app-data-view class="w-full" [objects]="products" (addToCartEvent)="addToCart($event)" (buyNowEvent)="buyNow($event)"></app-data-view>
 }

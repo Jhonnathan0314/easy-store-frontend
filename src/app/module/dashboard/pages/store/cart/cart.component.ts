@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Category } from '@models/data/category.model';
-import { Purchase, PurchaseCart, PurchaseHasProduct } from '@models/data/purchase.model';
+import { PurchaseCart, PurchaseHasProduct } from '@models/data/purchase.model';
 import { AccordionModule } from 'primeng/accordion';
 import { Subscription } from 'rxjs';
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
@@ -11,11 +11,12 @@ import { Router } from '@angular/router';
 import { ProductService } from 'src/app/core/services/api/data/product/product.service';
 import { Product } from '@models/data/product.model';
 import { DividerModule } from 'primeng/divider';
+import { SkeletonModule } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [AccordionModule, DividerModule, ButtonComponent],
+  imports: [AccordionModule, DividerModule, SkeletonModule, ButtonComponent],
   templateUrl: './cart.component.html'
 })
 export class CartComponent implements OnInit {
@@ -25,6 +26,8 @@ export class CartComponent implements OnInit {
   products: Product[] = [];
 
   userId: number = 0;
+
+  isLoading = true;
 
   purchaseSubscription: Subscription;
   categorySubscription: Subscription;
@@ -79,6 +82,7 @@ export class CartComponent implements OnInit {
         if(products.length == 0) return;
         this.products = products;
         this.savePurchases();
+        this.isLoading = false;
       },
       error: (error) => {
         console.log('Ha ocurrido un error consultando compras.', {error});

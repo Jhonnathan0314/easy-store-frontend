@@ -1,0 +1,15 @@
+<div class="rounded border border-section px-6 mt-12">
+    <ul class="m-0 p-0 list-none">
+        @for(object of objects; track object) {
+            <li class="py-4">
+                <div class="flex">
+                    <p-skeleton shape="circle" size="4rem" styleClass="mr-2" />
+                    <div class="self-center" style="flex: 1">
+                        <p-skeleton width="100%" styleClass="mb-2" />
+                        <p-skeleton width="75%" />
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+</div>

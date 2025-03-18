@@ -6,17 +6,20 @@ import { Subscription } from 'rxjs';
 import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/payment-type.service';
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
 import { TableComponent } from "../../../../../shared/data/table/table.component";
+import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
 
 @Component({
   selector: 'app-payment-type-all',
   standalone: true,
-  imports: [RouterModule, ButtonComponent, TableComponent],
+  imports: [RouterModule, ButtonComponent, TableComponent, LoadingTableComponent],
   templateUrl: './payment-type-all.component.html'
 })
 export class PaymentTypeAllComponent {
 
   paymentTypes: PaymentType[] = [];
   mappedPaymentTypes: DataObject[] = [];
+
+  isLoading = true;
 
   paymentTypeSubscription: Subscription;
 
@@ -36,8 +39,10 @@ export class PaymentTypeAllComponent {
   openSubscriptions() {
     this.paymentTypeSubscription = this.paymentTypeService.storedPaymentTypes$.subscribe({
       next: (paymentTypes) => {
+        if(paymentTypes.length == 0) return;
         this.paymentTypes = paymentTypes;
         this.convertToDataObject();
+        this.isLoading = false;
       },
       error: (error) => {
         console.log('Ha ocurrido un error: ', {error});

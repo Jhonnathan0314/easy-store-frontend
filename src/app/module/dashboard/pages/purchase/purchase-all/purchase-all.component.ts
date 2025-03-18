@@ -15,11 +15,12 @@ import { ProductService } from 'src/app/core/services/api/data/product/product.s
 import { PurchaseService } from 'src/app/core/services/api/data/purchase/purchase.service';
 import { UserService } from 'src/app/core/services/api/data/user/user.service';
 import { PurchaseReportComponent } from "../purchase-report/purchase-report.component";
+import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
 
 @Component({
   selector: 'app-purchase-all',
   standalone: true,
-  imports: [ButtonComponent, TableComponent, PurchaseReportComponent],
+  imports: [ButtonComponent, TableComponent, LoadingTableComponent, PurchaseReportComponent],
   templateUrl: './purchase-all.component.html'
 })
 export class PurchaseAllComponent {
@@ -31,7 +32,6 @@ export class PurchaseAllComponent {
   categories: Category[] = [];
   products: Product[] = [];
   purchases: Purchase[] = [];
-
 
   purchaseMap = new PurchaseMap();
   user = new User();
@@ -53,6 +53,8 @@ export class PurchaseAllComponent {
 
   viewChart: boolean = false;
 
+  isLoading = true;
+
   constructor(
     private router: Router,
     private userService: UserService,
@@ -73,6 +75,7 @@ export class PurchaseAllComponent {
   openUserSubscription() {
     this.userSubscription = this.userService.storedUsers$.subscribe({
       next: (users) => {
+        if(users.length == 0) return;
         this.users = users;
         this.openPaymentTypeSubscription();
       },
@@ -85,6 +88,7 @@ export class PurchaseAllComponent {
   openPaymentTypeSubscription() {
     this.paymentTypeSubscription = this.paymentTypeService.storedPaymentTypes$.subscribe({
       next: (paymentTypes) => {
+        if(paymentTypes.length == 0) return;
         this.paymentTypes = paymentTypes;
         this.openCategorySubscription();
       },
@@ -97,6 +101,7 @@ export class PurchaseAllComponent {
   openCategorySubscription() {
     this.categorySubscription = this.categoryService.storedCategories$.subscribe({
       next: (categories) => {
+        if(categories.length == 0) return;
         this.categories = categories;
         this.openProductSubscription();
       },
@@ -109,6 +114,7 @@ export class PurchaseAllComponent {
   openProductSubscription() {
     this.productSubscription = this.productService.storedProducts$.subscribe({
       next: (products) => {
+        if(products.length == 0) return;
         this.products = products;
         this.openPurchaseSubscription();
       },
@@ -121,8 +127,10 @@ export class PurchaseAllComponent {
   openPurchaseSubscription() {
     this.purchaseSubscription = this.purchaseService.storedPurchases$.subscribe({
       next: (purchases) => {
+        if(purchases.length == 0) return;
         this.purchases = purchases;
         this.convertToDataObject();
+        this.isLoading = false;
       },
       error: (error) => {
         console.log('Ha ocurrido un error consultando compras.', {error});

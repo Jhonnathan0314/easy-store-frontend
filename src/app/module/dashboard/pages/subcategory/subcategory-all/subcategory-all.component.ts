@@ -8,11 +8,12 @@ import { ButtonComponent } from "../../../../../shared/inputs/button/button.comp
 import { TableComponent } from "../../../../../shared/data/table/table.component";
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
 import { Category } from '@models/data/category.model';
+import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
 
 @Component({
   selector: 'app-subcategory-all',
   standalone: true,
-  imports: [ButtonComponent, TableComponent],
+  imports: [ButtonComponent, TableComponent, LoadingTableComponent],
   templateUrl: './subcategory-all.component.html'
 })
 export class SubcategoryAllComponent {
@@ -21,6 +22,8 @@ export class SubcategoryAllComponent {
   mappedSubcategories: DataObject[] = [];
   
   categories: Category[] = [];
+
+  isLoading = true;
 
   subcategorySubscription: Subscription;
   categorySubscription: Subscription;
@@ -42,6 +45,7 @@ export class SubcategoryAllComponent {
   openSubscriptions() {
     this.categorySubscription = this.categoryService.storedCategories$.subscribe({
       next: (categories) => {
+        if(categories.length == 0) return;
         this.categories = categories;
         this.openSubcategorySubscription();
       },
@@ -55,8 +59,10 @@ export class SubcategoryAllComponent {
     if(this.categories.length == 0) return;
     this.subcategorySubscription = this.subcategoryService.storedSubcategories$.subscribe({
       next: (subcategories) => {
+        if(subcategories.length == 0) return;
         this.subcategories = subcategories;
         this.convertToDataObject();
+        this.isLoading = false;
       },
       error: (error) => {
         console.log('Ha ocurrido un error en subcategorias: ', {error});

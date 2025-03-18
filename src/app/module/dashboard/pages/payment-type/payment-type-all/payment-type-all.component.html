@@ -10,12 +10,19 @@
         icon="pi pi-plus"
         (clickEvent)="goCreate()"
     />
-    <app-table
-        class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
-        [objects]="mappedPaymentTypes"
-        [updateButton]="true"
-        [deleteButton]="true"
-        updateRedirectPath="payment-type/form"
-        (deleteEvent)="deleteById($event)"
-    />
+    @if (isLoading) {
+        <app-loading-table 
+            class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
+        />
+    } @else {
+        <app-table
+            class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
+            [objects]="mappedPaymentTypes"
+            [updateButton]="true"
+            [deleteButton]="true"
+            updateRedirectPath="payment-type/form"
+            (deleteEvent)="deleteById($event)"
+        />
+    }
+        
 </section>

@@ -27,21 +27,33 @@
         <app-purchase-report class="w-full" [purchases]="mappedPurchases" [categories]="categories" />
     } @else {
         <h1 class="w-full text-center font-bold">Gestion de compras</h1>
-        <app-table
-            class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
-            [objects]="mappedPurchases"
-            (deleteEvent)="deleteById($event)"
-            (detailEvent)="viewDetail($event)"
-        />
+        @if (isLoading) {
+            <app-loading-table 
+                class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
+            />
+        } @else {
+            <app-table
+                class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
+                [objects]="mappedPurchases"
+                (deleteEvent)="deleteById($event)"
+                (detailEvent)="viewDetail($event)"
+            />
+        }
         
         @if(isDetailSelected) {
             <h1 class="w-full text-center font-bold">Compra con id {{ detailSelectedId }}</h1>
-            <app-table
-                class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
-                [purchaseHasProduct]="true"
-                [purchaseHasProductIndex]="detailSelectedIndex"
-                [objects]="mappedPurchases"
-            />
+            @if (isLoading) {
+                <app-loading-table 
+                    class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
+                />
+            } @else {
+                <app-table
+                    class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
+                    [purchaseHasProduct]="true"
+                    [purchaseHasProductIndex]="detailSelectedIndex"
+                    [objects]="mappedPurchases"
+                />
+            }
         }
     }
 </section>

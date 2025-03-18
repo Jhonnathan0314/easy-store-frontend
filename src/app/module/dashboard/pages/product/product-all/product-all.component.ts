@@ -8,11 +8,12 @@ import { Subcategory } from '@models/data/subcategory.model';
 import { Subscription } from 'rxjs';
 import { SubcategoryService } from 'src/app/core/services/api/data/subcategory/subcategory.service';
 import { Router } from '@angular/router';
+import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
 
 @Component({
   selector: 'app-product-all',
   standalone: true,
-  imports: [ButtonComponent, TableComponent],
+  imports: [ButtonComponent, TableComponent, LoadingTableComponent],
   templateUrl: './product-all.component.html'
 })
 export class ProductAllComponent {
@@ -21,6 +22,8 @@ export class ProductAllComponent {
   mappedProducts: DataObject[] = [];
   
   subcategories: Subcategory[] = [];
+
+  isLoading = true;
 
   productSubscription: Subscription;
   subcategorySubscription: Subscription;
@@ -42,6 +45,7 @@ export class ProductAllComponent {
   openSubcategorySubscription() {
     this.subcategorySubscription = this.subcategoryService.storedSubcategories$.subscribe({
       next: (subcategories) => {
+        if(subcategories.length == 0) return;
         this.subcategories = subcategories;
         this.openProductSubscription();
       },
@@ -55,10 +59,10 @@ export class ProductAllComponent {
     if(this.subcategories.length == 0) return;
     this.productSubscription = this.productService.storedProducts$.subscribe({
       next: (products) => {
-        if(products.length > 0) {
-          this.products = products;
-          this.convertToDataObject();
-        }
+        if(products.length == 0) return;
+        this.products = products;
+        this.convertToDataObject();
+        this.isLoading = false;
       },
       error: (error) => {
         console.log('Ha ocurrido un error en subcategorias: ', {error});

@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { DataViewComponent } from '@component/shared/data/data-view/data-view.component';
+import { LoadingDataViewComponent } from '@component/shared/skeleton/loading-data-view/loading-data-view.component';
 import { Category } from '@models/data/category.model';
 import { PaymentType } from '@models/data/payment-type.model';
 import { Product } from '@models/data/product.model';
@@ -13,7 +14,7 @@ import { PurchaseService } from 'src/app/core/services/api/data/purchase/purchas
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [RouterModule, DataViewComponent],
+  imports: [RouterModule, DataViewComponent, LoadingDataViewComponent],
   templateUrl: './products.component.html'
 })
 export class ProductsComponent implements OnInit, OnDestroy {
@@ -28,6 +29,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
   categories: Category[] = [];
 
   categoryId: number;
+
+  isLoading = true;
 
   productsSubscription: Subscription;
   purchaseSubscription: Subscription;
@@ -56,6 +59,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   productsSubscribe() {
     this.productsSubscription = this.productService.getByCategoryId(this.categoryId).subscribe({
       next: (products) => {
+        if(products.length == 0) return;
         this.products = products;
         this.purchaseSubscribe();
       },
@@ -68,6 +72,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   purchaseSubscribe() {
     this.purchaseSubscription = this.purchaseService.storedPurchases$.subscribe({
       next: (purchases) => {
+        if(purchases.length == 0) return;
         this.purchases = purchases;
         this.paymentTypeSubscribe();
       },
@@ -80,7 +85,9 @@ export class ProductsComponent implements OnInit, OnDestroy {
   paymentTypeSubscribe() {
     this.paymentTypeSubscription = this.paymentTypeService.storedPaymentTypes$.subscribe({
       next: (paymentTypes) => {
+        if(paymentTypes.length == 0) return;
         this.paymentTypes = paymentTypes;
+        this.isLoading = false;
       },
       error: (error) => {
         console.log("Ha ocurrido un error en tipos de pago.", error);
