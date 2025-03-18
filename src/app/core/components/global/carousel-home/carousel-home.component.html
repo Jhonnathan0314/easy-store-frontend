@@ -1,14 +1,22 @@
-<p-carousel
-  [value]="items"
-  [numVisible]="3"
-  [numScroll]="1"
-  [responsiveOptions]="responsiveOptions"
->
-  <ng-template let-item pTemplate="item">
-    <a [routerLink]="['/dashboard/' + item.route]" class="!mx-4 bg-section gap-4">
-      <img [src]="item.img" [alt]="item.img" class="h-40"/>
-      <h3 class="text-center">{{ item.title }}</h3>
-      <h4 class="text-center">{{ item.body }}</h4>
-    </a>
-  </ng-template>
-</p-carousel>
+@if (isLoading) {
+  <div class="py-4 flex flex-col justify-center items-center gap-4">
+    <p-skeleton width="10rem" height="8rem" />
+    <p-skeleton width="5rem" />
+    <p-skeleton width="10rem" />
+  </div>
+} @else {
+  <p-carousel
+    [value]="items"
+    [numVisible]="3"
+    [numScroll]="1"
+    [responsiveOptions]="responsiveOptions"
+  >
+    <ng-template let-item pTemplate="item">
+      <a [routerLink]="['/dashboard/' + item.route]" class="!mx-4 bg-section gap-4">
+        <img [src]="item.img" [alt]="item.img" class="h-40"/>
+        <h3 class="text-center">{{ item.title }}</h3>
+        <h4 class="text-center">{{ item.body }}</h4>
+      </a>
+    </ng-template>
+  </p-carousel>
+}

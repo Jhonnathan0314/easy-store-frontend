@@ -5,11 +5,12 @@ import { CarouselHomeObject, ResponsiveCarouselOptions } from '@models/utils/pri
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
 import { CarouselModule } from 'primeng/carousel';
 import { RouterModule } from '@angular/router';
+import { SkeletonModule } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-carousel-home',
   standalone: true,
-  imports: [CarouselModule, RouterModule],
+  imports: [CarouselModule, SkeletonModule, RouterModule],
   templateUrl: './carousel-home.component.html',
   styleUrls: ['../../../../../../public/assets/css/layout.css']
 })
@@ -19,6 +20,8 @@ export class CarouselHomeComponent implements OnInit, OnDestroy {
   items: CarouselHomeObject[] = [];
 
   responsiveOptions: ResponsiveCarouselOptions[] = [];
+
+  isLoading = true;
 
   categoriesSuscription: Subscription;
 
@@ -40,6 +43,7 @@ export class CarouselHomeComponent implements OnInit, OnDestroy {
         if(value.length == 0) return;
         this.categories = value;
         this.defineItems();
+        this.isLoading = false;
       }
     });
   }
