@@ -27,8 +27,8 @@
                         <div class="md:w-40 relative">
                             <img
                                 class="block xl:block mx-auto rounded w-full"
-                                [src]="item.image ? 'data:' + item.image.extension + ';base64,' + item.image.content : '/assets/img/product.png'"
-                                [alt]="item.name"
+                                [src]="item && item.images && item.images.length ? 'data:' + item.images[0].extension + ';base64,' + item.images[0].content : '/assets/img/product.png'"
+                                [alt]="item && item.images && item.images.length ? item.images[0].name : '/assets/img/product.png'"
                             />
                             <p-tag
                                 [value]="item.quantity + ' disponibles'"
@@ -81,8 +81,8 @@
                                     <div class="relative mx-auto">
                                         <img
                                             class="rounded w-full"
-                                            [src]="item.image ? 'data:' + item.image.extension + ';base64,' + item.image.content : '/assets/img/product.png'"
-                                            [alt]="item.name"
+                                            [src]="item && item.images && item.images.length ? 'data:' + item.images[0].extension + ';base64,' + item.images[0].content : '/assets/img/product.png'"
+                                            [alt]="item && item.images && item.images.length ? item.images[0].name : '/assets/img/product.png'"
                                             style="max-width: 300px"
                                         />
                                         <p-tag
