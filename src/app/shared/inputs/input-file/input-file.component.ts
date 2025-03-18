@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { S3File } from '@models/utils/file.model';
 import { FileSelectEvent, FileUpload } from 'primeng/fileupload';
 import { ButtonComponent } from '../button/button.component';
@@ -10,13 +10,14 @@ import { ButtonComponent } from '../button/button.component';
   imports: [FileUpload, ButtonComponent, CommonModule],
   templateUrl: './input-file.component.html'
 })
-export class InputFileComponent {
+export class InputFileComponent implements OnInit {
 
   @Input() fileLimit: number = 1;
   @Input() label: string = '';
   @Input() filesUploaded: S3File[] = [];
 
   @Output() uploadFilesEvent = new EventEmitter<S3File[]>();
+  @Output() deleteFileEvent = new EventEmitter<S3File>();
 
   filesToUpload: S3File[] = [];
 
@@ -26,6 +27,12 @@ export class InputFileComponent {
   removeEnable: boolean = false;
 
   constructor() { }
+
+  ngOnInit() {
+    if (this.filesUploaded?.length > 0) {
+      this.removeEnable = true;
+    }
+  }
 
   callback(callback: any) {
     callback();
@@ -74,6 +81,10 @@ export class InputFileComponent {
     this.sendEnable = false;
     this.clearEnable = false;
     this.filesToUpload = [];
+  }
+
+  removeUploaded(file: S3File) {
+    this.deleteFileEvent.emit(file);
   }
 
 }

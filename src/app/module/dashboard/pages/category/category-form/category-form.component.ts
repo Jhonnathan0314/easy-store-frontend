@@ -80,6 +80,11 @@ export class CategoryFormComponent implements OnInit {
     })
   }
 
+  setUpdateTitles() {
+    this.buttonLabel = 'Guardar';
+    this.title = 'Actualizar tienda';
+  }
+
   findCategoryById() {
     this.categoryService.getById(this.category.id).subscribe({
       next: (response) => {
@@ -103,11 +108,6 @@ export class CategoryFormComponent implements OnInit {
       name: this.category.name,
       description: this.category.description
     });
-  }
-
-  setUpdateTitles() {
-    this.buttonLabel = 'Guardar';
-    this.title = 'Actualizar tienda';
   }
 
   validateForm() {
@@ -163,7 +163,7 @@ export class CategoryFormComponent implements OnInit {
   }
 
   receiveValue(key: string, value: string | number) {
-    this.categoryForm.value[key] = value;
+    this.categoryForm.patchValue({ [key]: value });
   }
 
   setViewInputFile(value: boolean) {

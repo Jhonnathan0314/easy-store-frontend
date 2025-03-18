@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Product } from '@models/data/product.model';
@@ -15,7 +15,6 @@ import { InputSelectComponent } from "../../../../../shared/inputs/input-select/
 import { InputFileComponent } from "../../../../../shared/inputs/input-file/input-file.component";
 import { S3File } from '@models/utils/file.model';
 import { MessageService } from 'primeng/api';
-import { FileService } from 'src/app/core/services/api/utils/file/file.service';
 
 @Component({
   selector: 'app-product-form',
@@ -25,17 +24,19 @@ import { FileService } from 'src/app/core/services/api/utils/file/file.service';
   styleUrls: ['../../../../../../../public/assets/css/layout.css'],
   providers: [MessageService]
 })
-export class ProductFormComponent {
+export class ProductFormComponent implements OnDestroy {
 
   productForm: FormGroup;
   formErrors: FormErrors;
 
   product: Product = new Product();
+
   subcategories: Subcategory[] = [];
   mappedSubcategories: PrimeNGObject[] = [];
   
+  files: S3File[] = [];
   filesToUpload: S3File[] = [];
-  filesUploaded: S3File[] = [];
+  filesToDelete: S3File[] = [];
 
   buttonLabel: string = 'Crear';
   title: string = 'Crear producto';
@@ -43,6 +44,7 @@ export class ProductFormComponent {
   viewInputFile: boolean = true;
 
   subcategorySubscription: Subscription;
+  productsSubscription: Subscription;
 
   @Output() productErrorEvent = new EventEmitter<FormErrors>();
 
@@ -52,45 +54,38 @@ export class ProductFormComponent {
     private formBuilder: FormBuilder, 
     private messageService: MessageService,
     private productService: ProductService,
-    private subcategoryService: SubcategoryService,
-    private fileService: FileService
+    private subcategoryService: SubcategoryService
   ) { }
 
   ngOnInit(): void {
+    this.openSubcategorySubscription();
+    this.openProductsSubscription();
     this.initializeForm();
-    this.obtainIdFromPath();
-    this.openSubscriptions();
+    this.validateAction();
   }
 
-  obtainIdFromPath() {
-    this.product.id = parseInt(this.activatedRoute.snapshot.params['_id']);
+  ngOnDestroy(): void {
+    this.subcategorySubscription.unsubscribe();
+    this.productsSubscription.unsubscribe();
   }
 
-  findProductById() {
-    if(this.isCreate()) {
-      this.prepareCreateForm();
-      return;
-    }
-    this.setUpdateTitles();
-    if(this.subcategories.length == 0) return;
-    this.productService.getById(this.product.id).subscribe({
-      next: (response) => {
-        if(response?.id == null || response.id == undefined) return;
-        this.product = response || new Subcategory();
-        this.prepareUpdateForm();
-      },
-      error: (error) => {
-        console.log("Ha ocurrido un error al obtener producto por id. ", error);
-      }
-    })
-  }
-
-  openSubscriptions() {
+  openSubcategorySubscription() {
     this.subcategorySubscription = this.subcategoryService.storedSubcategories$.subscribe({
       next: (subcategories) => {
         this.subcategories = subcategories;
         this.mapSubcategoriesToSelect();
-        this.findProductById();
+      },
+      error: (error) => {
+        console.log("Ha ocurrido un error en subcategorias.", error);
+      }
+    })
+  }
+
+  openProductsSubscription() {
+    this.productsSubscription = this.productService.storedProducts$.subscribe({
+      next: (products) => {
+        this.product = products.find(prod => prod.id == this.product.id) ?? this.product;
+        this.files = this.product.images;
       },
       error: (error) => {
         console.log("Ha ocurrido un error en subcategorias.", error);
@@ -104,20 +99,54 @@ export class ProductFormComponent {
     })
   }
 
-  isCreate(): boolean {
-    return this.product.id === 0;
+  initializeForm() {
+    this.productForm = this.formBuilder.group({
+      id: [0],
+      name: ['', [Validators.required]],
+      description: ['', [Validators.required]],
+      price: [null, [Validators.required]],
+      quantity: [null, [Validators.required]],
+      qualification: [null, [Validators.required]],
+      subcategoryId: [null, [Validators.required]]
+    });
+  }
+
+  validateAction() {
+    this.obtainIdFromPath();
+    if(this.product.id == 0) {
+      this.prepareCreateForm();
+      return;
+    }
+    this.setUpdateTitles();
+    this.findProductById();
+  }
+
+  obtainIdFromPath() {
+    this.product.id = parseInt(this.activatedRoute.snapshot.params['_id']);
   }
 
   prepareCreateForm() {
     this.productForm.patchValue({
-      id: this.product.id,
-      name: '',
-      description: '',
-      price: null,
-      quantity: null,
-      qualification: null,
-      subcategoryId: null,
-      imageName: null
+      id: this.product.id
+    })
+  }
+
+  setUpdateTitles() {
+    this.buttonLabel = 'Guardar';
+    this.title = 'Actualizar producto';
+  }
+
+  findProductById() {
+    if(this.subcategories.length == 0) return;
+    this.productService.getById(this.product.id).subscribe({
+      next: (response) => {
+        if(response?.id == null || response.id == undefined) return;
+        this.product = response || new Subcategory();
+        this.prepareUpdateForm();
+      },
+      error: (error) => {
+        console.log("Ha ocurrido un error al obtener producto por id. ", error);
+      }
     })
   }
 
@@ -132,35 +161,8 @@ export class ProductFormComponent {
       price: this.product.price,
       quantity: this.product.quantity,
       qualification: this.product.qualification,
-      subcategoryId: `${this.product.subcategoryId}`,
-      imageName: `${this.product.imageName}`
+      subcategoryId: `${this.product.subcategoryId}`
     })
-  }
-
-  setUpdateTitles() {
-    this.buttonLabel = 'Guardar';
-    this.title = 'Actualizar producto';
-  }
-
-  initializeForm() {
-    this.productForm = this.formBuilder.group({
-      id: [0],
-      name: ['', [Validators.required]],
-      description: ['', [Validators.required]],
-      price: [null, [Validators.required]],
-      quantity: [null, [Validators.required]],
-      qualification: [null, [Validators.required]],
-      subcategoryId: [null, [Validators.required]],
-      imageName: ['']
-    });
-  }
-
-  receiveValueString(key: string, value: string) {
-    this.productForm.patchValue({ [key]: value })
-  }
-
-  receiveValueNumber(key: string, value: number) {
-    this.productForm.patchValue({ [key]: value })
   }
 
   validateForm() {
@@ -168,78 +170,62 @@ export class ProductFormComponent {
       this.productForm.markAllAsTouched();
       return;
     }
-    this.getProductObject();
-    if(this.buttonLabel === 'Crear') {
+    this.prepareRequest();
+  }
+
+  prepareRequest() {
+    this.product = { 
+      ...this.productForm.value,
+      imageNumber: this.product.imageNumber ?? 0,
+      imageLastNumber: this.product.imageLastNumber ?? 0,
+      imageName: this.product.imageName ?? 'product.png'
+    };
+    this.executeAction();
+  }
+
+  executeAction() {
+    if(this.product.id == 0) {
       this.createProduct();
-    }else {
-      this.updateProduct();
+      return;
     }
+    this.updateProduct();
   }
 
   createProduct() {
-    this.productService.create(this.product).subscribe({
-      next: (response) => {
-        if(this.filesToUpload.length > 0) {
-          this.product.id = response.data.id;
-          this.uploadFiles(this.filesToUpload);
-        }else {
-          this.router.navigateByUrl('/dashboard/category');
-        }
-      },
+    this.productService.create(this.product, this.filesToUpload).subscribe({
+      next: (response) => { },
       error: (error) => {
         console.log("Ha ocurrido un error al crear el producto.", error);
+      },
+      complete: () => {
+        this.router.navigateByUrl('/dashboard/product');
       }
     })
   }
 
   updateProduct() {
-    this.productService.update(this.product).subscribe({
-      next: (response) => {
-        this.router.navigateByUrl('/dashboard/product');
-      },
+    this.productService.update(this.product, this.filesToUpload, this.filesToDelete).subscribe({
+      next: (response) => { },
       error: (error) => {
         console.log("Ha ocurrido un error al actualizar el producto.", error);
+      },
+      complete: () => {
+        this.router.navigateByUrl('/dashboard/product');
       }
     })
   }
 
-  getProductObject() {
-    this.product = { 
-      id: this.productForm.value.id,
-      name: this.productForm.value.name,
-      description: this.productForm.value.description,
-      price: this.productForm.value.price,
-      quantity: this.productForm.value.quantity,
-      qualification: this.productForm.value.qualification,
-      subcategoryId: this.productForm.value.subcategoryId,
-      imageName: this.filesToUpload.length > 0 ? this.filesToUpload[0].name : 'product.png'
-    };
+  deleteFile(file: S3File) {
+    this.product.images = this.product.images.filter(img => img.name != file.name);
+    this.filesToDelete.push(file);
   }
 
   uploadFiles(files: S3File[]) {
-    if(this.product.id == 0) {
-      this.filesToUpload = files;
-      this.messageService.add({severity: 'info', summary: `Información.`, detail: `Las imagenes serán cargadas automaticamente cuando cree el producto.`});
-      return;
-    }
-    files.forEach(file  => {
-      file.context = "product";
-      file.name = `${this.product.id}.png`;
-      this.product.imageName = file.name;
-      this.fileService.putFile(file).subscribe({
-        next: (response) => {
-          if(response) {
-            this.filesUploaded.push(file);
-            this.messageService.add({severity: 'success', summary: `Cargue exitoso.`, detail: `Imagen ${file.name} cargada con éxito.`});
-            this.updateProduct();
-          }
-        },
-        error: (error) => {
-          console.log("Ha ocurrido un error al cargar el archivo ", {name: file.name, error});
-        }
-      })
-    })
-    this.filesToUpload = [];
+    this.filesToUpload = files;
+  }
+
+  receiveValue(key: string, value: string | number) {
+    this.productForm.patchValue({ [key]: value });
   }
 
   setViewInputFile(value: boolean) {

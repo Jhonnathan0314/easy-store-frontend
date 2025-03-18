@@ -82,7 +82,7 @@ export class ProductAllComponent {
         qualification: prod.qualification,
         description: prod.description,
         imageName: prod.imageName,
-        imageObj: prod.image,
+        imageObj: prod.imageNumber > 0 && prod.images ? prod.images[0] : undefined,
         subcategoryId: subcategory.id,
         subcategoryName: subcategory.name,
         categoryId: subcategory.categoryId

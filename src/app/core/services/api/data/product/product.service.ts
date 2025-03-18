@@ -1,62 +1,73 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { ApiResponse } from '@models/data/general.model';
 import { Product } from '@models/data/product.model';
-import { BehaviorSubject, forkJoin, map, Observable, of, Subscription, tap } from 'rxjs';
+import { BehaviorSubject, catchError, concat, concatMap, last, map, Observable, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SessionService } from '../../../session/session.service';
 import { SubcategoryService } from '../subcategory/subcategory.service';
 import { Subcategory } from '@models/data/subcategory.model';
 import { S3File } from '@models/utils/file.model';
-import { FileService } from '../../utils/file/file.service';
+import { FileProductService } from '../../utils/file-product/file-product.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductService {
+export class ProductService implements OnDestroy {
 
-  apiUrl: string = '';
+  apiUrl: string = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
 
   private products: Product[] = [];
   private productsSubject = new BehaviorSubject<Product[]>(this.products);
   storedProducts$ = this.productsSubject.asObservable();
 
-  private subcategorySubscription: Subscription;
   private subcategories: Subcategory[] = [];
+  private destroy$ = new Subject<void>();
 
   constructor(
     private http: HttpClient,
     private sessionService: SessionService,
     private subcategoryService: SubcategoryService,
-    private fileService: FileService
+    private fileProductService: FileProductService
   ) {
-    this.apiUrl = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
-    this.openSubscription();
-    this.findAllByAccount();
+    this.subscribeToSubcategories();
+    this.findByAccount().subscribe();
   }
 
-  openSubscription() {
-    this.subcategorySubscription = this.subcategoryService.storedSubcategories$.subscribe({
-      next: (subcategories) => {
-        this.subcategories = subcategories;
-      },
-      error: (error) => {
-        console.log("Ha ocurrido un error en subcategorias.", error);
-      }
-    })
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  private findAllByAccount() {
+  subscribeToSubcategories() {
+    this.subcategoryService.storedSubcategories$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(subcategories => this.subcategories = subcategories);
+  }
+
+  private findByAccount(): Observable<S3File[]> {
     const accountId = this.sessionService.getAccountId();
-    this.http.get<ApiResponse<Product[]>>(`${this.apiUrl}/product/account/${accountId}`).subscribe({
-      next: (products) => {
-        this.products = products.data;
-        this.findImages();
-      },
-      error: (error) => {
-        console.log("error finding products: ", error);
-      }
-    })
+    return this.http.get<ApiResponse<Product[]>>(`${this.apiUrl}/product/account/${accountId}`)
+    .pipe(
+      map(response => response.data),
+      concatMap(products => {
+        this.products = products.map(prod => ({...prod, images: []}));
+        this.productsSubject.next(this.products);
+        return this.fileProductService.findImages(this.products);
+      }),
+      tap(responses => {
+        responses.forEach(response => {
+          const productId = parseInt(response.name.split('-')[0]);
+          const product = this.products.find(prod => prod.id == productId);
+          if (product) product.images.push(response);
+        });
+        this.productsSubject.next(this.products);
+      }),
+      catchError(error => {
+        console.error("Error cargando productos:", error);
+        return of([]);
+      })
+    )
   }
 
   findById(id: number) {
@@ -72,10 +83,6 @@ export class ProductService {
     })
   }
 
-  getAll() {
-    return this.storedProducts$.pipe();
-  }
-
   getByCategoryId(categoryId: number) {
     return this.storedProducts$
       .pipe(
@@ -86,104 +93,80 @@ export class ProductService {
       );
   }
 
-  getBySubcategoryId(subcategoryId: number) {
-    return this.storedProducts$
-      .pipe(
-        map(products => products.filter(prod => prod.subcategoryId == subcategoryId))
-      );
-  }
-
   getById(id: number) {
     return this.storedProducts$
       .pipe(
         map(products => products.find(product => product.id == id))
       );
   }
-
-  getLikeName(name: string) {
-    return this.storedProducts$
-      .pipe(
-        map(products => products.filter(product => product.name.toLowerCase().includes(name.toLowerCase())))
-      );
-  }
-
-  getBetweenPrice(min: number, max: number) {
-    return this.storedProducts$
-      .pipe(
-        map(products => products.filter(product => product.price >= min && product.price <= max))
-      );
-  }
   
-  create(product: Product): Observable<ApiResponse<Product>> {
+  create(product: Product, files: S3File[]): Observable<Product> {
     const userId = this.sessionService.getUserId();
+
     return this.http.post<ApiResponse<Product>>(`${this.apiUrl}/product`, product, {
-      headers: {
-        'Create-By': `${userId}`
-      }
+      headers: { 'Create-By': `${userId}` }
     }).pipe(
-      tap(response => {
-        this.products.push(response.data);
+      map(response => response.data),
+      concatMap(createdProduct => {
+        return this.fileProductService.uploadFiles(files, createdProduct.id).pipe(
+          map(() => createdProduct)
+        )
+      }),
+      tap(product => {
+        this.products.push(product);
         this.productsSubject.next(this.products);
       })
-    )
+    ).pipe(
+      tap(() => console.log("Producto creado con éxito"))
+    );
   }
   
-  update(product: Product): Observable<ApiResponse<Product>> {
+  update(product: Product, filesToUpload: S3File[], filesToDelete: S3File[]): Observable<Product> {
     const userId = this.sessionService.getUserId();
     return this.http.put<ApiResponse<Product>>(`${this.apiUrl}/product`, product, {
-      headers: {
-        'Update-By': `${userId}`
-      }
+      headers: { 'Update-By': `${userId}` }
     }).pipe(
-      tap(response => {
-        const index = this.products.findIndex(prod => prod.id == product?.id);
-        this.products[index] = response.data;
+      map(response => response.data),
+      concatMap(updatedProduct => {
+        return this.fileProductService.uploadFiles(filesToUpload, updatedProduct.id).pipe(
+          map(() => updatedProduct)
+        )
+      }),
+      concatMap(updatedProduct => {
+        return this.fileProductService.deleteFiles(filesToDelete, updatedProduct.id).pipe(
+          map(() => updatedProduct)
+        )
+      }),
+      tap(updatedProduct => {
+        this.products = this.products.map(prod => prod.id === product.id ? updatedProduct : prod);
         this.productsSubject.next(this.products);
+      }),
+      catchError(error => {
+        return concat(
+          this.fileProductService.uploadFiles(filesToUpload, product.id),
+          this.fileProductService.deleteFiles(filesToDelete, product.id)
+        ).pipe(
+          map(() => product)
+        );
       })
-    )
+    );
   }
   
   deleteById(id: number) {
-    this.http.delete<ApiResponse<Object>>(`${this.apiUrl}/product/delete/${id}`).subscribe({
-      next: (response) => {
-        this.productsSubject.next(this.products.filter(prod => prod.id != id));
-      },
-      error: (error) => {
-        if(error.error.code === 404) 
-          console.error("Id no encontrado para eliminar producto.", error);
-      }
-    })
-  }
+    const product = this.products.find(prod => prod.id === id);
+    if (!product) return;
 
-  private findImages() {
-    const requests = this.getRequestObject();
-  
-    forkJoin(requests).subscribe({
-      next: (responses) => {
-        responses.forEach((response, index) => {
-          if (response) {
-            this.products[index].image = response;
-          }
-        });
+    this.fileProductService.deleteFiles(product.images, id).pipe(
+      last(),
+      concatMap(() => this.http.delete<ApiResponse<Object>>(`${this.apiUrl}/product/delete/${id}`)),
+      tap(() => {
+        this.products = this.products.filter(prod => prod.id !== id);
         this.productsSubject.next(this.products);
-      },
-      error: (error) => {
-        console.error("Error al cargar imágenes", error);
-      }
-    });
-  }
-
-  private getRequestObject() {
-    return this.products.map(product => {
-      if (product.imageName != 'product.png') {
-        const file = new S3File();
-        file.context = "product";
-        file.name = product.imageName;
-        return this.fileService.getFile(file);
-      } else {
+      }),
+      catchError(error => {
         return of(null);
-      }
-    });
+      })
+    ).subscribe();
   }
 
 }

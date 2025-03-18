@@ -9,5 +9,7 @@ export class Product {
     description: string;
     subcategoryId: number;
     imageName: string;
-    image?: S3File;
+    imageNumber: number;
+    imageLastNumber: number;
+    images: S3File[];
 }

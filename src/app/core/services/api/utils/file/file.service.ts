@@ -11,20 +11,17 @@ import { ApiResponse } from '@models/data/general.model';
 })
 export class FileService {
 
-  apiUrl: string = '';
+  apiUrl: string = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
 
   accountId: number;
 
   constructor(
     private http: HttpClient, 
     private sessionService: SessionService
-  ) {
-    this.apiUrl = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
-    this.accountId = sessionService.getAccountId();
-  }
+  ) { }
 
   getFile(file: S3File): Observable<S3File> {
-    file.accountId = this.accountId;
+    file.accountId = this.sessionService.getAccountId();
     return this.http.get<ApiResponse<S3File>>(`${this.apiUrl}/s3/get/accountId/${file.accountId}/context/${file.context}/objectName/${file.name}`)
       .pipe(
         map(response => response.data)
@@ -32,7 +29,7 @@ export class FileService {
   }
 
   putFile(file: S3File): Observable<boolean> {
-    file.accountId = this.accountId;
+    file.accountId = this.sessionService.getAccountId();
     return this.http.post<ApiResponse<boolean>>(`${this.apiUrl}/s3/put`, file)
       .pipe(
         map(response => response.data)
@@ -40,7 +37,7 @@ export class FileService {
   }
 
   deleteFile(file: S3File): Observable<boolean> {
-    file.accountId = this.accountId;
+    file.accountId = this.sessionService.getAccountId();
     return this.http.delete<ApiResponse<boolean>>(`${this.apiUrl}/s3/delete/accountId/${file.accountId}/context/${file.context}/objectName/${file.name}`)
       .pipe(
         map(response => response.data)

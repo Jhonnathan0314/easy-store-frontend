@@ -23,8 +23,8 @@
                         <div class="w-full p-4 flex flex-col md:flex-row justify-center md:justify-between items-center gap-8">
                             <img
                                 class="rounded w-full"
-                                [src]="product.product?.image ? 'data:' + product.product?.image?.extension + ';base64,' + product.product?.image?.content : '/assets/img/product.png'"
-                                [alt]="product.product?.image?.name"
+                                [src]="product.product && product.product.images && product.product.images.length ? 'data:' + product.product.images[0].extension + ';base64,' + product.product.images[0].content : '/assets/img/product.png'"
+                                [alt]="product.product && product.product.images && product.product.images.length ? product.product.images[0].name : '/assets/img/product.png'"
                                 style="max-width: 100px"
                             />
                             <span class="w-1/4 text-center">{{ product.product?.name }}</span>
