@@ -53,8 +53,13 @@ export class ProductService implements OnDestroy {
       concatMap(products => {
         this.products = products.map(prod => ({...prod, images: []}));
         this.productsSubject.next(this.products);
-        return this.fileProductService.findImages(this.products);
-      }),
+        return this.findAllImages();
+      })
+    )
+  }
+
+  private findAllImages(): Observable<S3File[]> {
+    return this.fileProductService.findAllImages(this.products).pipe(
       tap(responses => {
         responses.forEach(response => {
           const productId = parseInt(response.name.split('-')[0]);
@@ -62,25 +67,34 @@ export class ProductService implements OnDestroy {
           if (product) product.images.push(response);
         });
         this.productsSubject.next(this.products);
-      }),
-      catchError(error => {
-        console.error("Error cargando productos:", error);
-        return of([]);
       })
     )
   }
 
-  findById(id: number) {
-    this.http.get<ApiResponse<Product>>(`${this.apiUrl}/product/${id}`).subscribe({
-      next: (product) => {
-        const index = this.products.findIndex(prod => prod.id == id);
-        this.products[index] = product.data;
+  findProductImages(productId: number): Observable<S3File[]> {
+    return this.fileProductService.findImage(this.products.find(prod => prod.id == productId) ?? new Product()).pipe(
+      tap(responses => {
+        let files: S3File[] = [];
+        responses.forEach(response => {
+          files.push(response);
+        });
+        const productIndex = this.products.findIndex(prod => prod.id == productId);
+        this.products[productIndex].images = files;
         this.productsSubject.next(this.products);
-      },
-      error: (error) => {
-        console.log("error finding products: ", error);
-      }
-    })
+      })
+    )
+  }
+
+  findById(id: number): Observable<Product> {
+    return this.http.get<ApiResponse<Product>>(`${this.apiUrl}/product/${id}`).pipe(
+      map(response => response.data),
+      tap(product => {
+        const index = this.products.findIndex(prod => prod.id == id);
+        if(index == -1) this.products.push(product);
+        else this.products[index] = product;
+        this.productsSubject.next(this.products);
+      })
+    )
   }
 
   getByCategoryId(categoryId: number) {
@@ -112,12 +126,10 @@ export class ProductService implements OnDestroy {
           map(() => createdProduct)
         )
       }),
-      tap(product => {
-        this.products.push(product);
-        this.productsSubject.next(this.products);
+      last(),
+      concatMap(createdProduct => {
+        return this.findById(createdProduct.id);
       })
-    ).pipe(
-      tap(() => console.log("Producto creado con éxito"))
     );
   }
   
@@ -132,19 +144,21 @@ export class ProductService implements OnDestroy {
           map(() => updatedProduct)
         )
       }),
+      last(),
       concatMap(updatedProduct => {
         return this.fileProductService.deleteFiles(filesToDelete, updatedProduct.id).pipe(
           map(() => updatedProduct)
         )
       }),
-      tap(updatedProduct => {
-        this.products = this.products.map(prod => prod.id === product.id ? updatedProduct : prod);
-        this.productsSubject.next(this.products);
+      last(),
+      concatMap(updatedProduct => {
+        return this.findById(updatedProduct.id);
       }),
       catchError(error => {
         return concat(
           this.fileProductService.uploadFiles(filesToUpload, product.id),
-          this.fileProductService.deleteFiles(filesToDelete, product.id)
+          this.fileProductService.deleteFiles(filesToDelete, product.id),
+          this.findById(product.id)
         ).pipe(
           map(() => product)
         );

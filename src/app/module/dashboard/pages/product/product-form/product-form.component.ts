@@ -193,11 +193,14 @@ export class ProductFormComponent implements OnDestroy {
 
   createProduct() {
     this.productService.create(this.product, this.filesToUpload).subscribe({
-      next: (response) => { },
+      next: (product) => {
+        this.product = product;
+      },
       error: (error) => {
         console.log("Ha ocurrido un error al crear el producto.", error);
       },
       complete: () => {
+        this.productService.findProductImages(this.product.id).subscribe();
         this.router.navigateByUrl('/dashboard/product');
       }
     })
@@ -205,11 +208,14 @@ export class ProductFormComponent implements OnDestroy {
 
   updateProduct() {
     this.productService.update(this.product, this.filesToUpload, this.filesToDelete).subscribe({
-      next: (response) => { },
+      next: (product) => {
+        this.product = product;
+      },
       error: (error) => {
         console.log("Ha ocurrido un error al actualizar el producto.", error);
       },
       complete: () => {
+        this.productService.findProductImages(this.product.id).subscribe();
         this.router.navigateByUrl('/dashboard/product');
       }
     })

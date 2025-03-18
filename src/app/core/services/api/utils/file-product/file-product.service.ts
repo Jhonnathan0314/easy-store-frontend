@@ -21,10 +21,16 @@ export class FileProductService {
     private fileService: FileService
   ) { }
 
-  findImages(products: Product[]) {
+  findAllImages(products: Product[]) {
     const requests = products.map(product => this.getImageRequests(product));
   
     return forkJoin(requests.flat());
+  }
+
+  findImage(product: Product) {
+    const requests = this.getImageRequests(product);
+  
+    return forkJoin(requests);
   }
 
   private getImageRequests(product: Product) {
