@@ -5,6 +5,7 @@ import { ButtonComponent } from '@component/shared/inputs/button/button.componen
 import { InputSelectComponent } from '@component/shared/inputs/input-select/input-select.component';
 import { InputTextComponent } from '@component/shared/inputs/input-text/input-text.component';
 import { Product } from '@models/data/product.model';
+import { PurchaseCart } from '@models/data/purchase.model';
 import { PrimeNGObject } from '@models/utils/primeng-object.model';
 import { DataViewModule } from 'primeng/dataview';
 import { SelectButtonModule } from 'primeng/selectbutton';
@@ -19,8 +20,12 @@ import { TagModule } from 'primeng/tag';
 export class DataViewComponent implements OnChanges {
 
   @Output() addToCartEvent = new EventEmitter<Product>();
+  @Output() removeFromCartEvent = new EventEmitter<Product>();
   @Output() buyNowEvent = new EventEmitter<Product>();
+  @Output() goCartEvent = new EventEmitter<Product>();
   
+  @Input() cart: PurchaseCart = new PurchaseCart();
+
   @Input() objects: Product[] = [];
   originalObjects: Product[] = [];
 
@@ -107,8 +112,20 @@ export class DataViewComponent implements OnChanges {
     }
   }
 
+  cartHasProduct(product: Product) {
+    return this.cart.products.find(p => p.id.productId == product.id) != undefined;
+  }
+
   addToCart(product: Product) {
     this.addToCartEvent.emit(product);
+  }
+
+  removeFromCart(product: Product) {
+    this.removeFromCartEvent.emit(product);
+  }
+
+  goToCart() {
+    this.goCartEvent.emit();
   }
 
   buyNow(product: Product) {

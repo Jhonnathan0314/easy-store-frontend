@@ -42,7 +42,6 @@ export class CategoryAllComponent implements OnInit, OnDestroy {
         if(categories.length == 0) return;
         this.categories = categories;
         this.convertToDataObject();
-        console.log({categories});
         this.isLoading = false;
       },
       error: (error) => {

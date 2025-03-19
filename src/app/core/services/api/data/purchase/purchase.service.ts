@@ -112,7 +112,11 @@ export class PurchaseService {
       tap(response => {
         const purchaseIndex = this.purchases.findIndex(purchase => purchase.id == purchaseHasProduct.id.purchaseId);
         const productIndex = this.purchases[purchaseIndex].products.findIndex(hasProduct => hasProduct.id.productId == purchaseHasProduct.id.productId);
-        this.purchases[purchaseIndex].products[productIndex] = response.data;
+        if(productIndex == -1) {
+          this.purchases[purchaseIndex].products.push(response.data);
+        }else {
+          this.purchases[purchaseIndex].products[productIndex] = response.data;
+        }
         this.purchasesSubject.next(this.purchases);
       })
     );

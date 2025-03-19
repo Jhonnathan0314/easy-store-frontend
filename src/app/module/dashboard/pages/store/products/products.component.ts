@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DataViewComponent } from '@component/shared/data/data-view/data-view.component';
 import { LoadingDataViewComponent } from '@component/shared/skeleton/loading-data-view/loading-data-view.component';
 import { Category } from '@models/data/category.model';
 import { PaymentType } from '@models/data/payment-type.model';
 import { Product } from '@models/data/product.model';
-import { Purchase, PurchaseCart, PurchaseHasProductRq, PurchaseRq } from '@models/data/purchase.model';
+import { Purchase, PurchaseCart, PurchaseHasProductId, PurchaseHasProductRq, PurchaseRq } from '@models/data/purchase.model';
 import { Subscription } from 'rxjs';
 import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/payment-type.service';
 import { ProductService } from 'src/app/core/services/api/data/product/product.service';
@@ -23,6 +23,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   productToAdd: PurchaseHasProductRq = new PurchaseHasProductRq();
 
   purchases: PurchaseCart[] = [];
+  cart: PurchaseCart = new PurchaseCart();
   purchase: PurchaseRq = new PurchaseRq();
 
   paymentTypes: PaymentType[] = [];
@@ -38,6 +39,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   constructor(
     private activatedRoute: ActivatedRoute,
+    private router: Router,
     private productService: ProductService,
     private paymentTypeService: PaymentTypeService,
     private purchaseService: PurchaseService
@@ -74,6 +76,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
       next: (purchases) => {
         if(purchases.length == 0) return;
         this.purchases = purchases.filter(purchase => purchase.state == 'cart');
+        this.cart = this.purchases.find(cart => cart.categoryId == this.categoryId) ?? new PurchaseCart();
         this.paymentTypeSubscribe();
       },
       error: (error) => {
@@ -103,6 +106,20 @@ export class ProductsComponent implements OnInit, OnDestroy {
         console.log("Ha ocurrido un error mientras agregaba producto al carrito", {error});
       }
     })
+  }
+
+  removeFromCart($event: Product) {
+    const hasProductId: PurchaseHasProductId = {
+      productId: $event.id,
+      purchaseId: this.cart.id
+    }
+    this.purchaseService.deletePurchaseHasProductById(hasProductId).subscribe({
+      next: () => { },
+      error: (error) => {
+        console.log("Ha ocurrido un error mientras eliminaba producto del carrito", {error});
+      }
+    })
+
   }
 
   validatePurchase(product: Product) {
@@ -144,6 +161,10 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   buyNow($event: Product) {
     console.log("products componente buy now event: ", $event);
+  }
+
+  goCart() {
+    this.router.navigateByUrl('/dashboard/store/cart');
   }
 
 }

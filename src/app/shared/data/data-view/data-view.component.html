@@ -53,20 +53,38 @@
                             </div>
                             <div class="flex flex-col items-center gap-4">
                                 <span class="text-xl font-semibold">{{ item.price | currency: 'USD' }}</span>
-                                <app-button
-                                    icon="pi pi-shopping-cart"
-                                    label="Agregar al carrito"
-                                    [disabled]="item.quantity == 0"
-                                    class="flex-auto md:flex-initial whitespace-nowrap"
-                                    (clickEvent)="addToCart(item)"
-                                ></app-button>
-                                <app-button
-                                    icon="pi pi-shopping-cart"
-                                    label="Comprar ahora"
-                                    [disabled]="item.quantity == 0"
-                                    class="flex-auto md:flex-initial whitespace-nowrap"
-                                    (clickEvent)="buyNow(item)"
-                                ></app-button>
+                                @if (cartHasProduct(item)) {
+                                    <app-button
+                                        icon="pi pi-cart-minus"
+                                        label="Eliminar del carrito"
+                                        severity="danger"
+                                        [disabled]="item.quantity == 0"
+                                        class="flex-auto md:flex-initial whitespace-nowrap"
+                                        (clickEvent)="removeFromCart(item)"
+                                    ></app-button>
+                                    <app-button
+                                        icon="pi pi-shopping-cart"
+                                        label="Ver carrito"
+                                        [disabled]="item.quantity == 0"
+                                        class="flex-auto md:flex-initial whitespace-nowrap"
+                                        (clickEvent)="goToCart()"
+                                    ></app-button>
+                                } @else {
+                                    <app-button
+                                        icon="pi pi-cart-plus"
+                                        label="Agregar al carrito"
+                                        [disabled]="item.quantity == 0"
+                                        class="flex-auto md:flex-initial whitespace-nowrap"
+                                        (clickEvent)="addToCart(item)"
+                                    ></app-button>
+                                    <app-button
+                                        icon="pi pi-shopping-cart"
+                                        label="Comprar ahora"
+                                        [disabled]="item.quantity == 0"
+                                        class="flex-auto md:flex-initial whitespace-nowrap"
+                                        (clickEvent)="buyNow(item)"
+                                    ></app-button>
+                                }
                             </div>
                         </div>
                     </div>
@@ -109,20 +127,38 @@
                                     </div>
                                     <div class="flex flex-col items-center gap-6 mt-6">
                                         <span class="text-2xl font-semibold">{{ item.price | currency: 'USD' }}</span>
-                                        <app-button
-                                            icon="pi pi-shopping-cart"
-                                            label="Agregar al carrito"
-                                            [disabled]="item.quantity == 0"
-                                            class="flex-auto md:flex-initial whitespace-nowrap"
-                                            (clickEvent)="addToCart(item)"
-                                        ></app-button>
-                                        <app-button
-                                            icon="pi pi-shopping-cart"
-                                            label="Comprar ahora"
-                                            [disabled]="item.quantity == 0"
-                                            class="flex-auto md:flex-initial whitespace-nowrap"
-                                            (clickEvent)="buyNow(item)"
-                                        ></app-button>
+                                        @if (cartHasProduct(item)) {
+                                            <app-button
+                                                icon="pi pi-cart-minus"
+                                                label="Eliminar del carrito"
+                                                severity="danger"
+                                                [disabled]="item.quantity == 0"
+                                                class="flex-auto md:flex-initial whitespace-nowrap"
+                                                (clickEvent)="removeFromCart(item)"
+                                            ></app-button>
+                                            <app-button
+                                                icon="pi pi-shopping-cart"
+                                                label="Ver carrito"
+                                                [disabled]="item.quantity == 0"
+                                                class="flex-auto md:flex-initial whitespace-nowrap"
+                                                (clickEvent)="goToCart()"
+                                            ></app-button>
+                                        } @else {
+                                            <app-button
+                                                icon="pi pi-cart-plus"
+                                                label="Agregar al carrito"
+                                                [disabled]="item.quantity == 0"
+                                                class="flex-auto md:flex-initial whitespace-nowrap"
+                                                (clickEvent)="addToCart(item)"
+                                            ></app-button>
+                                            <app-button
+                                                icon="pi pi-shopping-cart"
+                                                label="Comprar ahora"
+                                                [disabled]="item.quantity == 0"
+                                                class="flex-auto md:flex-initial whitespace-nowrap"
+                                                (clickEvent)="buyNow(item)"
+                                            ></app-button>
+                                        }
                                     </div>
                                 </div>
                             </div>
