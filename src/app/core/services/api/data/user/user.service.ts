@@ -68,8 +68,8 @@ export class UserService {
   }
 
   deleteById(id: number) {
-    this.http.delete<ApiResponse<Object>>(`${this.apiUrl}/user/delete/${id}`).subscribe({
-      next: (response) => {
+    this.http.delete<ApiResponse<object>>(`${this.apiUrl}/user/delete/${id}`).subscribe({
+      next: () => {
         this.usersSubject.next(this.users.filter(user => user.id != id));
       },
       error: (error) => {

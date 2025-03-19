@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
@@ -6,7 +6,6 @@ import { ButtonComponent } from '@component/shared/inputs/button/button.componen
 import { InputPasswordComponent } from '@component/shared/inputs/input-password/input-password.component';
 import { InputTextComponent } from '@component/shared/inputs/input-text/input-text.component';
 
-import { FormErrors } from '@models/security/security-error.model';
 import { LoginRequest } from '@models/security/security-request.model';
 
 import { ToastModule } from 'primeng/toast';

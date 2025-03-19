@@ -23,6 +23,8 @@ export class CarouselHomeComponent implements OnInit, OnDestroy {
 
   isLoading = true;
 
+  hola = true;
+
   categoriesSuscription: Subscription;
 
   constructor(

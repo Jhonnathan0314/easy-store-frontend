@@ -84,8 +84,8 @@ export class SubcategoryService {
   }
 
   deleteById(id: number) {
-    this.http.delete<ApiResponse<Object>>(`${this.apiUrl}/subcategory/delete/${id}`).subscribe({
-      next: (response) => {
+    this.http.delete<ApiResponse<object>>(`${this.apiUrl}/subcategory/delete/${id}`).subscribe({
+      next: () => {
         this.subcategoriesSubject.next(this.subcategories.filter(sub => sub.id != id));
       },
       error: (error) => {

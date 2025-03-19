@@ -22,11 +22,11 @@ export class CryptoService {
     return bytes.toString(enc.Utf8);
   }
 
-  encryptObject(value: any): string {
+  encryptObject(value: unknown): string {
     return AES.encrypt(JSON.stringify(value), this.key).toString();
   }
 
-  decryptObject(value: string): any {
+  decryptObject(value: string): unknown {
     const bytes = AES.decrypt(value, this.key);
     return JSON.parse(bytes.toString(enc.Utf8));
   }

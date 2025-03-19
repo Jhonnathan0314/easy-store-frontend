@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { DataObject, DataObjectValidation } from '@models/utils/object.data-view.model';
 import { TableModule } from 'primeng/table';
 import { ButtonComponent } from "../../inputs/button/button.component";
@@ -26,7 +26,7 @@ export class TableComponent implements OnChanges {
 
   constructor(private router: Router) { }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.validateHasFields();
   }
 

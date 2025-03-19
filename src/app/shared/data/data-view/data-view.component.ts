@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
 import { InputSelectComponent } from '@component/shared/inputs/input-select/input-select.component';

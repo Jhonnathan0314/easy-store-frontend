@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { ApiResponse } from '@models/data/general.model';
 import { Product } from '@models/data/product.model';
-import { BehaviorSubject, catchError, concat, concatMap, last, map, Observable, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, catchError, concat, concatMap, last, map, Observable, of, Subject, takeUntil, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SessionService } from '../../../session/session.service';
 import { SubcategoryService } from '../subcategory/subcategory.service';
@@ -74,7 +74,7 @@ export class ProductService implements OnDestroy {
   findProductImages(productId: number): Observable<S3File[]> {
     return this.fileProductService.findImage(this.products.find(prod => prod.id == productId) ?? new Product()).pipe(
       tap(responses => {
-        let files: S3File[] = [];
+        const files: S3File[] = [];
         responses.forEach(response => {
           files.push(response);
         });
@@ -154,7 +154,7 @@ export class ProductService implements OnDestroy {
       concatMap(updatedProduct => {
         return this.findById(updatedProduct.id);
       }),
-      catchError(error => {
+      catchError(() => {
         return concat(
           this.fileProductService.uploadFiles(filesToUpload, product.id),
           this.fileProductService.deleteFiles(filesToDelete, product.id),
@@ -172,12 +172,12 @@ export class ProductService implements OnDestroy {
 
     this.fileProductService.deleteFiles(product.images, id).pipe(
       last(),
-      concatMap(() => this.http.delete<ApiResponse<Object>>(`${this.apiUrl}/product/delete/${id}`)),
+      concatMap(() => this.http.delete<ApiResponse<object>>(`${this.apiUrl}/product/delete/${id}`)),
       tap(() => {
         this.products = this.products.filter(prod => prod.id !== id);
         this.productsSubject.next(this.products);
       }),
-      catchError(error => {
+      catchError(() => {
         return of(null);
       })
     ).subscribe();

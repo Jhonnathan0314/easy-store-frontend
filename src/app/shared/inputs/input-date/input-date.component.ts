@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { DateSelectionMode } from 'src/app/core/models/enums/primeng.enum';
 import { DatePicker } from 'primeng/datepicker';
@@ -32,7 +32,7 @@ export class InputDateComponent implements OnChanges {
     this.componentId = InputDateComponent.nextId++;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.controlValue.setValue(this.value);
   }
 

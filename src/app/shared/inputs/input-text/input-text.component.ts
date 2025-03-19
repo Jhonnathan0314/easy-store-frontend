@@ -1,5 +1,4 @@
-import { DOCUMENT } from '@angular/common';
-import { Component, EventEmitter, Inject, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { IconField } from 'primeng/iconfield';
@@ -33,7 +32,7 @@ export class InputTextComponent implements OnChanges {
     this.componentId = InputTextComponent.nextId++;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.controlValue.setValue(this.value);
     this.validateState();
   }

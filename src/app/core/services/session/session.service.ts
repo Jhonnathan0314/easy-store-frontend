@@ -69,7 +69,7 @@ export class SessionService {
     return tokenPayload.exp < now;
   }
 
-  private decodePayload(token: string): any {
+  private decodePayload(token: string) {
     const parts = token.split('.');
     if (parts.length !== 3) return null;
 
@@ -79,16 +79,7 @@ export class SessionService {
   }
 
   private getSessionData(): SessionData {
-    const localStorageValue = this.cryptoService.decryptObject(this.localStorage?.getItem("object") ?? "");
-
-    let sessionData: SessionData = new SessionData();
-    sessionData.token = localStorageValue.token;
-    sessionData.username = localStorageValue.username;
-    sessionData.role = localStorageValue.role;
-    sessionData.userId = localStorageValue.userId;
-    sessionData.accountId = localStorageValue.accountId;
-    
-    return sessionData;
+    return this.cryptoService.decryptObject(this.localStorage?.getItem("object") ?? "") as SessionData;
   }
 
   private getTokenAttribute(token: string, attribute: string) {

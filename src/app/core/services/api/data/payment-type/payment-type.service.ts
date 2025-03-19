@@ -80,8 +80,8 @@ export class PaymentTypeService {
   }
 
   deleteById(id: number) {
-    this.http.delete<ApiResponse<Object>>(`${this.apiUrl}/payment-type/delete/${id}`).subscribe({
-      next: (response) => {
+    this.http.delete<ApiResponse<object>>(`${this.apiUrl}/payment-type/delete/${id}`).subscribe({
+      next: () => {
         this.paymentTypesSubject.next(this.paymentTypes.filter(pay => pay.id != id));
       },
       error: (error) => {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RatingModule } from 'primeng/rating';
 
@@ -17,7 +17,7 @@ export class InputRatingComponent implements OnChanges {
 
   @Output() valueEvent = new EventEmitter<number>();
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.controlValue.setValue(this.value);
     this.validateState();
   }

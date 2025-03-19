@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnChanges, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PrimeNGObject } from '@models/utils/primeng-object.model';
 import { Select } from 'primeng/select';
@@ -33,7 +33,7 @@ export class InputSelectComponent implements OnChanges {
     this.componentId = InputSelectComponent.nextId++;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.controlValue.setValue(this.selectedOption);
     this.validateState();
   }

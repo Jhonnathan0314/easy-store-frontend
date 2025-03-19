@@ -150,7 +150,7 @@ export class CategoryService {
         this.categoriesSubject.next(this.categories);
         return response;
       }),
-      catchError((error: any) => {
+      catchError((error) => {
         if (error.error.error.code == 406 && file != null) {
           const imgName = `${category.id}.png`
           file.context = 'category';
@@ -174,7 +174,7 @@ export class CategoryService {
 
   private uploadFile(file: S3File) {
     this.fileService.putFile(file).subscribe({
-      next: (response) => { },
+      next: () => { },
       error: (error) => {
         console.log("Ha ocurrido un error al cargar el archivo ", {name: file.name, error});
       }
@@ -182,12 +182,12 @@ export class CategoryService {
   }
 
   deleteById(id: number) {
-    this.http.delete<ApiResponse<Object>>(`${this.apiUrl}/category/delete/${id}`)
+    this.http.delete<ApiResponse<object>>(`${this.apiUrl}/category/delete/${id}`)
     .pipe(
       tap(response => {
         const index = this.categories.findIndex(cat => cat.id == id);
         const category = this.categories[index];
-        let image = category.image;
+        const image = category.image;
         if(image){
           image.context = 'category';
           this.deleteFile(image);
@@ -201,7 +201,7 @@ export class CategoryService {
       })
     )
     .subscribe({
-      next: (response) => { },
+      next: () => { },
       error: (error) => {
         if(error.error.code === 404) 
           console.error("Id no encontrado para eliminar categoria.", error);
@@ -211,7 +211,7 @@ export class CategoryService {
 
   private deleteFile(file: S3File) {
     this.fileService.deleteFile(file).subscribe({
-      next: (response) => { },
+      next: () => { },
       error: (error) => {
         console.log("Ha ocurrido un error al eliminar el archivo ", {name: file.name, error});
       }

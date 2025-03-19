@@ -34,6 +34,7 @@ export class InputFileComponent implements OnInit {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   callback(callback: any) {
     callback();
   }
@@ -67,7 +68,7 @@ export class InputFileComponent implements OnInit {
     this.removeEnable = false;
   }
 
-  onRemove($event: any) {
+  onRemove($event: {name: string}) {
     this.filesToUpload = this.filesToUpload.filter(file => file.name == $event.name)
     if(this.filesToUpload.length == 0) {  
       this.selectEnable = true;

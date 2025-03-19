@@ -9,8 +9,6 @@ import { apiToken } from "@interceptor/api-token/api-token.interceptor";
 import { routes } from "./app.routes";
 import { providePrimeNG } from "primeng/config";
 
-import Aura from '@primeng/themes/aura';
-
 export const appConfig: ApplicationConfig = {
     providers: [
         provideZoneChangeDetection({ eventCoalescing: true }), 

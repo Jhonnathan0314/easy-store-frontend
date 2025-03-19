@@ -5,8 +5,7 @@ import {
   Inject,
   Input,
   OnChanges,
-  Output,
-  SimpleChanges,
+  Output
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PasswordModule } from 'primeng/password';
@@ -47,7 +46,7 @@ export class InputPasswordComponent implements OnChanges {
     this.componentId = InputPasswordComponent.nextId++;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.controlValue.setValue(this.value);
     this.validateState();
     this.validatePassword();
