@@ -73,7 +73,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this.purchaseSubscription = this.purchaseService.storedPurchases$.subscribe({
       next: (purchases) => {
         if(purchases.length == 0) return;
-        this.purchases = purchases;
+        this.purchases = purchases.filter(purchase => purchase.state == 'cart');
         this.paymentTypeSubscribe();
       },
       error: (error) => {
@@ -98,7 +98,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   addToCart($event: Product) {
     this.validatePurchase($event);
     this.purchaseService.addPurchaseHasProduct(this.productToAdd).subscribe({
-      next: (response) => { },
+      next: () => { },
       error: (error) => {
         console.log("Ha ocurrido un error mientras agregaba producto al carrito", {error});
       }
@@ -106,19 +106,19 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   validatePurchase(product: Product) {
-    const purchase = this.purchases.find(purchase => purchase.categoryId == this.categoryId && purchase.state == 'cart');
-    if(purchase != undefined) {
-      this.prepareProductToAdd(product, purchase);
+    const cart = this.purchases.find(cart => cart.categoryId == this.categoryId);
+    if(cart != undefined) {
+      this.prepareProductToAdd(product, cart);
     }else {
       this.createPurchase(product);
     }
   }
 
-  prepareProductToAdd(product: Product, purchase: Purchase){
+  prepareProductToAdd(product: Product, cart: Purchase){
     this.productToAdd = {
       id: {
         productId: product.id,
-        purchaseId: purchase.id
+        purchaseId: cart.id
       },
       quantity: 1
     }
@@ -127,7 +127,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   createPurchase(product: Product) {
     this.prepareNewPurchase();
     this.purchaseService.generate(this.purchase).subscribe({
-      next: (response) => {
+      next: () => {
         this.addToCart(product);
       },
       error: (error) => {

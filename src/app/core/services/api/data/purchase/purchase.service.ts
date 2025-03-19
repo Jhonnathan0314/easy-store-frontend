@@ -95,8 +95,8 @@ export class PurchaseService {
   }
 
   deleteById(id: number) {
-    this.http.delete<ApiResponse<Object>>(`${this.apiUrl}/purchase/delete/${id}`).subscribe({
-      next: (response) => {
+    this.http.delete<ApiResponse<object>>(`${this.apiUrl}/purchase/delete/${id}`).subscribe({
+      next: () => {
         this.purchasesSubject.next(this.purchases.filter(pur => pur.id != id));
       },
       error: (error) => {
@@ -111,13 +111,14 @@ export class PurchaseService {
     .pipe(
       tap(response => {
         const purchaseIndex = this.purchases.findIndex(purchase => purchase.id == purchaseHasProduct.id.purchaseId);
-        this.purchases[purchaseIndex].products.push(response.data);
+        const productIndex = this.purchases[purchaseIndex].products.findIndex(hasProduct => hasProduct.id.productId == purchaseHasProduct.id.productId);
+        this.purchases[purchaseIndex].products[productIndex] = response.data;
         this.purchasesSubject.next(this.purchases);
       })
     );
   }
 
-  updatePurchaseHasProduct(purchaseHasProduct: PurchaseHasProduct): Observable<ApiResponse<PurchaseHasProduct>> {
+  updatePurchaseHasProduct(purchaseHasProduct: PurchaseHasProductRq): Observable<ApiResponse<PurchaseHasProduct>> {
     return this.http.put<ApiResponse<PurchaseHasProduct>>(`${this.apiUrl}/purchase-has-product`, purchaseHasProduct)
     .pipe(
       tap(response => {
@@ -130,8 +131,8 @@ export class PurchaseService {
     );
   }
 
-  deletePurchaseHasProductById(id: PurchaseHasProductId): Observable<ApiResponse<Object>> {
-    return this.http.delete<ApiResponse<Object>>(`${this.apiUrl}/purchase-has-product/purchase/${id.purchaseId}/product/${id.productId}`)
+  deletePurchaseHasProductById(id: PurchaseHasProductId): Observable<ApiResponse<object>> {
+    return this.http.delete<ApiResponse<object>>(`${this.apiUrl}/purchase-has-product/purchase/${id.purchaseId}/product/${id.productId}`)
     .pipe(
       tap(response => {
         const purchaseIndex = this.purchases.findIndex(purchase => purchase.id == id.purchaseId);
