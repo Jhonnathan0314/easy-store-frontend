@@ -79,7 +79,16 @@ export class SessionService {
   }
 
   private getSessionData(): SessionData {
-    return this.cryptoService.decryptObject(this.localStorage?.getItem("object") ?? "") as SessionData;
+    const localStorageValue = this.cryptoService.decryptObject(this.localStorage?.getItem("object") ?? "") as SessionData;
+
+    const sessionData: SessionData = new SessionData();
+    sessionData.token = localStorageValue.token;
+    sessionData.username = localStorageValue.username;
+    sessionData.role = localStorageValue.role;
+    sessionData.userId = localStorageValue.userId;
+    sessionData.accountId = localStorageValue.accountId;
+    
+    return sessionData;
   }
 
   private getTokenAttribute(token: string, attribute: string) {
