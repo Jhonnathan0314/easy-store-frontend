@@ -4,6 +4,15 @@
     <p-skeleton width="5rem" />
     <p-skeleton width="10rem" />
   </div>
+} @else if(categories.length == 0 && !isLoading) {
+  <div class="p-4 flex flex-col justify-center items-start gap-4">
+    <p class="w-full">No tienes tiendas creadas por el momento.</p>
+    <app-button 
+      label="Crear tienda"
+      icon="pi pi-plus"
+      (clickEvent)="goCreateCategory()"
+    />
+  </div>
 } @else {
   <p-carousel
     [value]="items"

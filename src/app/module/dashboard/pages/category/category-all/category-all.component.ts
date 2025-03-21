@@ -7,6 +7,7 @@ import { TableComponent } from "../../../../../shared/data/table/table.component
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
 import { Router, RouterModule } from '@angular/router';
 import { LoadingTableComponent } from "../../../../../shared/skeleton/loading-table/loading-table.component";
+import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 
 @Component({
   selector: 'app-category-all',
@@ -44,14 +45,18 @@ export class CategoryAllComponent implements OnInit, OnDestroy {
         this.convertToDataObject();
         this.isLoading = false;
       },
-      error: (error) => {
-        console.log('Ha ocurrido un error: ', {error});
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) {
+          this.categories = [];
+        }
+        this.isLoading = false;
       }
     })
   }
 
   closeSubscriptions() {
-    this.categorySubscription.unsubscribe();
+    if(this.categorySubscription)
+      this.categorySubscription.unsubscribe();
   }
 
   convertToDataObject() {

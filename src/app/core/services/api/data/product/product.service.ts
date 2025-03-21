@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { ApiResponse } from '@models/data/general.model';
+import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { Product } from '@models/data/product.model';
-import { BehaviorSubject, catchError, concat, concatMap, last, map, Observable, of, Subject, takeUntil, tap } from 'rxjs';
+import { catchError, concat, concatMap, last, map, Observable, of, ReplaySubject, Subject, takeUntil, tap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SessionService } from '../../../session/session.service';
 import { SubcategoryService } from '../subcategory/subcategory.service';
@@ -18,7 +18,7 @@ export class ProductService implements OnDestroy {
   apiUrl: string = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
 
   private products: Product[] = [];
-  private productsSubject = new BehaviorSubject<Product[]>(this.products);
+  private productsSubject = new ReplaySubject<Product[]>(1);
   storedProducts$ = this.productsSubject.asObservable();
 
   private subcategories: Subcategory[] = [];
@@ -31,7 +31,6 @@ export class ProductService implements OnDestroy {
     private fileProductService: FileProductService
   ) {
     this.subscribeToSubcategories();
-    this.findByAccount().subscribe();
   }
 
   ngOnDestroy() {
@@ -45,17 +44,25 @@ export class ProductService implements OnDestroy {
       .subscribe(subcategories => this.subcategories = subcategories);
   }
 
-  private findByAccount(): Observable<S3File[]> {
+  findByAccount() {
     const accountId = this.sessionService.getAccountId();
-    return this.http.get<ApiResponse<Product[]>>(`${this.apiUrl}/product/account/${accountId}`)
+    this.http.get<ApiResponse<Product[]>>(`${this.apiUrl}/product/account/${accountId}`)
     .pipe(
       map(response => response.data),
       concatMap(products => {
         this.products = products.map(prod => ({...prod, images: []}));
         this.productsSubject.next(this.products);
         return this.findAllImages();
+      }),
+      catchError((error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) return throwError(() => error);
+        return of(null);
       })
-    )
+    ).subscribe({
+      error: (error: ApiResponse<ErrorMessage>) => {
+        this.productsSubject.error(error);
+      }
+    });
   }
 
   private findAllImages(): Observable<S3File[]> {
@@ -95,16 +102,6 @@ export class ProductService implements OnDestroy {
         this.productsSubject.next(this.products);
       })
     )
-  }
-
-  getByCategoryId(categoryId: number) {
-    return this.storedProducts$
-      .pipe(
-        map(products => products.filter(prod => {
-          const subcategory = this.subcategories.find(sub => sub.id == prod.subcategoryId);
-          return subcategory?.categoryId == categoryId;
-        }))
-      );
   }
 
   getById(id: number) {

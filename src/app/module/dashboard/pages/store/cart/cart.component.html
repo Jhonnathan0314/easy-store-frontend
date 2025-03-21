@@ -10,6 +10,8 @@
             <p-skeleton height="4rem" styleClass="py-4" />
             <p-skeleton height="4rem" styleClass="py-4" />
         </div>
+    } @else if(carts.length == 0) {
+        No tienes carritos por el momento 😢
     } @else {
         <p-accordion [value]="[]" [multiple]="true">
             @for (cart of carts; track cart.id) {

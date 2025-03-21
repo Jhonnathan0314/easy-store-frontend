@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { SubcategoryService } from 'src/app/core/services/api/data/subcategory/subcategory.service';
 import { Router } from '@angular/router';
 import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
+import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 
 @Component({
   selector: 'app-product-all',
@@ -50,7 +51,11 @@ export class ProductAllComponent {
         this.openProductSubscription();
       },
       error: (error) => {
-        console.log('Ha ocurrido un error en categorias: ', {error});
+        if(error.error.code == 404) {
+          this.subcategories = [];
+          this.products = [];
+        }
+        this.isLoading = false;
       }
     })
   }
@@ -64,14 +69,18 @@ export class ProductAllComponent {
         this.convertToDataObject();
         this.isLoading = false;
       },
-      error: (error) => {
-        console.log('Ha ocurrido un error en subcategorias: ', {error});
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) this.products = [];
+        this.isLoading = false;
       }
     })
   }
 
   closeSubscriptions() {
-    this.productSubscription.unsubscribe();
+    if(this.productSubscription)
+      this.productSubscription.unsubscribe();
+    if(this.subcategorySubscription)
+      this.subcategorySubscription.unsubscribe();
   }
 
   convertToDataObject() {

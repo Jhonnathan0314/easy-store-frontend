@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PaymentType } from '@models/data/payment-type.model';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { catchError, map, Observable, ReplaySubject, tap, throwError } from 'rxjs';
 import { SessionService } from '../../../session/session.service';
 import { environment } from 'src/environments/environment';
-import { ApiResponse } from '@models/data/general.model';
+import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,7 @@ export class PaymentTypeService {
   apiUrl: string = '';
 
   private paymentTypes: PaymentType[] = [];
-  private paymentTypesSubject = new BehaviorSubject<PaymentType[]>(this.paymentTypes);
+  private paymentTypesSubject = new ReplaySubject<PaymentType[]>(1);
   storedPaymentTypes$: Observable<PaymentType[]> = this.paymentTypesSubject.asObservable();
   
   constructor(
@@ -27,13 +27,16 @@ export class PaymentTypeService {
 
   private findAll() {
     const accountId = this.sessionService.getUserId();
-    this.http.get<ApiResponse<PaymentType[]>>(`${this.apiUrl}/payment-type/account/${accountId}`).subscribe({
-      next: (apiResponse) => {
-        this.paymentTypes = apiResponse.data;
+    this.http.get<ApiResponse<PaymentType[]>>(`${this.apiUrl}/payment-type/account/${accountId}`).pipe(
+      map(response => response.data),
+      tap(paymentTypes => {
+        this.paymentTypes = paymentTypes;
         this.paymentTypesSubject.next(this.paymentTypes);
-      },
-      error: (error) => {
-        console.log("error finding payment types: ", error);
+      }),
+      catchError((error: ApiResponse<ErrorMessage>) => throwError(() => error))
+    ).subscribe({
+      error: (error: ApiResponse<ErrorMessage>) => {
+        this.paymentTypesSubject.error(error);
       }
     })
   }

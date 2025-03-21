@@ -16,6 +16,7 @@ import { PurchaseService } from 'src/app/core/services/api/data/purchase/purchas
 import { UserService } from 'src/app/core/services/api/data/user/user.service';
 import { PurchaseReportComponent } from "../purchase-report/purchase-report.component";
 import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
+import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 
 @Component({
   selector: 'app-purchase-all',
@@ -79,8 +80,11 @@ export class PurchaseAllComponent {
         this.users = users;
         this.openPaymentTypeSubscription();
       },
-      error: (error) => {
-        console.log('Ha ocurrido un error consultando usuarios.', {error});
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) {
+          this.users = [];
+        }
+        this.isLoading = false;
       }
     })
   }
@@ -92,8 +96,11 @@ export class PurchaseAllComponent {
         this.paymentTypes = paymentTypes;
         this.openCategorySubscription();
       },
-      error: (error) => {
-        console.log('Ha ocurrido un error consultando tipos de pago.', {error});
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) {
+          this.paymentTypes = [];
+        }
+        this.isLoading = false;
       }
     })
   }
@@ -105,8 +112,11 @@ export class PurchaseAllComponent {
         this.categories = categories;
         this.openProductSubscription();
       },
-      error: (error) => {
-        console.log('Ha ocurrido un error consultando categorias.', {error});
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) {
+          this.categories = [];
+        }
+        this.isLoading = false;
       }
     })
   }
@@ -118,8 +128,11 @@ export class PurchaseAllComponent {
         this.products = products;
         this.openPurchaseSubscription();
       },
-      error: (error) => {
-        console.log('Ha ocurrido un error consultando productos.', {error});
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) {
+          this.products = [];
+        }
+        this.isLoading = false;
       }
     })
   }
@@ -132,18 +145,26 @@ export class PurchaseAllComponent {
         this.convertToDataObject();
         this.isLoading = false;
       },
-      error: (error) => {
-        console.log('Ha ocurrido un error consultando compras.', {error});
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) {
+          this.purchases = [];
+        }
+        this.isLoading = false;
       }
     })
   }
 
   closeSubscriptions() {
-    this.userSubscription.unsubscribe();
-    this.paymentTypeSubscription.unsubscribe();
-    this.categorySubscription.unsubscribe;
-    this.productSubscription.unsubscribe();
-    this.purchaseSubscription.unsubscribe();
+    if(this.userSubscription)
+      this.userSubscription.unsubscribe();
+    if(this.paymentTypeSubscription)
+      this.paymentTypeSubscription.unsubscribe();
+    if(this.categorySubscription)
+      this.categorySubscription.unsubscribe();
+    if(this.productSubscription)
+      this.productSubscription.unsubscribe();
+    if(this.purchaseSubscription)
+      this.purchaseSubscription.unsubscribe();
   }
 
   convertToDataObject() {

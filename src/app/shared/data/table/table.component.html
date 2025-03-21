@@ -57,6 +57,11 @@
                 <td>{{ obj.subtotal }}</td>
             </tr>
         </ng-template>
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="4">No se encontraron resultados.</td>
+            </tr>
+        </ng-template>
     </p-table>
 } @else if (hasFields.purchase) {
     <p-table
@@ -150,6 +155,11 @@
                 <td>
                     <app-button icon="pi pi-eye" [rounded]="true" (clickEvent)="viewDetail(obj.purchase.id)" />
                 </td>
+            </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="8">No se encontraron resultados.</td>
             </tr>
         </ng-template>
     </p-table>
@@ -295,6 +305,9 @@
                     </td>
                 }
             </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+            <p class="w-full my-4">No se encontraron resultados.</p>
         </ng-template>
     </p-table>
 }

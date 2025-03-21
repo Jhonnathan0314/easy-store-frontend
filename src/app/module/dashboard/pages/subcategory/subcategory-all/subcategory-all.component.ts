@@ -9,6 +9,7 @@ import { TableComponent } from "../../../../../shared/data/table/table.component
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
 import { Category } from '@models/data/category.model';
 import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
+import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 
 @Component({
   selector: 'app-subcategory-all',
@@ -49,8 +50,12 @@ export class SubcategoryAllComponent {
         this.categories = categories;
         this.openSubcategorySubscription();
       },
-      error: (error) => {
-        console.log('Ha ocurrido un error en categorias: ', {error});
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) {
+          this.categories = [];
+          this.subcategories = [];
+        }
+        this.isLoading = false;
       }
     })
   }
@@ -64,14 +69,20 @@ export class SubcategoryAllComponent {
         this.convertToDataObject();
         this.isLoading = false;
       },
-      error: (error) => {
-        console.log('Ha ocurrido un error en subcategorias: ', {error});
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) {
+          this.subcategories = [];
+        }
+        this.isLoading = false;
       }
     })
   }
 
   closeSubscriptions() {
-    this.subcategorySubscription.unsubscribe();
+    if(this.categorySubscription) 
+      this.categorySubscription.unsubscribe();
+    if(this.subcategorySubscription) 
+      this.subcategorySubscription.unsubscribe();
   }
 
   convertToDataObject() {

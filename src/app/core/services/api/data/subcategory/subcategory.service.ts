@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subcategory } from '@models/data/subcategory.model';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { catchError, map, Observable, ReplaySubject, tap, throwError } from 'rxjs';
 import { SessionService } from '../../../session/session.service';
 import { environment } from 'src/environments/environment';
-import { ApiResponse } from '@models/data/general.model';
+import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,7 @@ export class SubcategoryService {
   apiUrl: string = '';
 
   private subcategories: Subcategory[] = [];
-  private subcategoriesSubject = new BehaviorSubject<Subcategory[]>(this.subcategories);
+  private subcategoriesSubject = new ReplaySubject<Subcategory[]>(1);
   storedSubcategories$: Observable<Subcategory[]> = this.subcategoriesSubject.asObservable();
   
   constructor(
@@ -27,13 +27,16 @@ export class SubcategoryService {
 
   private findAllByAccountId() {
     const accountId = this.sessionService.getAccountId();
-    this.http.get<ApiResponse<Subcategory[]>>(`${this.apiUrl}/subcategory/account/${accountId}`).subscribe({
-      next: (apiResponse) => {
-        this.subcategories = apiResponse.data;
+    this.http.get<ApiResponse<Subcategory[]>>(`${this.apiUrl}/subcategory/account/${accountId}`).pipe(
+      map(response => response.data),
+      tap(subcategories => {
+        this.subcategories = subcategories;
         this.subcategoriesSubject.next(this.subcategories);
-      },
+      }),
+      catchError((error: ApiResponse<ErrorMessage>) => throwError(() => error))
+    ).subscribe({
       error: (error) => {
-        console.log("error finding subcategories: ", error);
+        this.subcategoriesSubject.error(error);
       }
     })
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Category } from '@models/data/category.model';
 import { PurchaseCart, PurchaseHasProduct } from '@models/data/purchase.model';
 import { AccordionModule } from 'primeng/accordion';
@@ -12,6 +12,7 @@ import { ProductService } from 'src/app/core/services/api/data/product/product.s
 import { Product } from '@models/data/product.model';
 import { DividerModule } from 'primeng/divider';
 import { SkeletonModule } from 'primeng/skeleton';
+import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 
 @Component({
   selector: 'app-cart',
@@ -19,7 +20,7 @@ import { SkeletonModule } from 'primeng/skeleton';
   imports: [AccordionModule, DividerModule, SkeletonModule, ButtonComponent],
   templateUrl: './cart.component.html'
 })
-export class CartComponent implements OnInit {
+export class CartComponent implements OnInit, OnDestroy {
 
   carts: PurchaseCart[] = [];
   categories: Category[] = [];
@@ -46,6 +47,19 @@ export class CartComponent implements OnInit {
     this.categorySubscribe();
   }
 
+  ngOnDestroy(): void {
+    this.closeSubscriptions();
+  }
+
+  closeSubscriptions() {
+    if(this.categorySubscription)
+      this.categorySubscription.unsubscribe();
+    if(this.purchaseSubscription)
+      this.purchaseSubscription.unsubscribe();
+    if(this.productSubscription)
+      this.productSubscription.unsubscribe();
+  }
+
   findUserId() {
     this.userId = this.sessionService.getUserId();
   }
@@ -57,8 +71,11 @@ export class CartComponent implements OnInit {
         this.categories = categories;
         this.purchaseSubscribe();
       },
-      error: (error) => {
-        console.log('Ha ocurrido un error consultando categorias.', {error});
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) {
+          this.categories = [];
+        }
+        this.isLoading = false;
       }
     })
   }
@@ -70,8 +87,11 @@ export class CartComponent implements OnInit {
         this.carts = purchases.filter((purchase) => purchase.state == 'cart' && purchase.userId == this.userId);
         this.productSubscribe();
       },
-      error: (error) => {
-        console.log('Ha ocurrido un error consultando compras.', {error});
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) {
+          this.carts = [];
+        }
+        this.isLoading = false;
       }
     })
   }
@@ -84,8 +104,11 @@ export class CartComponent implements OnInit {
         this.savePurchases();
         this.isLoading = false;
       },
-      error: (error) => {
-        console.log('Ha ocurrido un error consultando compras.', {error});
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) {
+          this.products = [];
+        }
+        this.isLoading = false;
       }
     })
   }
@@ -103,8 +126,8 @@ export class CartComponent implements OnInit {
   plusProductToCart(product: PurchaseHasProduct) {
     product.quantity += 1;
     this.purchaseService.updatePurchaseHasProduct(product).subscribe({
-      next: (response) => { },
-      error: (error) => {
+      next: () => { },
+      error: () => {
         console.log('Ha ocurrio un error al actualizar el articulo del carrito.');
       }
     })
@@ -113,8 +136,8 @@ export class CartComponent implements OnInit {
   minusProductToCart(product: PurchaseHasProduct) {
     product.quantity -= 1;
     this.purchaseService.updatePurchaseHasProduct(product).subscribe({
-      next: (response) => { },
-      error: (error) => {
+      next: () => { },
+      error: () => {
         console.log('Ha ocurrio un error al actualizar el articulo del carrito.');
       }
     })
@@ -122,7 +145,7 @@ export class CartComponent implements OnInit {
 
   deleteFromCart(product: PurchaseHasProduct) {
     this.purchaseService.deletePurchaseHasProductById(product.id).subscribe({
-      next: (response) => { },
+      next: () => { },
       error: (error) => {
         console.log('Ha ocurrio un error al eliminar el articulo del carrito.', error);
       },

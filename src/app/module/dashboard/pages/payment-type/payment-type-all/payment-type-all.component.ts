@@ -7,6 +7,7 @@ import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
 import { TableComponent } from "../../../../../shared/data/table/table.component";
 import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
+import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 
 @Component({
   selector: 'app-payment-type-all',
@@ -44,14 +45,16 @@ export class PaymentTypeAllComponent {
         this.convertToDataObject();
         this.isLoading = false;
       },
-      error: (error) => {
-        console.log('Ha ocurrido un error: ', {error});
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) this.paymentTypes = [];
+        this.isLoading = false;
       }
     })
   }
 
   closeSubscriptions() {
-    this.paymentTypeSubscription.unsubscribe();
+    if(this.paymentTypeSubscription)
+      this.paymentTypeSubscription.unsubscribe();
   }
 
   convertToDataObject() {

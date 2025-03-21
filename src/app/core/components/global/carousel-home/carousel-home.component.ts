@@ -4,13 +4,15 @@ import { Category } from 'src/app/core/models/data-types/data/category.model';
 import { CarouselHomeObject, ResponsiveCarouselOptions } from '@models/utils/primeng-object.model';
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
 import { CarouselModule } from 'primeng/carousel';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { SkeletonModule } from 'primeng/skeleton';
+import { ApiResponse, ErrorMessage } from '@models/data/general.model';
+import { ButtonComponent } from "../../../../shared/inputs/button/button.component";
 
 @Component({
   selector: 'app-carousel-home',
   standalone: true,
-  imports: [CarouselModule, SkeletonModule, RouterModule],
+  imports: [CarouselModule, SkeletonModule, RouterModule, ButtonComponent],
   templateUrl: './carousel-home.component.html',
   styleUrls: ['../../../../../../public/assets/css/layout.css']
 })
@@ -23,11 +25,10 @@ export class CarouselHomeComponent implements OnInit, OnDestroy {
 
   isLoading = true;
 
-  hola = true;
-
   categoriesSuscription: Subscription;
 
   constructor(
+    private router: Router,
     private categoryService: CategoryService
   ) {}
 
@@ -36,7 +37,12 @@ export class CarouselHomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.categoriesSuscription.unsubscribe();
+    this.closeSubscriptions();
+  }
+
+  closeSubscriptions() {
+    if(this.categoriesSuscription)
+      this.categoriesSuscription.unsubscribe();
   }
 
   categoriesSubscribe() {
@@ -45,6 +51,10 @@ export class CarouselHomeComponent implements OnInit, OnDestroy {
         if(value.length == 0) return;
         this.categories = value;
         this.defineItems();
+        this.isLoading = false;
+      },
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) this.categories = [];
         this.isLoading = false;
       }
     });
@@ -82,7 +92,11 @@ export class CarouselHomeComponent implements OnInit, OnDestroy {
           numVisible: 1,
           numScroll: 1
       }
-  ];
+    ];
+  }
+
+  goCreateCategory() {
+    this.router.navigateByUrl('/dashboard/category/form/0');
   }
 
 }

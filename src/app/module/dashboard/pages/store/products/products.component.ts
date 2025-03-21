@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DataViewComponent } from '@component/shared/data/data-view/data-view.component';
 import { LoadingDataViewComponent } from '@component/shared/skeleton/loading-data-view/loading-data-view.component';
 import { Category } from '@models/data/category.model';
+import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { PaymentType } from '@models/data/payment-type.model';
 import { Product } from '@models/data/product.model';
 import { Purchase, PurchaseCart, PurchaseHasProductId, PurchaseHasProductRq, PurchaseRq } from '@models/data/purchase.model';
@@ -31,7 +32,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   categoryId: number;
 
-  isLoading = true;
+  isLoading = false;
 
   productsSubscription: Subscription;
   purchaseSubscription: Subscription;
@@ -51,7 +52,16 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.productsSubscription.unsubscribe();
+    this.closeSubscriptions();
+  }
+
+  closeSubscriptions() {
+    if(this.productsSubscription)
+      this.productsSubscription.unsubscribe();
+    if(this.purchaseSubscription)
+      this.purchaseSubscription.unsubscribe();
+    if(this.paymentTypeSubscription)
+      this.paymentTypeSubscription.unsubscribe();
   }
 
   getIdFromPath() {
@@ -59,14 +69,17 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   productsSubscribe() {
-    this.productsSubscription = this.productService.getByCategoryId(this.categoryId).subscribe({
+    this.productsSubscription = this.productService.storedProducts$.subscribe({
       next: (products) => {
-        if(products.length == 0) return;
         this.products = products;
         this.purchaseSubscribe();
       },
-      error: (error) => {
-        console.log("Ha ocurrido un error en productos.", error);
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) {
+          this.purchases = [];
+          this.cart = new PurchaseCart();
+        }
+        this.isLoading = false;
       }
     })
   }
@@ -79,8 +92,12 @@ export class ProductsComponent implements OnInit, OnDestroy {
         this.cart = this.purchases.find(cart => cart.categoryId == this.categoryId) ?? new PurchaseCart();
         this.paymentTypeSubscribe();
       },
-      error: (error) => {
-        console.log("Ha ocurrido un error en productos.", error);
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) {
+          this.purchases = [];
+          this.cart = new PurchaseCart();
+        }
+        this.isLoading = false;
       }
     })
   }
@@ -92,8 +109,11 @@ export class ProductsComponent implements OnInit, OnDestroy {
         this.paymentTypes = paymentTypes;
         this.isLoading = false;
       },
-      error: (error) => {
-        console.log("Ha ocurrido un error en tipos de pago.", error);
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) {
+          this.paymentTypes = [];
+        }
+        this.isLoading = false;
       }
     })
   }

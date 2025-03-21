@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, forkJoin, map, Observable, of, tap } from 'rxjs';
+import { catchError, forkJoin, map, Observable, of, ReplaySubject, tap, throwError } from 'rxjs';
 import { Category } from 'src/app/core/models/data-types/data/category.model';
-import { ApiResponse } from 'src/app/core/models/data-types/data/general.model';
+import { ApiResponse, ErrorMessage } from 'src/app/core/models/data-types/data/general.model';
 import { environment } from 'src/environments/environment';
 import { SessionService } from '../../../session/session.service';
 import { FileService } from '../../utils/file/file.service';
@@ -16,7 +16,7 @@ export class CategoryService {
   apiUrl: string = '';
 
   private categories: Category[] = [];
-  private categoriesSubject = new BehaviorSubject<Category[]>(this.categories);
+  private categoriesSubject = new ReplaySubject<Category[]>(1);
   storedCategories$: Observable<Category[]> = this.categoriesSubject.asObservable();
   
   constructor(
@@ -25,20 +25,23 @@ export class CategoryService {
     private fileService: FileService
   ) {
     this.apiUrl = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
-    this.findAllByAccoumt();
+    this.findAllByAccount();
   }
 
-  private findAllByAccoumt() {
+  findAllByAccount() {
     const accountId = this.sessionService.getAccountId();
-    this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/category/account/${accountId}`).subscribe({
-      next: (apiResponse) => {
-        this.categories = apiResponse.data;
+    this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/category/account/${accountId}`).pipe(
+      map(response => response.data),
+      tap(categories => {
+        this.categories = categories;
         this.findImages();
-      },
-      error: (error) => {
-        console.log("error finding categories: ", error);
+      }),
+      catchError((error: ApiResponse<ErrorMessage>) => throwError(() => error))
+    ).subscribe({
+      error: (error: ApiResponse<ErrorMessage>) => {
+        this.categoriesSubject.error(error);
       }
-    })
+    });
   }
 
   private findImages() {
