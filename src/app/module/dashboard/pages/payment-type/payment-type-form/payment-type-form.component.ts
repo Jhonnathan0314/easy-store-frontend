@@ -7,13 +7,17 @@ import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
 import { InputNumberComponent } from "../../../../../shared/inputs/input-number/input-number.component";
 import { InputTextComponent } from "../../../../../shared/inputs/input-text/input-text.component";
+import { ApiResponse, ErrorMessage } from '@models/data/general.model';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-payment-type-form',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule, ButtonComponent, InputNumberComponent, InputTextComponent],
+  imports: [ReactiveFormsModule, RouterModule, ToastModule, ButtonComponent, InputNumberComponent, InputTextComponent],
   templateUrl: './payment-type-form.component.html',
-  styleUrls: ['../../../../../../../public/assets/css/layout.css']
+  styleUrls: ['../../../../../../../public/assets/css/layout.css'],
+  providers: [MessageService]
 })
 export class PaymentTypeFormComponent {
 
@@ -31,6 +35,7 @@ export class PaymentTypeFormComponent {
     private activatedRoute: ActivatedRoute, 
     private router: Router, 
     private formBuilder: FormBuilder, 
+    private messageService: MessageService,
     private paymentTypeService: PaymentTypeService
   ) { }
 
@@ -113,22 +118,34 @@ export class PaymentTypeFormComponent {
 
   createCategory() {
     this.paymentTypeService.create(this.paymentType).subscribe({
-      next: (response) => {
+      next: () => {
         this.router.navigateByUrl('/dashboard/payment-type');
       },
-      error: (error) => {
-        console.log("Ha ocurrido un error al crear tipo de pago.", error);
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error){
+          if(error.error.code == 409) {
+            this.messageService.add({severity: 'error', summary: error.error.detail, detail: 'Ya existe un tipo de pago con el mismo nombre.'});
+            return;
+          }
+        }
+        this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
       }
     })
   }
 
   updateCategory() {
     this.paymentTypeService.update(this.paymentType).subscribe({
-      next: (response) => {
+      next: () => {
         this.router.navigateByUrl('/dashboard/payment-type');
       },
-      error: (error) => {
-        console.log("Ha ocurrido un error al crear tipo de pago.", error);
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error){
+          if(error.error.code == 406) {
+            this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.error.detail});
+          }
+          return;
+        }
+        this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
       }
     })
   }

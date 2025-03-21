@@ -55,8 +55,8 @@ export class RegisterComponent {
     }
 
     const role = {
-      id: 3,
-      name: 'admin'
+      id: 1,
+      name: 'client'
     }
     this.registerRequest = {
       name: this.registerForm.value.name,

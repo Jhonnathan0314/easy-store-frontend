@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
 import { InputSelectComponent } from '@component/shared/inputs/input-select/input-select.component';
@@ -10,14 +10,15 @@ import { PrimeNGObject } from '@models/utils/primeng-object.model';
 import { DataViewModule } from 'primeng/dataview';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { TagModule } from 'primeng/tag';
+import { DividerModule } from 'primeng/divider';
 
 @Component({
   selector: 'app-data-view',
   standalone: true,
-  imports: [CommonModule, FormsModule, DataViewModule, SelectButtonModule, TagModule, ButtonComponent, InputTextComponent, InputSelectComponent],
+  imports: [CommonModule, FormsModule, DataViewModule, DividerModule, SelectButtonModule, TagModule, ButtonComponent, InputTextComponent, InputSelectComponent],
   templateUrl: './data-view.component.html'
 })
-export class DataViewComponent implements OnChanges {
+export class DataViewComponent implements OnInit, OnChanges {
 
   @Output() addToCartEvent = new EventEmitter<Product>();
   @Output() removeFromCartEvent = new EventEmitter<Product>();
@@ -65,6 +66,11 @@ export class DataViewComponent implements OnChanges {
   ];
 
   selectedSortOption = this.sortOptions[0].value;
+
+  ngOnInit(): void {
+    if(!this.cart.products)
+      this.cart.products = [];  
+  }
 
   ngOnChanges(): void {
     this.originalObjects = [...this.objects];

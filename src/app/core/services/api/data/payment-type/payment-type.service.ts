@@ -62,7 +62,8 @@ export class PaymentTypeService {
       tap(response => {
         this.paymentTypes.push(response.data);
         this.paymentTypesSubject.next(this.paymentTypes);
-      })
+      }),
+      catchError((error) => throwError(() => error.error))
     )
   }
 
@@ -78,7 +79,8 @@ export class PaymentTypeService {
         const index = this.paymentTypes.findIndex(pay => pay.id == paymentType?.id);
         this.paymentTypes[index] = response.data;
         this.paymentTypesSubject.next(this.paymentTypes);
-      })
+      }),
+      catchError((error) => throwError(() => error.error))
     )
   }
 

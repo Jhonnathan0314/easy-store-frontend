@@ -34,7 +34,7 @@ export class FileProductService {
   }
 
   private getImageRequests(product: Product) {
-    if (product.imageNumber == 0 || product.imageName == 'product.png') return [];
+    if (product.imageNumber == 0 || !product.imageName || product.imageName == 'product.png') return [];
 
     return product.imageName.split(",").map(imageName => {
       return this.fileService.getFile({ name: imageName, context: "product" } as S3File);

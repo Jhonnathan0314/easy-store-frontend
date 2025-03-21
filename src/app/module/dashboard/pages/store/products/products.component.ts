@@ -69,6 +69,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   productsSubscribe() {
+    this.productService.findByAccount();
     this.productsSubscription = this.productService.storedProducts$.subscribe({
       next: (products) => {
         this.products = products;
@@ -96,8 +97,10 @@ export class ProductsComponent implements OnInit, OnDestroy {
         if(error.error.code == 404) {
           this.purchases = [];
           this.cart = new PurchaseCart();
+          this.paymentTypeSubscribe();
+        }else {
+          this.isLoading = false;
         }
-        this.isLoading = false;
       }
     })
   }

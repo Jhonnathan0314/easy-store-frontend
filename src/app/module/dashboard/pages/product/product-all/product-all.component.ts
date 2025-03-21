@@ -62,6 +62,7 @@ export class ProductAllComponent {
 
   openProductSubscription() {
     if(this.subcategories.length == 0) return;
+    this.productService.findByAccount();
     this.productSubscription = this.productService.storedProducts$.subscribe({
       next: (products) => {
         if(products.length == 0) return;

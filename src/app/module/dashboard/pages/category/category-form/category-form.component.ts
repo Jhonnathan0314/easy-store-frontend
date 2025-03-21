@@ -11,6 +11,7 @@ import { InputFileComponent } from '@component/shared/inputs/input-file/input-fi
 import { S3File } from '@models/utils/file.model';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 
 @Component({
   selector: 'app-category-form',
@@ -134,24 +135,36 @@ export class CategoryFormComponent implements OnInit {
 
   createCategory() {
     this.categoryService.create(this.category, this.filesToUpload[0] ?? null).subscribe({
-      next: () => { },
-      error: (error) => {
-        console.log("Ha ocurrido un error al crear la categoria.", error);
-      },
-      complete: () => {
+      next: () => {
         this.router.navigateByUrl('/dashboard/category');
+      },
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error){
+          if(error.error.code == 409) {
+            this.messageService.add({severity: 'error', summary: error.error.detail, detail: 'Ya existe una tienda con el mismo nombre.'});
+            return;
+          }
+        }
+        this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
       }
     })
   }
 
   updateCategory() {
     this.categoryService.update(this.category, this.filesToUpload[0] ?? null).subscribe({
-      next: () => { },
-      error: (error) => {
-        console.log("Ha ocurrido un error al crear la categoria.", error);
-      },
-      complete: () => {
+      next: () => {
         this.router.navigateByUrl('/dashboard/category');
+      },
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error){
+          if(error.error.code == 406 && this.filesToUpload.length == 0) {
+            this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.error.detail});
+          }else if (this.filesToUpload.length > 0){
+            this.router.navigateByUrl('/dashboard/category');
+          }
+          return;
+        }
+        this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
       }
     })
   }

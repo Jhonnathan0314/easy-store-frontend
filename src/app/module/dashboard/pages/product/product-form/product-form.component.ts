@@ -16,11 +16,12 @@ import { InputFileComponent } from "../../../../../shared/inputs/input-file/inpu
 import { S3File } from '@models/utils/file.model';
 import { MessageService } from 'primeng/api';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule, ButtonComponent, InputNumberComponent, InputTextComponent, InputSelectComponent, InputFileComponent],
+  imports: [ReactiveFormsModule, RouterModule, ToastModule, ButtonComponent, InputNumberComponent, InputTextComponent, InputSelectComponent, InputFileComponent],
   templateUrl: './product-form.component.html',
   styleUrls: ['../../../../../../../public/assets/css/layout.css'],
   providers: [MessageService]
@@ -191,8 +192,8 @@ export class ProductFormComponent implements OnDestroy {
       next: (product) => {
         this.product = product;
       },
-      error: (error) => {
-        console.log("Ha ocurrido un error al crear el producto.", error);
+      error: () => {
+        this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
       },
       complete: () => {
         this.productService.findProductImages(this.product.id).subscribe();
@@ -206,8 +207,8 @@ export class ProductFormComponent implements OnDestroy {
       next: (product) => {
         this.product = product;
       },
-      error: (error) => {
-        console.log("Ha ocurrido un error al actualizar el producto.", error);
+      error: () => {
+        this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
       },
       complete: () => {
         this.productService.findProductImages(this.product.id).subscribe();

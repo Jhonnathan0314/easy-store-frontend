@@ -13,13 +13,16 @@ import { Category } from '@models/data/category.model';
 import { Subscription } from 'rxjs';
 import { PrimeNGObject } from '@models/utils/primeng-object.model';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-subcategory-form',
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule, ButtonComponent, InputTextComponent, InputNumberComponent, InputSelectComponent],
+  imports: [RouterModule, ReactiveFormsModule, ToastModule, ButtonComponent, InputTextComponent, InputNumberComponent, InputSelectComponent],
   templateUrl: './subcategory-form.component.html',
-  styleUrls: ['../../../../../../../public/assets/css/layout.css']
+  styleUrls: ['../../../../../../../public/assets/css/layout.css'],
+  providers: [MessageService]
 })
 export class SubcategoryFormComponent implements OnInit, OnDestroy {
 
@@ -43,6 +46,7 @@ export class SubcategoryFormComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute, 
     private router: Router, 
     private formBuilder: FormBuilder, 
+    private messageService: MessageService,
     private subcategoryService: SubcategoryService,
     private categoryService: CategoryService
   ) { }
@@ -171,8 +175,11 @@ export class SubcategoryFormComponent implements OnInit, OnDestroy {
       next: () => {
         this.router.navigateByUrl('/dashboard/subcategory');
       },
-      error: (error) => {
-        console.log("Ha ocurrido un error al crear la categoria.", error);
+      error: () => {
+        this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
+      },
+      complete: () => {
+        this.router.navigateByUrl('/dashboard/category');
       }
     })
   }
@@ -182,9 +189,14 @@ export class SubcategoryFormComponent implements OnInit, OnDestroy {
       next: () => {
         this.router.navigateByUrl('/dashboard/subcategory');
       },
-      error: (error) => {
-        console.log("Ha ocurrido un error al crear la categoria.", error);
-      }
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error) {
+          if(error.error.code == 406) {
+            this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.error.detail});
+          }
+        }
+        this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
+      },
     })
   }
 

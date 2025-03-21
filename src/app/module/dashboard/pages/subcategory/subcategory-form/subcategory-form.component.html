@@ -52,5 +52,6 @@
           [disabled]="(!isLoading && categories.length == 0) || isLoading"
           (clickEvent)="validateForm()"
         />
+        <p-toast [life]="10000" />
     </form>
 </section>

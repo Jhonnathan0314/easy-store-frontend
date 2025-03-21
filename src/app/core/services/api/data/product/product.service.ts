@@ -126,6 +126,9 @@ export class ProductService implements OnDestroy {
       last(),
       concatMap(createdProduct => {
         return this.findById(createdProduct.id);
+      }),
+      catchError((error: ApiResponse<ErrorMessage>) => {
+        return throwError(() => error.error);
       })
     );
   }
@@ -151,14 +154,17 @@ export class ProductService implements OnDestroy {
       concatMap(updatedProduct => {
         return this.findById(updatedProduct.id);
       }),
-      catchError(() => {
-        return concat(
-          this.fileProductService.uploadFiles(filesToUpload, product.id),
-          this.fileProductService.deleteFiles(filesToDelete, product.id),
-          this.findById(product.id)
-        ).pipe(
-          map(() => product)
-        );
+      catchError((error) => {
+        if(error.error.error.code == 406) {
+          return concat(
+            this.fileProductService.uploadFiles(filesToUpload, product.id),
+            this.fileProductService.deleteFiles(filesToDelete, product.id),
+            this.findById(product.id)
+          ).pipe(
+            map(() => product)
+          );
+        }
+        return throwError(() => error.error);
       })
     );
   }

@@ -97,6 +97,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   productSubscribe() {
+    this.productService.findByAccount();
     this.productSubscription = this.productService.storedProducts$.subscribe({
       next: (products) => {
         if(products.length == 0) return;

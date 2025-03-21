@@ -116,6 +116,9 @@ export class CategoryService {
           this.update(response.data, null).subscribe();
         }
         return response;
+      }),
+      catchError((error: ApiResponse<ErrorMessage>) => {
+        return throwError(() => error.error);
       })
     )
   }
@@ -170,7 +173,7 @@ export class CategoryService {
         }
         const response: ApiResponse<Category> = new ApiResponse();
         response.data = category;
-        return of(response);
+        return throwError(() => error.error);
       })
     )
   }
