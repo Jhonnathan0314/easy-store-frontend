@@ -7,10 +7,8 @@ import { InputTextComponent } from "../../../../../shared/inputs/input-text/inpu
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
 import { InputNumberComponent } from "../../../../../shared/inputs/input-number/input-number.component";
 import { FormErrors } from '@models/security/security-error.model';
-import { SessionService } from 'src/app/core/services/session/session.service';
 import { InputFileComponent } from '@component/shared/inputs/input-file/input-file.component';
 import { S3File } from '@models/utils/file.model';
-import { FileService } from 'src/app/core/services/api/utils/file/file.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 
@@ -136,7 +134,7 @@ export class CategoryFormComponent implements OnInit {
 
   createCategory() {
     this.categoryService.create(this.category, this.filesToUpload[0] ?? null).subscribe({
-      next: (response) => { },
+      next: () => { },
       error: (error) => {
         console.log("Ha ocurrido un error al crear la categoria.", error);
       },
@@ -148,7 +146,7 @@ export class CategoryFormComponent implements OnInit {
 
   updateCategory() {
     this.categoryService.update(this.category, this.filesToUpload[0] ?? null).subscribe({
-      next: (response) => { },
+      next: () => { },
       error: (error) => {
         console.log("Ha ocurrido un error al crear la categoria.", error);
       },

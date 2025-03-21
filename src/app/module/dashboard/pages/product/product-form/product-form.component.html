@@ -102,9 +102,14 @@
             (clickEvent)="setViewInputFile(true)"
           />
         }
+
+        @if (!isLoading && subcategories.length == 0) {
+          <p class="text-center text-red-500">Debe crear al menos 1 categoria para poder crear productos.</p>
+        }
     
         <app-button
           [label]="buttonLabel"
+          [disabled]="(!isLoading && subcategories.length == 0) || isLoading"
           (clickEvent)="validateForm()"
         />
     </form>

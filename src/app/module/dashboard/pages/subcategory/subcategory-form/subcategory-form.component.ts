@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
@@ -12,6 +12,7 @@ import { InputSelectComponent } from "../../../../../shared/inputs/input-select/
 import { Category } from '@models/data/category.model';
 import { Subscription } from 'rxjs';
 import { PrimeNGObject } from '@models/utils/primeng-object.model';
+import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 
 @Component({
   selector: 'app-subcategory-form',
@@ -20,7 +21,7 @@ import { PrimeNGObject } from '@models/utils/primeng-object.model';
   templateUrl: './subcategory-form.component.html',
   styleUrls: ['../../../../../../../public/assets/css/layout.css']
 })
-export class SubcategoryFormComponent {
+export class SubcategoryFormComponent implements OnInit, OnDestroy {
 
   subcategoryForm: FormGroup;
   formErrors: FormErrors;
@@ -31,6 +32,8 @@ export class SubcategoryFormComponent {
 
   buttonLabel: string = 'Crear';
   title: string = 'Crear categoria';
+
+  isLoading: boolean = true;
 
   categorySubscription: Subscription;
 
@@ -45,43 +48,33 @@ export class SubcategoryFormComponent {
   ) { }
 
   ngOnInit(): void {
+    this.openCategorySubscription();
     this.initializeForm();
-    this.obtainIdFromPath();
-    this.openSubscriptions();
+    this.validateAction();
   }
 
-  obtainIdFromPath() {
-    this.subcategory.id = parseInt(this.activatedRoute.snapshot.params['_id']);
+  ngOnDestroy(): void {
+    this.closeSubscriptions();
   }
 
-  findSubcategoryById() {
-    if(this.isCreate()) {
-      this.prepareCreateForm();
-      return;
-    }
-    this.setUpdateTitles();
-    if(this.categories.length == 0) return;
-    this.subcategoryService.getById(this.subcategory.id).subscribe({
-      next: (response) => {
-        if(response?.id == null || response.id == undefined) return;
-        this.subcategory = response || new Subcategory();
-        this.prepareUpdateForm();
-      },
-      error: (error) => {
-        console.log("Ha ocurrido un error al obtener categoria por id. ", error);
-      }
-    })
+  closeSubscriptions() {
+    if(this.categorySubscription)
+      this.categorySubscription.unsubscribe();
   }
 
-  openSubscriptions() {
+  openCategorySubscription() {
     this.categorySubscription = this.categoryService.storedCategories$.subscribe({
       next: (categories) => {
         this.categories = categories;
         this.mapCategoriesToSelect();
-        this.findSubcategoryById();
+        this.isLoading = false;
       },
-      error: (error) => {
-        console.log("Ha ocurrido un error en categories.", error);
+      error: (error: ApiResponse<ErrorMessage>) => {
+        console.log("Ha ocurrido un error al obtener las categorias.", error);
+        if(error.error.code == 404) {
+          this.categories = [];
+        }
+        this.isLoading = false;
       }
     })
   }
@@ -92,13 +85,51 @@ export class SubcategoryFormComponent {
     })
   }
 
-  isCreate(): boolean {
-    return this.subcategory.id === 0;
+  initializeForm() {
+    this.subcategoryForm = this.formBuilder.group({
+      id: [0],
+      name: ['', [Validators.required]],
+      categoryId: [null, [Validators.required]]
+    });
+  }
+
+  validateAction() {
+    this.obtainIdFromPath();
+    if(this.subcategory.id == 0) {
+      this.prepareCreateForm();
+      return;
+    }
+    this.setUpdateTitles();
+    this.findSubcategoryById();
+  }
+
+  obtainIdFromPath() {
+    this.subcategory.id = parseInt(this.activatedRoute.snapshot.params['_id'] ?? 0);
   }
 
   prepareCreateForm() {
     this.subcategoryForm.patchValue({
       id: this.subcategory.id
+    })
+  }
+
+  setUpdateTitles() {
+    this.buttonLabel = 'Guardar';
+    this.title = 'Actualizar categoria';
+  }
+
+  findSubcategoryById() {
+    this.isLoading = true;
+    this.subcategoryService.getById(this.subcategory.id).subscribe({
+      next: (response) => {
+        if(response?.id == null || response.id == undefined) return;
+        this.subcategory = response || new Subcategory();
+        this.prepareUpdateForm();
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+      }
     })
   }
 
@@ -110,24 +141,7 @@ export class SubcategoryFormComponent {
     })
   }
 
-  setUpdateTitles() {
-    this.buttonLabel = 'Guardar';
-    this.title = 'Actualizar categoria';
-  }
-
-  initializeForm() {
-    this.subcategoryForm = this.formBuilder.group({
-      id: [0],
-      name: ['', [Validators.required]],
-      categoryId: [null, [Validators.required]]
-    });
-  }
-
-  receiveValueString(key: string, value: string) {
-    this.subcategoryForm.patchValue({ [key]: value })
-  }
-
-  receiveValueNumber(key: string, value: number) {
+  receiveValue(key: string, value: string | number) {
     this.subcategoryForm.patchValue({ [key]: value })
   }
 
@@ -144,9 +158,17 @@ export class SubcategoryFormComponent {
     }
   }
 
+  getCategoryObject() {
+    this.subcategory = { 
+      id: this.subcategoryForm.value.id,
+      name: this.subcategoryForm.value.name,
+      categoryId: this.subcategoryForm.value.categoryId
+    };
+  }
+
   createSubcategory() {
     this.subcategoryService.create(this.subcategory).subscribe({
-      next: (response) => {
+      next: () => {
         this.router.navigateByUrl('/dashboard/subcategory');
       },
       error: (error) => {
@@ -157,21 +179,13 @@ export class SubcategoryFormComponent {
 
   updateSubcategory() {
     this.subcategoryService.update(this.subcategory).subscribe({
-      next: (response) => {
+      next: () => {
         this.router.navigateByUrl('/dashboard/subcategory');
       },
       error: (error) => {
         console.log("Ha ocurrido un error al crear la categoria.", error);
       }
     })
-  }
-
-  getCategoryObject() {
-    this.subcategory = { 
-      id: this.subcategoryForm.value.id,
-      name: this.subcategoryForm.value.name,
-      categoryId: this.subcategoryForm.value.categoryId
-    };
   }
 
   goBack() {

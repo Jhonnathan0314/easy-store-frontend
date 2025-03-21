@@ -25,7 +25,7 @@
           label="Nombre"
           [classes]="subcategoryForm.controls['name'].status === 'INVALID' && subcategoryForm.touched ? 'ng-invalid ng-dirty' : ''"
           errorMessage="Nombre inválido"
-          (valueEvent)="receiveValueString('name', $event)"
+          (valueEvent)="receiveValue('name', $event)"
           formControlName="name"
           ngDefaultControl
         />
@@ -38,13 +38,18 @@
           [showClear]="true"
           [classes]="subcategoryForm.controls['categoryId'].status === 'INVALID' && subcategoryForm.touched ? 'ng-invalid ng-dirty' : ''"
           errorMessage="Tienda inválida"
-          (valueEvent)="receiveValueString('categoryId', $event)"
+          (valueEvent)="receiveValue('categoryId', $event)"
           formControlName="categoryId"
           ngDefaultControl
         />
+
+        @if (!isLoading && categories.length == 0) {
+          <p class="text-center text-red-500">Debe crear al menos 1 tienda para poder crear categorias.</p>
+        }
     
         <app-button
           [label]="buttonLabel"
+          [disabled]="(!isLoading && categories.length == 0) || isLoading"
           (clickEvent)="validateForm()"
         />
     </form>

@@ -54,7 +54,7 @@ export class PurchaseAllComponent {
 
   viewChart: boolean = false;
 
-  isLoading = true;
+  isLoading: boolean = true;
 
   constructor(
     private router: Router,
@@ -122,6 +122,7 @@ export class PurchaseAllComponent {
   }
 
   openProductSubscription() {
+    this.productService.findByAccount();
     this.productSubscription = this.productService.storedProducts$.subscribe({
       next: (products) => {
         if(products.length == 0) return;

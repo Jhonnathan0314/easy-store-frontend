@@ -15,6 +15,7 @@ import { InputSelectComponent } from "../../../../../shared/inputs/input-select/
 import { InputFileComponent } from "../../../../../shared/inputs/input-file/input-file.component";
 import { S3File } from '@models/utils/file.model';
 import { MessageService } from 'primeng/api';
+import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 
 @Component({
   selector: 'app-product-form',
@@ -42,9 +43,9 @@ export class ProductFormComponent implements OnDestroy {
   title: string = 'Crear producto';
 
   viewInputFile: boolean = true;
+  isLoading: boolean = true;
 
   subcategorySubscription: Subscription;
-  productsSubscription: Subscription;
 
   @Output() productErrorEvent = new EventEmitter<FormErrors>();
 
@@ -59,14 +60,13 @@ export class ProductFormComponent implements OnDestroy {
 
   ngOnInit(): void {
     this.openSubcategorySubscription();
-    this.openProductsSubscription();
     this.initializeForm();
     this.validateAction();
   }
 
   ngOnDestroy(): void {
-    this.subcategorySubscription.unsubscribe();
-    this.productsSubscription.unsubscribe();
+    if(this.subcategorySubscription)
+      this.subcategorySubscription.unsubscribe();
   }
 
   openSubcategorySubscription() {
@@ -75,20 +75,11 @@ export class ProductFormComponent implements OnDestroy {
         this.subcategories = subcategories;
         this.mapSubcategoriesToSelect();
       },
-      error: (error) => {
-        console.log("Ha ocurrido un error en subcategorias.", error);
-      }
-    })
-  }
-
-  openProductsSubscription() {
-    this.productsSubscription = this.productService.storedProducts$.subscribe({
-      next: (products) => {
-        this.product = products.find(prod => prod.id == this.product.id) ?? this.product;
-        this.files = this.product.images;
-      },
-      error: (error) => {
-        console.log("Ha ocurrido un error en subcategorias.", error);
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code == 404) {
+          this.subcategories = [];
+        }
+        this.isLoading = false;
       }
     })
   }
@@ -115,6 +106,7 @@ export class ProductFormComponent implements OnDestroy {
     this.obtainIdFromPath();
     if(this.product.id == 0) {
       this.prepareCreateForm();
+      this.isLoading = false;
       return;
     }
     this.setUpdateTitles();
@@ -137,15 +129,18 @@ export class ProductFormComponent implements OnDestroy {
   }
 
   findProductById() {
+    this.isLoading = true;
     if(this.subcategories.length == 0) return;
     this.productService.getById(this.product.id).subscribe({
       next: (response) => {
         if(response?.id == null || response.id == undefined) return;
         this.product = response || new Subcategory();
+        this.files = this.product.images;
         this.prepareUpdateForm();
+        this.isLoading = false;
       },
-      error: (error) => {
-        console.log("Ha ocurrido un error al obtener producto por id. ", error);
+      error: () => {
+        this.isLoading = false;
       }
     })
   }
