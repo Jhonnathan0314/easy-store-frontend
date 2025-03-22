@@ -31,7 +31,7 @@ export class PurchaseAllComponent {
   users: User[] = [];
   paymentTypes: Signal<PaymentType[]> = computed(() => this.paymentTypeService.paymentTypes());
   categories: Signal<Category[]> = computed(() => this.categoryService.categories());
-  products: Product[] = [];
+  products: Signal<Product[]> = computed(() => this.productService.products());
   purchases: Purchase[] = [];
 
   purchaseMap = new PurchaseMap();
@@ -43,7 +43,6 @@ export class PurchaseAllComponent {
   hasProducts: PurchaseHasProduct[] = [];
 
   userSubscription: Subscription;
-  productSubscription: Subscription;
   purchaseSubscription: Subscription;
 
   isDetailSelected: boolean = false;
@@ -76,28 +75,11 @@ export class PurchaseAllComponent {
       next: (users) => {
         if(users.length == 0) return;
         this.users = users;
-        this.openProductSubscription();
-      },
-      error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error.code == 404) {
-          this.users = [];
-        }
-        this.isLoading = false;
-      }
-    })
-  }
-
-  openProductSubscription() {
-    this.productService.findByAccount();
-    this.productSubscription = this.productService.storedProducts$.subscribe({
-      next: (products) => {
-        if(products.length == 0) return;
-        this.products = products;
         this.openPurchaseSubscription();
       },
       error: (error: ApiResponse<ErrorMessage>) => {
         if(error.error.code == 404) {
-          this.products = [];
+          this.users = [];
         }
         this.isLoading = false;
       }
@@ -124,8 +106,6 @@ export class PurchaseAllComponent {
   closeSubscriptions() {
     if(this.userSubscription)
       this.userSubscription.unsubscribe();
-    if(this.productSubscription)
-      this.productSubscription.unsubscribe();
     if(this.purchaseSubscription)
       this.purchaseSubscription.unsubscribe();
   }
@@ -141,7 +121,7 @@ export class PurchaseAllComponent {
 
       this.hasProducts = purch.products.filter(php => php.id.purchaseId === purch.id) || [];
       this.hasProducts = this.hasProducts.map(hasProd => {
-        this.product = this.products.find(prod => prod.id === hasProd.id.productId) ?? new Product();
+        this.product = this.products().find(prod => prod.id === hasProd.id.productId) ?? new Product();
         this.purchase = this.purchases.find(pur => pur.id === hasProd.id.purchaseId) ?? new Purchase();
         return { 
           id: hasProd.id, 

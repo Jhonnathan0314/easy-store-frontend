@@ -5,7 +5,7 @@
 } @else {
   <app-data-view
     class="w-full"
-    [objects]="products"
+    [objects]="products()"
     [cart]="cart"
     (addToCartEvent)="addToCart($event)"
     (removeFromCartEvent)="removeFromCart($event)"

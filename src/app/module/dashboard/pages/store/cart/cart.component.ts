@@ -24,14 +24,13 @@ export class CartComponent implements OnInit, OnDestroy {
 
   carts: PurchaseCart[] = [];
   categories: Signal<Category[]> = computed(() => this.categoryService.categories());
-  products: Product[] = [];
+  products: Signal<Product[]> = computed(() => this.productService.products());
 
   userId: number = 0;
 
   isLoading = true;
 
   purchaseSubscription: Subscription;
-  productSubscription: Subscription;
 
   constructor(
     private sessionService: SessionService,
@@ -53,8 +52,6 @@ export class CartComponent implements OnInit, OnDestroy {
   closeSubscriptions() {
     if(this.purchaseSubscription)
       this.purchaseSubscription.unsubscribe();
-    if(this.productSubscription)
-      this.productSubscription.unsubscribe();
   }
 
   findUserId() {
@@ -66,7 +63,8 @@ export class CartComponent implements OnInit, OnDestroy {
       next: (purchases) => {
         if(purchases.length == 0) return;
         this.carts = purchases.filter((purchase) => purchase.state == 'cart' && purchase.userId == this.userId);
-        this.productSubscribe();
+        this.savePurchases();
+        this.isLoading = false;
       },
       error: (error: ApiResponse<ErrorMessage>) => {
         if(error.error.code == 404) {
@@ -77,29 +75,11 @@ export class CartComponent implements OnInit, OnDestroy {
     })
   }
 
-  productSubscribe() {
-    this.productService.findByAccount();
-    this.productSubscription = this.productService.storedProducts$.subscribe({
-      next: (products) => {
-        if(products.length == 0) return;
-        this.products = products;
-        this.savePurchases();
-        this.isLoading = false;
-      },
-      error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error.code == 404) {
-          this.products = [];
-        }
-        this.isLoading = false;
-      }
-    })
-  }
-
   savePurchases() {
     this.carts.forEach((cart) => {
       cart.category = this.categories().find(category => category.id == cart.categoryId);
       cart.products = cart.products.map(product => {
-        product.product = this.products.find(prod => prod.id == product.id.productId);
+        product.product = this.products().find(prod => prod.id == product.id.productId);
         return product;
       })
     })

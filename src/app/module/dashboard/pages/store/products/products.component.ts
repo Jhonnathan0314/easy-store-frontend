@@ -20,7 +20,7 @@ import { PurchaseService } from 'src/app/core/services/api/data/purchase/purchas
 })
 export class ProductsComponent implements OnInit, OnDestroy {
   
-  products: Product[] = [];
+  products: Signal<Product[]> = computed(() => this.productService.products());
   productToAdd: PurchaseHasProductRq = new PurchaseHasProductRq();
 
   purchases: PurchaseCart[] = [];
@@ -34,7 +34,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   isLoading = false;
 
-  productsSubscription: Subscription;
   purchaseSubscription: Subscription;
 
   constructor(
@@ -47,7 +46,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getIdFromPath();
-    this.productsSubscribe();
+    this.purchaseSubscribe();
   }
 
   ngOnDestroy(): void {
@@ -55,31 +54,12 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   closeSubscriptions() {
-    if(this.productsSubscription)
-      this.productsSubscription.unsubscribe();
     if(this.purchaseSubscription)
       this.purchaseSubscription.unsubscribe();
   }
 
   getIdFromPath() {
     this.categoryId = parseInt(this.activatedRoute.snapshot.params['_id']);
-  }
-
-  productsSubscribe() {
-    this.productService.findByAccount();
-    this.productsSubscription = this.productService.storedProducts$.subscribe({
-      next: (products) => {
-        this.products = products;
-        this.purchaseSubscribe();
-      },
-      error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error.code == 404) {
-          this.purchases = [];
-          this.cart = new PurchaseCart();
-        }
-        this.isLoading = false;
-      }
-    })
   }
 
   purchaseSubscribe() {

@@ -17,7 +17,7 @@
     } @else {
         <app-table
             class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
-            [objects]="mappedProducts"
+            [objects]="mappedProducts()"
             [updateButton]="true"
             [deleteButton]="true"
             updateRedirectPath="product/form"

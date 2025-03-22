@@ -1,11 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { computed, Injectable, Signal, signal } from '@angular/core';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { Product } from '@models/data/product.model';
-import { catchError, concat, concatMap, last, map, Observable, of, ReplaySubject, tap, throwError } from 'rxjs';
+import { catchError, concat, concatMap, last, map, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SessionService } from '../../../session/session.service';
-import { SubcategoryService } from '../subcategory/subcategory.service';
 import { S3File } from '@models/utils/file.model';
 import { FileProductService } from '../../utils/file-product/file-product.service';
 
@@ -16,16 +15,16 @@ export class ProductService {
 
   apiUrl: string = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
 
-  private products: Product[] = [];
-  private productsSubject = new ReplaySubject<Product[]>(1);
-  storedProducts$ = this.productsSubject.asObservable();
+  products = signal<Product[]>([]);
+  productsError = signal<ErrorMessage | null>(null);
 
   constructor(
     private http: HttpClient,
     private sessionService: SessionService,
-    private subcategoryService: SubcategoryService,
     private fileProductService: FileProductService
-  ) { }
+  ) {
+    this.findByAccount();
+  }
 
   findByAccount() {
     const accountId = this.sessionService.getAccountId();
@@ -33,44 +32,39 @@ export class ProductService {
     .pipe(
       map(response => response.data),
       concatMap(products => {
-        this.products = products.map(prod => ({...prod, images: []}));
-        this.productsSubject.next(this.products);
+        this.products.set(products.map(prod => ({...prod, images: []})));
         return this.findAllImages();
       }),
       catchError((error: ApiResponse<ErrorMessage>) => {
-        if(error.error.code == 404) return throwError(() => error);
-        return of(null);
+        this.productsError.set(error.error);
+        return throwError(() => error);
       })
-    ).subscribe({
-      error: (error: ApiResponse<ErrorMessage>) => {
-        this.productsSubject.error(error);
-      }
-    });
+    ).subscribe();
   }
 
   private findAllImages(): Observable<S3File[]> {
-    return this.fileProductService.findAllImages(this.products).pipe(
+    return this.fileProductService.findAllImages(this.products()).pipe(
       tap(responses => {
         responses.forEach(response => {
           const productId = parseInt(response.name.split('-')[0]);
-          const product = this.products.find(prod => prod.id == productId);
+          const product = this.products().find(prod => prod.id == productId);
           if (product) product.images.push(response);
         });
-        this.productsSubject.next(this.products);
+        this.products.update(() => this.products());
       })
     )
   }
 
   findProductImages(productId: number): Observable<S3File[]> {
-    return this.fileProductService.findImage(this.products.find(prod => prod.id == productId) ?? new Product()).pipe(
+    return this.fileProductService.findImage(this.products().find(prod => prod.id == productId) ?? new Product()).pipe(
       tap(responses => {
         const files: S3File[] = [];
         responses.forEach(response => {
           files.push(response);
         });
-        const productIndex = this.products.findIndex(prod => prod.id == productId);
-        this.products[productIndex].images = files;
-        this.productsSubject.next(this.products);
+        const productIndex = this.products().findIndex(prod => prod.id == productId);
+        this.products()[productIndex].images = files;
+        this.products.update(() => this.products());
       })
     )
   }
@@ -79,19 +73,16 @@ export class ProductService {
     return this.http.get<ApiResponse<Product>>(`${this.apiUrl}/product/${id}`).pipe(
       map(response => response.data),
       tap(product => {
-        const index = this.products.findIndex(prod => prod.id == id);
-        if(index == -1) this.products.push(product);
-        else this.products[index] = product;
-        this.productsSubject.next(this.products);
+        const index = this.products().findIndex(prod => prod.id == id);
+        if(index == -1) this.products().push(product);
+        else this.products()[index] = product;
+        this.products.update(() => this.products());
       })
     )
   }
 
-  getById(id: number) {
-    return this.storedProducts$
-      .pipe(
-        map(products => products.find(product => product.id == id))
-      );
+  getById(id: number): Signal<Product | undefined> {
+    return computed(() => this.products().find(prod => prod.id = id));
   }
   
   create(product: Product, files: S3File[]): Observable<Product> {
@@ -153,15 +144,14 @@ export class ProductService {
   }
   
   deleteById(id: number) {
-    const product = this.products.find(prod => prod.id === id);
+    const product = this.products().find(prod => prod.id === id);
     if (!product) return;
 
     this.fileProductService.deleteFiles(product.images, id).pipe(
       last(),
       concatMap(() => this.http.delete<ApiResponse<object>>(`${this.apiUrl}/product/delete/${id}`)),
       tap(() => {
-        this.products = this.products.filter(prod => prod.id !== id);
-        this.productsSubject.next(this.products);
+        this.products.update(() => this.products().filter(prod => prod.id !== id));
       }),
       catchError(() => {
         return of(null);

@@ -30,7 +30,8 @@ export class ProductFormComponent implements OnInit {
   productForm: FormGroup;
   formErrors: FormErrors;
 
-  product: Product = new Product();
+  productId: number = 0;
+  product: Signal<Product | undefined> = computed(() => this.productService.products().find(prod => prod.id == this.productId));
 
   subcategories: Signal<Subcategory[]> = computed(() => this.subcategoryService.subcategories());
   mappedSubcategories: Signal<PrimeNGObject[]> = computed<PrimeNGObject[]>(() => this.subcategories().map(sub => ({ value: `${sub.id}`, name: sub.name })));
@@ -77,22 +78,22 @@ export class ProductFormComponent implements OnInit {
 
   validateAction() {
     this.obtainIdFromPath();
-    if(this.product.id == 0) {
+    if(this.productId == 0) {
       this.prepareCreateForm();
       this.isLoading = false;
       return;
     }
     this.setUpdateTitles();
-    this.findProductById();
+    this.prepareUpdateForm();
   }
 
   obtainIdFromPath() {
-    this.product.id = parseInt(this.activatedRoute.snapshot.params['_id']);
+    this.productId = parseInt(this.activatedRoute.snapshot.params['_id']);
   }
 
   prepareCreateForm() {
     this.productForm.patchValue({
-      id: this.product.id
+      id: this.productId
     })
   }
 
@@ -101,35 +102,18 @@ export class ProductFormComponent implements OnInit {
     this.title = 'Actualizar producto';
   }
 
-  findProductById() {
-    this.isLoading = true;
-    if(this.subcategories().length == 0) return;
-    this.productService.getById(this.product.id).subscribe({
-      next: (response) => {
-        if(response?.id == null || response.id == undefined) return;
-        this.product = response || new Subcategory();
-        this.files = this.product.images;
-        this.prepareUpdateForm();
-        this.isLoading = false;
-      },
-      error: () => {
-        this.isLoading = false;
-      }
-    })
-  }
-
   prepareUpdateForm() {
-    if(this.product.imageName != 'store.png') {
+    if(this.product()?.imageName != 'store.png') {
       this.viewInputFile = false;
     }
     this.productForm.patchValue({
-      id: this.product.id,
+      id: this.productId,
       name: this.product.name,
-      description: this.product.description,
-      price: this.product.price,
-      quantity: this.product.quantity,
-      qualification: this.product.qualification,
-      subcategoryId: `${this.product.subcategoryId}`
+      description: this.product()?.description,
+      price: this.product()?.price,
+      quantity: this.product()?.quantity,
+      qualification: this.product()?.qualification,
+      subcategoryId: `${this.product()?.subcategoryId}`
     })
   }
 
@@ -144,15 +128,15 @@ export class ProductFormComponent implements OnInit {
   prepareRequest() {
     this.product = { 
       ...this.productForm.value,
-      imageNumber: this.product.imageNumber ?? 0,
-      imageLastNumber: this.product.imageLastNumber ?? 0,
-      imageName: this.product.imageName ?? 'product.png'
+      imageNumber: this.product()?.imageNumber ?? 0,
+      imageLastNumber: this.product()?.imageLastNumber ?? 0,
+      imageName: this.product()?.imageName ?? 'product.png'
     };
     this.executeAction();
   }
 
   executeAction() {
-    if(this.product.id == 0) {
+    if(this.productId == 0) {
       this.createProduct();
       return;
     }
@@ -160,37 +144,33 @@ export class ProductFormComponent implements OnInit {
   }
 
   createProduct() {
-    this.productService.create(this.product, this.filesToUpload).subscribe({
-      next: (product) => {
-        this.product = product;
-      },
+    this.productService.create(this.product() || new Product(), this.filesToUpload).subscribe({
+      next: () => { },
       error: () => {
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
       },
       complete: () => {
-        this.productService.findProductImages(this.product.id).subscribe();
+        this.productService.findProductImages(this.productId).subscribe();
         this.router.navigateByUrl('/dashboard/product');
       }
     })
   }
 
   updateProduct() {
-    this.productService.update(this.product, this.filesToUpload, this.filesToDelete).subscribe({
-      next: (product) => {
-        this.product = product;
-      },
+    this.productService.update(this.product() || new Product(), this.filesToUpload, this.filesToDelete).subscribe({
+      next: () => { },
       error: () => {
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
       },
       complete: () => {
-        this.productService.findProductImages(this.product.id).subscribe();
+        this.productService.findProductImages(this.productId).subscribe();
         this.router.navigateByUrl('/dashboard/product');
       }
     })
   }
 
   deleteFile(file: S3File) {
-    this.product.images = this.product.images.filter(img => img.name != file.name);
+    this.product()?.images.filter(img => img.name != file.name);
     this.filesToDelete.push(file);
   }
 
