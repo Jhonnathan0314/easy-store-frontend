@@ -29,7 +29,7 @@ export class PurchaseAllComponent {
   mappedPurchases: DataObject[] = [];
   
   users: User[] = [];
-  paymentTypes: PaymentType[] = [];
+  paymentTypes: Signal<PaymentType[]> = computed(() => this.paymentTypeService.paymentTypes());
   categories: Signal<Category[]> = computed(() => this.categoryService.categories());
   products: Product[] = [];
   purchases: Purchase[] = [];
@@ -43,7 +43,6 @@ export class PurchaseAllComponent {
   hasProducts: PurchaseHasProduct[] = [];
 
   userSubscription: Subscription;
-  paymentTypeSubscription: Subscription;
   productSubscription: Subscription;
   purchaseSubscription: Subscription;
 
@@ -77,27 +76,11 @@ export class PurchaseAllComponent {
       next: (users) => {
         if(users.length == 0) return;
         this.users = users;
-        this.openPaymentTypeSubscription();
-      },
-      error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error.code == 404) {
-          this.users = [];
-        }
-        this.isLoading = false;
-      }
-    })
-  }
-
-  openPaymentTypeSubscription() {
-    this.paymentTypeSubscription = this.paymentTypeService.storedPaymentTypes$.subscribe({
-      next: (paymentTypes) => {
-        if(paymentTypes.length == 0) return;
-        this.paymentTypes = paymentTypes;
         this.openProductSubscription();
       },
       error: (error: ApiResponse<ErrorMessage>) => {
         if(error.error.code == 404) {
-          this.paymentTypes = [];
+          this.users = [];
         }
         this.isLoading = false;
       }
@@ -141,8 +124,6 @@ export class PurchaseAllComponent {
   closeSubscriptions() {
     if(this.userSubscription)
       this.userSubscription.unsubscribe();
-    if(this.paymentTypeSubscription)
-      this.paymentTypeSubscription.unsubscribe();
     if(this.productSubscription)
       this.productSubscription.unsubscribe();
     if(this.purchaseSubscription)
@@ -155,7 +136,7 @@ export class PurchaseAllComponent {
       this.purchases.length === 0) return;
     this.mappedPurchases = this.purchases.map(purch => {
       this.user = this.users.find(us => us.id == purch.userId) ?? new User();
-      this.paymentType = this.paymentTypes.find(pay => pay.id == purch.paymentTypeId) ?? new PaymentType();
+      this.paymentType = this.paymentTypes().find(pay => pay.id == purch.paymentTypeId) ?? new PaymentType();
       this.category = this.categories().find(cat => cat.id == purch.categoryId) ?? new Category();
 
       this.hasProducts = purch.products.filter(php => php.id.purchaseId === purch.id) || [];

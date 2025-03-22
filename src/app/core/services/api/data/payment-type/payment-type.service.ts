@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { computed, Injectable, Signal, signal } from '@angular/core';
 import { PaymentType } from '@models/data/payment-type.model';
-import { catchError, map, Observable, ReplaySubject, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { SessionService } from '../../../session/session.service';
 import { environment } from 'src/environments/environment';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
@@ -11,17 +11,15 @@ import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 })
 export class PaymentTypeService {
 
-  apiUrl: string = '';
+  apiUrl: string = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
 
-  private paymentTypes: PaymentType[] = [];
-  private paymentTypesSubject = new ReplaySubject<PaymentType[]>(1);
-  storedPaymentTypes$: Observable<PaymentType[]> = this.paymentTypesSubject.asObservable();
+  paymentTypes = signal<PaymentType[]>([]);
+  paymentTypesError = signal<ErrorMessage | null>(null);
   
   constructor(
     private http: HttpClient, 
     private sessionService: SessionService
   ) {
-    this.apiUrl = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
     this.findAll();
   }
 
@@ -30,28 +28,20 @@ export class PaymentTypeService {
     this.http.get<ApiResponse<PaymentType[]>>(`${this.apiUrl}/payment-type/account/${accountId}`).pipe(
       map(response => response.data),
       tap(paymentTypes => {
-        this.paymentTypes = paymentTypes;
-        this.paymentTypesSubject.next(this.paymentTypes);
+        this.paymentTypes.set(paymentTypes);
       }),
-      catchError((error: ApiResponse<ErrorMessage>) => throwError(() => error))
-    ).subscribe({
-      error: (error: ApiResponse<ErrorMessage>) => {
-        this.paymentTypesSubject.error(error);
-      }
-    })
+      catchError((error: ApiResponse<ErrorMessage>) => {
+        this.paymentTypesError.set(error.error);
+        return throwError(() => error)
+      })
+    ).subscribe()
   }
 
-  getAll(): Observable<PaymentType[]> {
-    return this.storedPaymentTypes$.pipe();
+  getById(id: number): Signal<PaymentType | undefined> {
+    return computed(() => this.paymentTypes().find(pay => pay.id === id));
   }
 
-  getById(id: number): Observable<PaymentType | undefined> {
-    return this.storedPaymentTypes$.pipe(
-      map(paymentTypes => paymentTypes.find(pay => pay.id === id))
-    );
-  }
-
-  create(paymentType: PaymentType): Observable<ApiResponse<PaymentType>> {
+  create(paymentType: PaymentType): Observable<PaymentType> {
     const userId = this.sessionService.getUserId();
     paymentType.accountId = this.sessionService.getAccountId();
     return this.http.post<ApiResponse<PaymentType>>(`${this.apiUrl}/payment-type`, paymentType, {
@@ -59,15 +49,15 @@ export class PaymentTypeService {
         'Create-By': `${userId}`
       }
     }).pipe(
-      tap(response => {
-        this.paymentTypes.push(response.data);
-        this.paymentTypesSubject.next(this.paymentTypes);
+      map(response => response.data),
+      tap(paymentTypeCreated => {
+        this.paymentTypes.update(payments => [...payments, paymentTypeCreated]);
       }),
       catchError((error) => throwError(() => error.error))
     )
   }
 
-  update(paymentType: PaymentType): Observable<ApiResponse<PaymentType>> {
+  update(paymentType: PaymentType): Observable<PaymentType> {
     const userId = this.sessionService.getUserId();
     paymentType.accountId = this.sessionService.getAccountId();
     return this.http.put<ApiResponse<PaymentType>>(`${this.apiUrl}/payment-type`, paymentType, {
@@ -75,25 +65,24 @@ export class PaymentTypeService {
         'Update-By': `${userId}`
       }
     }).pipe(
-      tap(response => {
-        const index = this.paymentTypes.findIndex(pay => pay.id == paymentType?.id);
-        this.paymentTypes[index] = response.data;
-        this.paymentTypesSubject.next(this.paymentTypes);
+      map(response => response.data),
+      tap(paymentTypeUpdated => {
+        this.paymentTypes.update(types => types.map(type => type.id === paymentType.id 
+          ? paymentTypeUpdated 
+          : type
+        ));
       }),
       catchError((error) => throwError(() => error.error))
     )
   }
 
   deleteById(id: number) {
-    this.http.delete<ApiResponse<object>>(`${this.apiUrl}/payment-type/delete/${id}`).subscribe({
-      next: () => {
-        this.paymentTypesSubject.next(this.paymentTypes.filter(pay => pay.id != id));
-      },
-      error: (error) => {
-        if(error.error.code === 404) 
-          console.error("Id no encontrado para eliminar tipo de pago.", error);
-      }
-    })
+    this.http.delete<ApiResponse<object>>(`${this.apiUrl}/payment-type/delete/${id}`).pipe(
+      tap(() => {
+        this.paymentTypes.update(types => types.filter(type => type.id != id));
+      }),
+      catchError((error) => throwError(() => error.error))
+    ).subscribe()
   }
 
 }

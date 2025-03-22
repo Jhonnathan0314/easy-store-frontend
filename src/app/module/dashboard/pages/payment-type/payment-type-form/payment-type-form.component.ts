@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, computed, EventEmitter, Output, Signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PaymentType } from '@models/data/payment-type.model';
@@ -24,7 +24,8 @@ export class PaymentTypeFormComponent {
   paymentTypeForm: FormGroup;
   formErrors: FormErrors;
 
-  paymentType: PaymentType = new PaymentType();
+  paymentTypeId: number = 0;
+  paymentType: Signal<PaymentType | undefined> = computed<PaymentType | undefined>(() => this.paymentTypeService.paymentTypes().find((paymentType) => paymentType.id === this.paymentTypeId));
 
   buttonLabel: string = 'Crear';
   title: string = 'Crear tipo de pago';
@@ -46,7 +47,7 @@ export class PaymentTypeFormComponent {
   }
 
   obtainIdFromPath() {
-    this.paymentType.id = parseInt(this.activatedRoute.snapshot.params['_id']);
+    this.paymentTypeId = parseInt(this.activatedRoute.snapshot.params['_id']);
   }
 
   findCategoryById() {
@@ -55,30 +56,21 @@ export class PaymentTypeFormComponent {
       return;
     }
     this.setUpdateTitles();
-    this.paymentTypeService.getById(this.paymentType.id).subscribe({
-      next: (response) => {
-        this.paymentType = response || new PaymentType();
-        this.prepareUpdateForm();
-      },
-      error: (error) => {
-        console.log("Ha ocurrido un error al obtener tipo de pago por id. ", error);
-      }
-    })
   }
 
   isCreate(): boolean {
-    return this.paymentType.id === 0;
+    return this.paymentTypeId === 0;
   }
 
   prepareCreateForm() {
     this.paymentTypeForm.patchValue({
-      id: this.paymentType.id
+      id: this.paymentTypeId
     })
   }
 
   prepareUpdateForm() {
     this.paymentTypeForm.patchValue({
-      id: this.paymentType.id,
+      id: this.paymentTypeId,
       name: this.paymentType.name
     })
   }
@@ -117,7 +109,7 @@ export class PaymentTypeFormComponent {
   }
 
   createCategory() {
-    this.paymentTypeService.create(this.paymentType).subscribe({
+    this.paymentTypeService.create(this.paymentType() || new PaymentType()).subscribe({
       next: () => {
         this.router.navigateByUrl('/dashboard/payment-type');
       },
@@ -134,7 +126,7 @@ export class PaymentTypeFormComponent {
   }
 
   updateCategory() {
-    this.paymentTypeService.update(this.paymentType).subscribe({
+    this.paymentTypeService.update(this.paymentType() || new PaymentType()).subscribe({
       next: () => {
         this.router.navigateByUrl('/dashboard/payment-type');
       },

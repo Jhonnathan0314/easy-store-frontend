@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, computed, OnDestroy, OnInit, Signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DataViewComponent } from '@component/shared/data/data-view/data-view.component';
 import { LoadingDataViewComponent } from '@component/shared/skeleton/loading-data-view/loading-data-view.component';
@@ -27,7 +27,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   cart: PurchaseCart = new PurchaseCart();
   purchase: PurchaseRq = new PurchaseRq();
 
-  paymentTypes: PaymentType[] = [];
+  paymentTypes: Signal<PaymentType[]> = computed(() => this.paymentTypeService.paymentTypes());
   categories: Category[] = [];
 
   categoryId: number;
@@ -36,7 +36,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   productsSubscription: Subscription;
   purchaseSubscription: Subscription;
-  paymentTypeSubscription: Subscription;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -60,8 +59,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
       this.productsSubscription.unsubscribe();
     if(this.purchaseSubscription)
       this.purchaseSubscription.unsubscribe();
-    if(this.paymentTypeSubscription)
-      this.paymentTypeSubscription.unsubscribe();
   }
 
   getIdFromPath() {
@@ -91,32 +88,15 @@ export class ProductsComponent implements OnInit, OnDestroy {
         if(purchases.length == 0) return;
         this.purchases = purchases.filter(purchase => purchase.state == 'cart');
         this.cart = this.purchases.find(cart => cart.categoryId == this.categoryId) ?? new PurchaseCart();
-        this.paymentTypeSubscribe();
+        this.isLoading = false;
       },
       error: (error: ApiResponse<ErrorMessage>) => {
         if(error.error.code == 404) {
           this.purchases = [];
           this.cart = new PurchaseCart();
-          this.paymentTypeSubscribe();
         }else {
           this.isLoading = false;
         }
-      }
-    })
-  }
-
-  paymentTypeSubscribe() {
-    this.paymentTypeSubscription = this.paymentTypeService.storedPaymentTypes$.subscribe({
-      next: (paymentTypes) => {
-        if(paymentTypes.length == 0) return;
-        this.paymentTypes = paymentTypes;
-        this.isLoading = false;
-      },
-      error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error.code == 404) {
-          this.paymentTypes = [];
-        }
-        this.isLoading = false;
       }
     })
   }
@@ -179,7 +159,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   prepareNewPurchase() {
     this.purchase.categoryId = this.categoryId;
     this.purchase.state = 'cart';
-    this.purchase.paymentTypeId = this.paymentTypes[0].id;
+    this.purchase.paymentTypeId = this.paymentTypes()[0].id;
   }
 
   buyNow($event: Product) {

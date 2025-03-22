@@ -1,12 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { computed, Injectable, Signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { Product } from '@models/data/product.model';
-import { catchError, concat, concatMap, last, map, Observable, of, ReplaySubject, Subject, tap, throwError } from 'rxjs';
+import { catchError, concat, concatMap, last, map, Observable, of, ReplaySubject, tap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SessionService } from '../../../session/session.service';
 import { SubcategoryService } from '../subcategory/subcategory.service';
-import { Subcategory } from '@models/data/subcategory.model';
 import { S3File } from '@models/utils/file.model';
 import { FileProductService } from '../../utils/file-product/file-product.service';
 
@@ -20,9 +19,6 @@ export class ProductService {
   private products: Product[] = [];
   private productsSubject = new ReplaySubject<Product[]>(1);
   storedProducts$ = this.productsSubject.asObservable();
-
-  private subcategories: Signal<Subcategory[]> = computed(() => this.subcategoryService.subcategories());
-  private destroy$ = new Subject<void>();
 
   constructor(
     private http: HttpClient,
