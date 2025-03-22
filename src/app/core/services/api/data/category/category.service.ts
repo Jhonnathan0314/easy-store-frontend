@@ -16,7 +16,7 @@ export class CategoryService {
   apiUrl: string = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
 
   categories = signal<Category[]>([]);
-  categoriesError = signal<ApiResponse<ErrorMessage> | null>(null);
+  categoriesError = signal<ErrorMessage | null>(null);
   
   constructor(
     private http: HttpClient, 
@@ -26,7 +26,7 @@ export class CategoryService {
     this.findAllByAccount();
   }
 
-  findAllByAccount() {
+  private findAllByAccount() {
     const accountId = this.sessionService.getAccountId();
     this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/category/account/${accountId}`).pipe(
       map(response => response.data),
@@ -35,7 +35,7 @@ export class CategoryService {
         this.findImages();
       }),
       catchError((error: ApiResponse<ErrorMessage>) => {
-        this.categoriesError.set(error);
+        this.categoriesError.set(error.error);
         return throwError(() => error);
       })
     ).subscribe();

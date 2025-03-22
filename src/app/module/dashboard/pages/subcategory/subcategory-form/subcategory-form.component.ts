@@ -29,7 +29,9 @@ export class SubcategoryFormComponent {
   subcategoryForm: FormGroup;
   formErrors: FormErrors;
 
-  subcategory: Subcategory = new Subcategory();
+  subcategoryId: number = 0;
+  subcategory: Signal<Subcategory | undefined> = computed<Subcategory | undefined>(() => this.subcategoryService.subcategories().find(sub => sub.id == this.subcategoryId));
+  
   categories: Signal<Category[]> = computed<Category[]>(() => this.categoryService.categories());
   mappedCategories: Signal<PrimeNGObject[]> = computed<PrimeNGObject[]>(() => 
     this.categoryService.categories().map(cat => ({
@@ -71,21 +73,21 @@ export class SubcategoryFormComponent {
 
   validateAction() {
     this.obtainIdFromPath();
-    if(this.subcategory.id == 0) {
+    if(this.subcategoryId == 0) {
       this.prepareCreateForm();
       return;
     }
     this.setUpdateTitles();
-    this.findSubcategoryById();
+    this.prepareUpdateForm();
   }
 
   obtainIdFromPath() {
-    this.subcategory.id = parseInt(this.activatedRoute.snapshot.params['_id'] ?? 0);
+    this.subcategoryId = parseInt(this.activatedRoute.snapshot.params['_id'] ?? 0);
   }
 
   prepareCreateForm() {
     this.subcategoryForm.patchValue({
-      id: this.subcategory.id
+      id: this.subcategoryId
     })
   }
 
@@ -94,26 +96,11 @@ export class SubcategoryFormComponent {
     this.title = 'Actualizar categoria';
   }
 
-  findSubcategoryById() {
-    this.isLoading = true;
-    this.subcategoryService.getById(this.subcategory.id).subscribe({
-      next: (response) => {
-        if(response?.id == null || response.id == undefined) return;
-        this.subcategory = response || new Subcategory();
-        this.prepareUpdateForm();
-        this.isLoading = false;
-      },
-      error: () => {
-        this.isLoading = false;
-      }
-    })
-  }
-
   prepareUpdateForm() {
     this.subcategoryForm.patchValue({
-      id: this.subcategory.id,
+      id: this.subcategoryId,
       name: this.subcategory.name,
-      categoryId: `${this.subcategory.categoryId}`
+      categoryId: `${this.subcategory()?.categoryId}`
     })
   }
 
@@ -126,7 +113,6 @@ export class SubcategoryFormComponent {
       this.subcategoryForm.markAllAsTouched();
       return;
     }
-    this.getCategoryObject();
     if(this.buttonLabel === 'Crear') {
       this.createSubcategory();
     }else {
@@ -134,16 +120,8 @@ export class SubcategoryFormComponent {
     }
   }
 
-  getCategoryObject() {
-    this.subcategory = { 
-      id: this.subcategoryForm.value.id,
-      name: this.subcategoryForm.value.name,
-      categoryId: this.subcategoryForm.value.categoryId
-    };
-  }
-
   createSubcategory() {
-    this.subcategoryService.create(this.subcategory).subscribe({
+    this.subcategoryService.create(this.subcategory() || new Subcategory()).subscribe({
       next: () => {
         this.router.navigateByUrl('/dashboard/subcategory');
       },
@@ -157,7 +135,7 @@ export class SubcategoryFormComponent {
   }
 
   updateSubcategory() {
-    this.subcategoryService.update(this.subcategory).subscribe({
+    this.subcategoryService.update(this.subcategory() || new Subcategory()).subscribe({
       next: () => {
         this.router.navigateByUrl('/dashboard/subcategory');
       },

@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, OnDestroy } from '@angular/core';
+import { computed, Injectable, Signal } from '@angular/core';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { Product } from '@models/data/product.model';
-import { catchError, concat, concatMap, last, map, Observable, of, ReplaySubject, Subject, takeUntil, tap, throwError } from 'rxjs';
+import { catchError, concat, concatMap, last, map, Observable, of, ReplaySubject, Subject, tap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SessionService } from '../../../session/session.service';
 import { SubcategoryService } from '../subcategory/subcategory.service';
@@ -13,7 +13,7 @@ import { FileProductService } from '../../utils/file-product/file-product.servic
 @Injectable({
   providedIn: 'root'
 })
-export class ProductService implements OnDestroy {
+export class ProductService {
 
   apiUrl: string = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
 
@@ -21,7 +21,7 @@ export class ProductService implements OnDestroy {
   private productsSubject = new ReplaySubject<Product[]>(1);
   storedProducts$ = this.productsSubject.asObservable();
 
-  private subcategories: Subcategory[] = [];
+  private subcategories: Signal<Subcategory[]> = computed(() => this.subcategoryService.subcategories());
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -29,20 +29,7 @@ export class ProductService implements OnDestroy {
     private sessionService: SessionService,
     private subcategoryService: SubcategoryService,
     private fileProductService: FileProductService
-  ) {
-    this.subscribeToSubcategories();
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  subscribeToSubcategories() {
-    this.subcategoryService.storedSubcategories$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(subcategories => this.subcategories = subcategories);
-  }
+  ) { }
 
   findByAccount() {
     const accountId = this.sessionService.getAccountId();

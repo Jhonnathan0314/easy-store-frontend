@@ -76,7 +76,7 @@
     
         <app-input-select
           class="w-1/2"
-          [options]="mappedSubcategories"
+          [options]="mappedSubcategories()"
           [selectedOption]="productForm.value.subcategoryId"
           label="Categoria"
           [showClear]="true"

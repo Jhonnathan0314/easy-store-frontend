@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, Output } from '@angular/core';
+import { Component, computed, EventEmitter, OnInit, Output, Signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Product } from '@models/data/product.model';
@@ -15,7 +15,6 @@ import { InputSelectComponent } from "../../../../../shared/inputs/input-select/
 import { InputFileComponent } from "../../../../../shared/inputs/input-file/input-file.component";
 import { S3File } from '@models/utils/file.model';
 import { MessageService } from 'primeng/api';
-import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { ToastModule } from 'primeng/toast';
 
 @Component({
@@ -26,15 +25,15 @@ import { ToastModule } from 'primeng/toast';
   styleUrls: ['../../../../../../../public/assets/css/layout.css'],
   providers: [MessageService]
 })
-export class ProductFormComponent implements OnDestroy {
+export class ProductFormComponent implements OnInit {
 
   productForm: FormGroup;
   formErrors: FormErrors;
 
   product: Product = new Product();
 
-  subcategories: Subcategory[] = [];
-  mappedSubcategories: PrimeNGObject[] = [];
+  subcategories: Signal<Subcategory[]> = computed(() => this.subcategoryService.subcategories());
+  mappedSubcategories: Signal<PrimeNGObject[]> = computed<PrimeNGObject[]>(() => this.subcategories().map(sub => ({ value: `${sub.id}`, name: sub.name })));
   
   files: S3File[] = [];
   filesToUpload: S3File[] = [];
@@ -60,35 +59,8 @@ export class ProductFormComponent implements OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.openSubcategorySubscription();
     this.initializeForm();
     this.validateAction();
-  }
-
-  ngOnDestroy(): void {
-    if(this.subcategorySubscription)
-      this.subcategorySubscription.unsubscribe();
-  }
-
-  openSubcategorySubscription() {
-    this.subcategorySubscription = this.subcategoryService.storedSubcategories$.subscribe({
-      next: (subcategories) => {
-        this.subcategories = subcategories;
-        this.mapSubcategoriesToSelect();
-      },
-      error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error.code == 404) {
-          this.subcategories = [];
-        }
-        this.isLoading = false;
-      }
-    })
-  }
-
-  mapSubcategoriesToSelect() {
-    this.mappedSubcategories = this.subcategories.map(cat => {
-      return { value: `${cat.id}`, name: cat.name }
-    })
   }
 
   initializeForm() {
@@ -131,7 +103,7 @@ export class ProductFormComponent implements OnDestroy {
 
   findProductById() {
     this.isLoading = true;
-    if(this.subcategories.length == 0) return;
+    if(this.subcategories().length == 0) return;
     this.productService.getById(this.product.id).subscribe({
       next: (response) => {
         if(response?.id == null || response.id == undefined) return;

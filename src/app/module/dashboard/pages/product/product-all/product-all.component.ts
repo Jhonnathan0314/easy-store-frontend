@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed, OnInit, Signal } from '@angular/core';
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
 import { TableComponent } from "../../../../../shared/data/table/table.component";
 import { Product } from '@models/data/product.model';
@@ -17,12 +17,12 @@ import { ApiResponse, ErrorMessage } from '@models/data/general.model';
   imports: [ButtonComponent, TableComponent, LoadingTableComponent],
   templateUrl: './product-all.component.html'
 })
-export class ProductAllComponent {
+export class ProductAllComponent implements OnInit {
 
   products: Product[] = [];
   mappedProducts: DataObject[] = [];
   
-  subcategories: Subcategory[] = [];
+  subcategories: Signal<Subcategory[]> = computed(() => this.subcategoryService.subcategories());
 
   isLoading = true;
 
@@ -36,28 +36,7 @@ export class ProductAllComponent {
   ) { }
 
   ngOnInit(): void {
-    this.openSubcategorySubscription();
-  }
-
-  ngOnDestroy(): void {
-    this.closeSubscriptions();
-  }
-
-  openSubcategorySubscription() {
-    this.subcategorySubscription = this.subcategoryService.storedSubcategories$.subscribe({
-      next: (subcategories) => {
-        if(subcategories.length == 0) return;
-        this.subcategories = subcategories;
-        this.openProductSubscription();
-      },
-      error: (error) => {
-        if(error.error.code == 404) {
-          this.subcategories = [];
-          this.products = [];
-        }
-        this.isLoading = false;
-      }
-    })
+    this.openProductSubscription();
   }
 
   openProductSubscription() {
@@ -80,14 +59,12 @@ export class ProductAllComponent {
   closeSubscriptions() {
     if(this.productSubscription)
       this.productSubscription.unsubscribe();
-    if(this.subcategorySubscription)
-      this.subcategorySubscription.unsubscribe();
   }
 
   convertToDataObject() {
     let subcategory = new Subcategory();
     this.mappedProducts = this.products.map(prod => {
-      subcategory = this.subcategories.find(sub => sub.id == prod.subcategoryId) ?? new Subcategory();
+      subcategory = this.subcategories().find(sub => sub.id == prod.subcategoryId) ?? new Subcategory();
       return {
         id: prod.id,
         name: prod.name,

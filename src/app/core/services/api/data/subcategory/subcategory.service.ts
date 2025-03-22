@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { computed, Injectable, Signal, signal } from '@angular/core';
 import { Subcategory } from '@models/data/subcategory.model';
-import { catchError, map, Observable, ReplaySubject, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { SessionService } from '../../../session/session.service';
 import { environment } from 'src/environments/environment';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
@@ -13,10 +13,9 @@ export class SubcategoryService {
 
   apiUrl: string = '';
 
-  private subcategories: Subcategory[] = [];
-  private subcategoriesSubject = new ReplaySubject<Subcategory[]>(1);
-  storedSubcategories$: Observable<Subcategory[]> = this.subcategoriesSubject.asObservable();
-  
+  subcategories = signal<Subcategory[]>([]);
+  subcategoriesError = signal<ErrorMessage | null>(null);
+
   constructor(
     private http: HttpClient, 
     private sessionService: SessionService
@@ -30,72 +29,56 @@ export class SubcategoryService {
     this.http.get<ApiResponse<Subcategory[]>>(`${this.apiUrl}/subcategory/account/${accountId}`).pipe(
       map(response => response.data),
       tap(subcategories => {
-        this.subcategories = subcategories;
-        this.subcategoriesSubject.next(this.subcategories);
+        this.subcategories.set(subcategories);
       }),
-      catchError((error: ApiResponse<ErrorMessage>) => throwError(() => error))
-    ).subscribe({
-      error: (error) => {
-        this.subcategoriesSubject.error(error);
-      }
-    })
+      catchError((error: ApiResponse<ErrorMessage>) => {
+        this.subcategoriesError.set(error.error);
+        return throwError(() => error);
+      })
+    ).subscribe()
   }
 
-  getAll(): Observable<Subcategory[]> {
-    return this.storedSubcategories$.pipe();
+  getById(id: number): Signal<Subcategory | undefined> {
+    return computed(() => this.subcategories().find(subcat => subcat.id === id));
   }
 
-  getByCategoryId(categoryId: number): Observable<Subcategory[]> {
-    return this.storedSubcategories$.pipe(
-      map(subcategories => subcategories.filter(sub => sub.categoryId == categoryId))
-    );
-  }
-
-  getById(id: number): Observable<Subcategory | undefined> {
-    return this.storedSubcategories$.pipe(
-      map(subcategories => subcategories.find(sub => sub.id === id))
-    );
-  }
-
-  create(subcategory: Subcategory): Observable<ApiResponse<Subcategory>> {
+  create(subcategory: Subcategory): Observable<Subcategory> {
     const userId = this.sessionService.getUserId();
     return this.http.post<ApiResponse<Subcategory>>(`${this.apiUrl}/subcategory`, subcategory, {
       headers: {
         'Create-By': `${userId}`
       }
     }).pipe(
-      tap(response => {
-        this.subcategories.push(response.data);
-        this.subcategoriesSubject.next(this.subcategories);
+      map(response => response.data),
+      tap(sucategoryCreated => {
+        this.subcategories.update(subcats => [...subcats, sucategoryCreated]);
       })
     )
   }
 
-  update(subcategory: Subcategory): Observable<ApiResponse<Subcategory>> {
+  update(subcategory: Subcategory): Observable<Subcategory> {
     const userId = this.sessionService.getUserId();
     return this.http.put<ApiResponse<Subcategory>>(`${this.apiUrl}/subcategory`, subcategory, {
       headers: {
         'Update-By': `${userId}`
       }
     }).pipe(
-      tap(response => {
-        const index = this.subcategories.findIndex(sub => sub.id == subcategory?.id);
-        this.subcategories[index] = response.data;
-        this.subcategoriesSubject.next(this.subcategories);
+      map(response => response.data),
+      tap(subcategoryUpdated => {
+        this.subcategories.update(subcats => subcats.map(subcat => subcat.id === subcategory.id 
+          ? subcategoryUpdated 
+          : subcat
+        ));
       })
     )
   }
 
   deleteById(id: number) {
-    this.http.delete<ApiResponse<object>>(`${this.apiUrl}/subcategory/delete/${id}`).subscribe({
-      next: () => {
-        this.subcategoriesSubject.next(this.subcategories.filter(sub => sub.id != id));
-      },
-      error: (error) => {
-        if(error.error.code === 404) 
-          console.error("Id no encontrado para eliminar subcategoria.", error);
-      }
-    })
+    this.http.delete<ApiResponse<object>>(`${this.apiUrl}/subcategory/delete/${id}`).pipe(
+      tap(() => {
+        this.subcategories.update(subcats => subcats.filter(subcat => subcat.id != id));
+      })
+    ).subscribe()
   }
   
 }
