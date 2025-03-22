@@ -24,7 +24,7 @@
 
     @if(viewChart) {
         <h1 class="w-full text-center font-bold">Reportes de compras</h1>
-        <app-purchase-report class="w-full" [purchases]="mappedPurchases" [categories]="categories" />
+        <app-purchase-report class="w-full" [purchases]="mappedPurchases" [categories]="categories()" />
     } @else {
         <h1 class="w-full text-center font-bold">Gestion de compras</h1>
         @if (isLoading) {

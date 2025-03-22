@@ -1,5 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Category } from '@models/data/category.model';
+import { Component, computed, Signal } from '@angular/core';
 import { DataObject } from '@models/utils/object.data-view.model';
 import { Subscription } from 'rxjs';
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
@@ -7,7 +6,6 @@ import { TableComponent } from "../../../../../shared/data/table/table.component
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
 import { Router, RouterModule } from '@angular/router';
 import { LoadingTableComponent } from "../../../../../shared/skeleton/loading-table/loading-table.component";
-import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 
 @Component({
   selector: 'app-category-all',
@@ -15,61 +13,26 @@ import { ApiResponse, ErrorMessage } from '@models/data/general.model';
   imports: [RouterModule, TableComponent, ButtonComponent, LoadingTableComponent],
   templateUrl: './category-all.component.html'
 })
-export class CategoryAllComponent implements OnInit, OnDestroy {
+export class CategoryAllComponent {
 
-  categories: Category[] = [];
-  mappedCategories: DataObject[] = [];
+  isLoading: Signal<boolean> = computed(() => this.categoryService.categories().length === 0);
 
-  isLoading = true;
-
+  mappedCategories: Signal<DataObject[]> = computed<DataObject[]>(() => 
+    this.categoryService.categories().map(cat => ({
+      id: cat.id,
+      name: cat.name,
+      description: cat.description,
+      imageName: cat.imageName,
+      imageObj: cat.image ?? undefined
+    }))
+  );
+  
   categorySubscription: Subscription;
 
   constructor(
     private router: Router,
     private categoryService: CategoryService
   ) { }
-
-  ngOnInit(): void {
-    this.openSubscriptions();
-  }
-
-  ngOnDestroy(): void {
-    this.closeSubscriptions();
-  }
-
-  openSubscriptions() {
-    this.categorySubscription = this.categoryService.storedCategories$.subscribe({
-      next: (categories) => {
-        if(categories.length == 0) return;
-        this.categories = categories;
-        this.convertToDataObject();
-        this.isLoading = false;
-      },
-      error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error.code == 404) {
-          this.categories = [];
-        }
-        this.isLoading = false;
-      }
-    })
-  }
-
-  closeSubscriptions() {
-    if(this.categorySubscription)
-      this.categorySubscription.unsubscribe();
-  }
-
-  convertToDataObject() {
-    this.mappedCategories = this.categories.map(cat => {
-      return {
-        id: cat.id,
-        name: cat.name,
-        description: cat.description,
-        imageName: cat.imageName,
-        imageObj: cat.image ?? undefined
-      }
-    })
-  }
 
   deleteById(category: DataObject) {
     this.categoryService.deleteById(category?.id ?? 0);

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, computed, OnDestroy, OnInit, Signal } from '@angular/core';
 import { Category } from '@models/data/category.model';
 import { PurchaseCart, PurchaseHasProduct } from '@models/data/purchase.model';
 import { AccordionModule } from 'primeng/accordion';
@@ -23,7 +23,7 @@ import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 export class CartComponent implements OnInit, OnDestroy {
 
   carts: PurchaseCart[] = [];
-  categories: Category[] = [];
+  categories: Signal<Category[]> = computed(() => this.categoryService.categories());
   products: Product[] = [];
 
   userId: number = 0;
@@ -31,7 +31,6 @@ export class CartComponent implements OnInit, OnDestroy {
   isLoading = true;
 
   purchaseSubscription: Subscription;
-  categorySubscription: Subscription;
   productSubscription: Subscription;
 
   constructor(
@@ -44,7 +43,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.findUserId();
-    this.categorySubscribe();
+    this.purchaseSubscribe();
   }
 
   ngOnDestroy(): void {
@@ -52,8 +51,6 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   closeSubscriptions() {
-    if(this.categorySubscription)
-      this.categorySubscription.unsubscribe();
     if(this.purchaseSubscription)
       this.purchaseSubscription.unsubscribe();
     if(this.productSubscription)
@@ -62,22 +59,6 @@ export class CartComponent implements OnInit, OnDestroy {
 
   findUserId() {
     this.userId = this.sessionService.getUserId();
-  }
-
-  categorySubscribe() {
-    this.categorySubscription = this.categoryService.storedCategories$.subscribe({
-      next: (categories) => {
-        if(categories.length == 0) return;
-        this.categories = categories;
-        this.purchaseSubscribe();
-      },
-      error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error.code == 404) {
-          this.categories = [];
-        }
-        this.isLoading = false;
-      }
-    })
   }
 
   purchaseSubscribe() {
@@ -116,7 +97,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   savePurchases() {
     this.carts.forEach((cart) => {
-      cart.category = this.categories.find(category => category.id == cart.categoryId);
+      cart.category = this.categories().find(category => category.id == cart.categoryId);
       cart.products = cart.products.map(product => {
         product.product = this.products.find(prod => prod.id == product.id.productId);
         return product;

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, computed, EventEmitter, Output, Signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
@@ -11,10 +11,10 @@ import { SubcategoryService } from 'src/app/core/services/api/data/subcategory/s
 import { InputSelectComponent } from "../../../../../shared/inputs/input-select/input-select.component";
 import { Category } from '@models/data/category.model';
 import { Subscription } from 'rxjs';
-import { PrimeNGObject } from '@models/utils/primeng-object.model';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { PrimeNGObject } from '@models/utils/primeng-object.model';
 
 @Component({
   selector: 'app-subcategory-form',
@@ -24,14 +24,19 @@ import { MessageService } from 'primeng/api';
   styleUrls: ['../../../../../../../public/assets/css/layout.css'],
   providers: [MessageService]
 })
-export class SubcategoryFormComponent implements OnInit, OnDestroy {
+export class SubcategoryFormComponent {
 
   subcategoryForm: FormGroup;
   formErrors: FormErrors;
 
   subcategory: Subcategory = new Subcategory();
-  categories: Category[] = [];
-  mappedCategories: PrimeNGObject[] = [];
+  categories: Signal<Category[]> = computed<Category[]>(() => this.categoryService.categories());
+  mappedCategories: Signal<PrimeNGObject[]> = computed<PrimeNGObject[]>(() => 
+    this.categoryService.categories().map(cat => ({
+      value: `${cat.id}`,
+      name: cat.name
+    }))
+  );
 
   buttonLabel: string = 'Crear';
   title: string = 'Crear categoria';
@@ -52,41 +57,8 @@ export class SubcategoryFormComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.openCategorySubscription();
     this.initializeForm();
     this.validateAction();
-  }
-
-  ngOnDestroy(): void {
-    this.closeSubscriptions();
-  }
-
-  closeSubscriptions() {
-    if(this.categorySubscription)
-      this.categorySubscription.unsubscribe();
-  }
-
-  openCategorySubscription() {
-    this.categorySubscription = this.categoryService.storedCategories$.subscribe({
-      next: (categories) => {
-        this.categories = categories;
-        this.mapCategoriesToSelect();
-        this.isLoading = false;
-      },
-      error: (error: ApiResponse<ErrorMessage>) => {
-        console.log("Ha ocurrido un error al obtener las categorias.", error);
-        if(error.error.code == 404) {
-          this.categories = [];
-        }
-        this.isLoading = false;
-      }
-    })
-  }
-
-  mapCategoriesToSelect() {
-    this.mappedCategories = this.categories.map(cat => {
-      return { value: `${cat.id}`, name: cat.name }
-    })
   }
 
   initializeForm() {

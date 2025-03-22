@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, computed, EventEmitter, OnInit, Output, Signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Category } from '@models/data/category.model';
@@ -26,7 +26,8 @@ export class CategoryFormComponent implements OnInit {
   categoryForm: FormGroup;
   formErrors: FormErrors;
 
-  category: Category = new Category();
+  categoryId: number = 0;
+  category: Signal<Category | undefined> = computed(() => this.categoryService.categories().find(cat => cat.id === this.categoryId));
 
   filesToUpload: S3File[] = [];
   filesUploaded: S3File[] = [];
@@ -61,21 +62,20 @@ export class CategoryFormComponent implements OnInit {
 
   validateAction() {
     this.obtainIdFromPath();
-    if(this.category.id == 0) {
+    if(this.categoryId == 0) {
       this.prepareCreateForm();
       return;
     }
     this.setUpdateTitles();
-    this.findCategoryById();
   }
 
   obtainIdFromPath() {
-    this.category.id = parseInt(this.activatedRoute.snapshot.params['_id']) ?? 0;
+    this.categoryId = parseInt(this.activatedRoute.snapshot.params['_id']) ?? 0;
   }
 
   prepareCreateForm() {
     this.categoryForm.patchValue({
-      id: this.category.id
+      id: this.categoryId
     })
   }
 
@@ -84,28 +84,14 @@ export class CategoryFormComponent implements OnInit {
     this.title = 'Actualizar tienda';
   }
 
-  findCategoryById() {
-    this.categoryService.getById(this.category.id).subscribe({
-      next: (response) => {
-        if(response) {
-          this.category = response || new Category();
-          this.prepareUpdateForm();
-        }
-      },
-      error: (error) => {
-        console.log("Ha ocurrido un error al obtener categoria por id. ", error);
-      }
-    })
-  }
-
   prepareUpdateForm() {
-    if(this.category.imageName != 'store.png') {
+    if(this.category()?.imageName != 'store.png') {
       this.viewInputFile = false;
     }
     this.categoryForm.patchValue({
-      id: this.category.id,
+      id: this.categoryId,
       name: this.category.name,
-      description: this.category.description
+      description: this.category()?.description
     });
   }
 
@@ -114,19 +100,11 @@ export class CategoryFormComponent implements OnInit {
       this.categoryForm.markAllAsTouched();
       return;
     }
-    this.prepareRequest();
-  }
-
-  prepareRequest() {
-    this.category = { 
-      ...this.categoryForm.value, 
-      imageName: this.category.imageName ?? 'store.png' 
-    };
     this.executeAction();
   }
 
   executeAction() {
-    if(this.category.id == 0) {
+    if(this.categoryId == 0) {
       this.createCategory();
       return;
     }
@@ -134,7 +112,8 @@ export class CategoryFormComponent implements OnInit {
   }
 
   createCategory() {
-    this.categoryService.create(this.category, this.filesToUpload[0] ?? null).subscribe({
+    if(!this.category()) return;
+    this.categoryService.create(this.category() ?? new Category(), this.filesToUpload[0] ?? null).subscribe({
       next: () => {
         this.router.navigateByUrl('/dashboard/category');
       },
@@ -151,7 +130,8 @@ export class CategoryFormComponent implements OnInit {
   }
 
   updateCategory() {
-    this.categoryService.update(this.category, this.filesToUpload[0] ?? null).subscribe({
+    if(!this.category()) return;
+    this.categoryService.update(this.category() ?? new Category(), this.filesToUpload[0] ?? null).subscribe({
       next: () => {
         this.router.navigateByUrl('/dashboard/category');
       },

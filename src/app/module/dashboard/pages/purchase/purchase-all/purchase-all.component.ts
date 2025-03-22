@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed, Signal } from '@angular/core';
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
 import { TableComponent } from "../../../../../shared/data/table/table.component";
 import { Purchase, PurchaseHasProduct, PurchaseMap } from '@models/data/purchase.model';
@@ -30,7 +30,7 @@ export class PurchaseAllComponent {
   
   users: User[] = [];
   paymentTypes: PaymentType[] = [];
-  categories: Category[] = [];
+  categories: Signal<Category[]> = computed(() => this.categoryService.categories());
   products: Product[] = [];
   purchases: Purchase[] = [];
 
@@ -44,7 +44,6 @@ export class PurchaseAllComponent {
 
   userSubscription: Subscription;
   paymentTypeSubscription: Subscription;
-  categorySubscription: Subscription;
   productSubscription: Subscription;
   purchaseSubscription: Subscription;
 
@@ -94,27 +93,11 @@ export class PurchaseAllComponent {
       next: (paymentTypes) => {
         if(paymentTypes.length == 0) return;
         this.paymentTypes = paymentTypes;
-        this.openCategorySubscription();
-      },
-      error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error.code == 404) {
-          this.paymentTypes = [];
-        }
-        this.isLoading = false;
-      }
-    })
-  }
-
-  openCategorySubscription() {
-    this.categorySubscription = this.categoryService.storedCategories$.subscribe({
-      next: (categories) => {
-        if(categories.length == 0) return;
-        this.categories = categories;
         this.openProductSubscription();
       },
       error: (error: ApiResponse<ErrorMessage>) => {
         if(error.error.code == 404) {
-          this.categories = [];
+          this.paymentTypes = [];
         }
         this.isLoading = false;
       }
@@ -160,8 +143,6 @@ export class PurchaseAllComponent {
       this.userSubscription.unsubscribe();
     if(this.paymentTypeSubscription)
       this.paymentTypeSubscription.unsubscribe();
-    if(this.categorySubscription)
-      this.categorySubscription.unsubscribe();
     if(this.productSubscription)
       this.productSubscription.unsubscribe();
     if(this.purchaseSubscription)
@@ -175,7 +156,7 @@ export class PurchaseAllComponent {
     this.mappedPurchases = this.purchases.map(purch => {
       this.user = this.users.find(us => us.id == purch.userId) ?? new User();
       this.paymentType = this.paymentTypes.find(pay => pay.id == purch.paymentTypeId) ?? new PaymentType();
-      this.category = this.categories.find(cat => cat.id == purch.categoryId) ?? new Category();
+      this.category = this.categories().find(cat => cat.id == purch.categoryId) ?? new Category();
 
       this.hasProducts = purch.products.filter(php => php.id.purchaseId === purch.id) || [];
       this.hasProducts = this.hasProducts.map(hasProd => {

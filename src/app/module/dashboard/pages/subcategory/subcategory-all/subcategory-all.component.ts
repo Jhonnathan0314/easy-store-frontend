@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed, Signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subcategory } from '@models/data/subcategory.model';
 import { DataObject } from '@models/utils/object.data-view.model';
@@ -22,7 +22,7 @@ export class SubcategoryAllComponent {
   subcategories: Subcategory[] = [];
   mappedSubcategories: DataObject[] = [];
   
-  categories: Category[] = [];
+  categories: Signal<Category[]> = computed<Category[]>(() => this.categoryService.categories());
 
   isLoading = true;
 
@@ -36,28 +36,11 @@ export class SubcategoryAllComponent {
   ) { }
 
   ngOnInit(): void {
-    this.openSubscriptions();
+    this.openSubcategorySubscription();
   }
 
   ngOnDestroy(): void {
     this.closeSubscriptions();
-  }
-
-  openSubscriptions() {
-    this.categorySubscription = this.categoryService.storedCategories$.subscribe({
-      next: (categories) => {
-        if(categories.length == 0) return;
-        this.categories = categories;
-        this.openSubcategorySubscription();
-      },
-      error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error.code == 404) {
-          this.categories = [];
-          this.subcategories = [];
-        }
-        this.isLoading = false;
-      }
-    })
   }
 
   openSubcategorySubscription() {
@@ -88,7 +71,7 @@ export class SubcategoryAllComponent {
   convertToDataObject() {
     let category = new Category();
     this.mappedSubcategories = this.subcategories.map(sub => {
-      category = this.categories.find(cat => cat.id == sub.categoryId) ?? new Category();
+      category = this.categories().find(cat => cat.id == sub.categoryId) ?? new Category();
       return {
         id: sub.id,
         name: sub.name,

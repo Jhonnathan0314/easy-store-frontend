@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { catchError, forkJoin, map, Observable, of, ReplaySubject, tap, throwError } from 'rxjs';
+import { computed, Injectable, Signal, signal } from '@angular/core';
+import { catchError, forkJoin, map, Observable, of, tap, throwError } from 'rxjs';
 import { Category } from 'src/app/core/models/data-types/data/category.model';
 import { ApiResponse, ErrorMessage } from 'src/app/core/models/data-types/data/general.model';
 import { environment } from 'src/environments/environment';
@@ -13,18 +13,16 @@ import { S3File } from '@models/utils/file.model';
 })
 export class CategoryService {
 
-  apiUrl: string = '';
+  apiUrl: string = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
 
-  private categories: Category[] = [];
-  private categoriesSubject = new ReplaySubject<Category[]>(1);
-  storedCategories$: Observable<Category[]> = this.categoriesSubject.asObservable();
+  categories = signal<Category[]>([]);
+  categoriesError = signal<ApiResponse<ErrorMessage> | null>(null);
   
   constructor(
     private http: HttpClient, 
     private sessionService: SessionService,
     private fileService: FileService
   ) {
-    this.apiUrl = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
     this.findAllByAccount();
   }
 
@@ -33,15 +31,14 @@ export class CategoryService {
     this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/category/account/${accountId}`).pipe(
       map(response => response.data),
       tap(categories => {
-        this.categories = categories;
+        this.categories.set(categories);
         this.findImages();
       }),
-      catchError((error: ApiResponse<ErrorMessage>) => throwError(() => error))
-    ).subscribe({
-      error: (error: ApiResponse<ErrorMessage>) => {
-        this.categoriesSubject.error(error);
-      }
-    });
+      catchError((error: ApiResponse<ErrorMessage>) => {
+        this.categoriesError.set(error);
+        return throwError(() => error);
+      })
+    ).subscribe();
   }
 
   private findImages() {
@@ -49,12 +46,11 @@ export class CategoryService {
   
     forkJoin(requests).subscribe({
       next: (responses) => {
-        responses.forEach((response, index) => {
-          if (response) {
-            this.categories[index].image = response;
-          }
-        });
-        this.categoriesSubject.next(this.categories);
+        const updatedCategories = this.categories().map((cat, i) => ({
+          ...cat,
+          image: responses[i] ?? null
+        }));
+        this.categories.set(updatedCategories);
       },
       error: (error) => {
         console.error("Error al cargar imágenes", error);
@@ -63,9 +59,9 @@ export class CategoryService {
   }
 
   private getRequestObject() {
-    return this.categories.map(category => {
-      if (category.imageName != 'store.png') {
-        const file = new S3File();
+    return this.categories().map(category => {
+      if (category.imageName !== 'store.png') {
+        const file: S3File = new S3File();
         file.context = "category";
         file.name = category.imageName;
         return this.fileService.getFile(file);
@@ -75,47 +71,40 @@ export class CategoryService {
     });
   }
 
-  getAll(): Observable<Category[]> {
-    return this.storedCategories$.pipe();
+  getById(id: number): Signal<Category | undefined> {
+    return computed(() => this.categories().find(cat => cat.id === id));
   }
 
-  getById(id: number): Observable<Category | undefined> {
-    return this.storedCategories$.pipe(
-      map(categories => categories.find(cat => cat.id === id))
-    );
-  }
-
-  create(category: Category, file: S3File | null): Observable<ApiResponse<Category>> {
+  create(category: Category, file: S3File | null): Observable<Category> {
     const userId = this.sessionService.getUserId();
     const accountId = this.sessionService.getAccountId();
     category.userId = userId;
     category.accountId = accountId;
+
     return this.http.post<ApiResponse<Category>>(`${this.apiUrl}/category`, category, {
-      headers: {
-        'Create-By': `${userId}`
-      }
+      headers: { 'Create-By': `${userId}` }
     }).pipe(
-      tap(response => {
+      map(response => response.data),
+      tap(categoryCreated => {
         if(file != null) {
-          const imgName = `${response.data.id}.png`
+          const imgName = `${categoryCreated.id}.png`
           file.context = 'category';
           file.name = imgName;
-          response.data.imageName = imgName;
-          response.data.image = file;
+          categoryCreated.imageName = imgName;
+          categoryCreated.image = file;
           this.uploadFile(file);
         }
-        return response;
+        return categoryCreated;
       }),
-      tap(response => {
-        this.categories.push(response.data);
-        this.categoriesSubject.next(this.categories);
-        return response;
+      tap(categoryCreated => {
+        this.categories.update(cats => [...cats, categoryCreated]);
+        return categoryCreated;
       }),
-      tap(response => {
+      tap(categoryCreated => {
         if(file != null) {
-          this.update(response.data, null).subscribe();
+          this.update(categoryCreated, null).subscribe();
         }
-        return response;
+        return categoryCreated;
       }),
       catchError((error: ApiResponse<ErrorMessage>) => {
         return throwError(() => error.error);
@@ -123,7 +112,7 @@ export class CategoryService {
     )
   }
 
-  update(category: Category, file: S3File | null): Observable<ApiResponse<Category>> {
+  update(category: Category, file: S3File | null): Observable<Category> {
     const userId = this.sessionService.getUserId();
     const accountId = this.sessionService.getAccountId();
     category.userId = userId;
@@ -136,25 +125,24 @@ export class CategoryService {
         'Update-By': `${userId}`
       }
     }).pipe(
-      tap(response => {
+      map(response => response.data),
+      tap(categoryUpdated => {
         if(file != null) {
-          const imgName = `${response.data.id}.png`
+          const imgName = `${categoryUpdated.id}.png`
           file.context = 'category';
           file.name = imgName;
-          response.data.imageName = imgName;
-          response.data.image = file;
+          categoryUpdated.imageName = imgName;
+          categoryUpdated.image = file;
           this.uploadFile(file);
         }
-        return response;
+        return categoryUpdated;
       }),
-      tap(response => {
-        const index = this.categories.findIndex(cat => cat.id == category?.id);
-        this.categories[index] = {
-          ...response.data,
-          image: this.categories[index].image ? this.categories[index].image : file
-        };
-        this.categoriesSubject.next(this.categories);
-        return response;
+      tap(categoryUpdated => {
+        this.categories.update(cats => cats.map(cat => cat.id === category.id 
+          ? { ...categoryUpdated, image: cat.image ?? file } 
+          : cat
+        ));
+        return categoryUpdated;
       }),
       catchError((error) => {
         if (error.error.error.code == 406 && file != null) {
@@ -164,15 +152,11 @@ export class CategoryService {
           category.image = file;
           this.uploadFile(file);
           
-          const index = this.categories.findIndex(cat => cat.id == category?.id);
-          this.categories[index] = {
-            ...category,
-            image: file
-          };
-          this.categoriesSubject.next(this.categories);
+          this.categories.update(cats => cats.map(cat => cat.id === category.id 
+            ? { ...category, image: file }
+            : cat
+          ));
         }
-        const response: ApiResponse<Category> = new ApiResponse();
-        response.data = category;
         return throwError(() => error.error);
       })
     )
@@ -191,28 +175,25 @@ export class CategoryService {
     this.http.delete<ApiResponse<object>>(`${this.apiUrl}/category/delete/${id}`)
     .pipe(
       tap(response => {
-        const index = this.categories.findIndex(cat => cat.id == id);
-        const category = this.categories[index];
-        const image = category.image;
-        if(image){
+        const category = this.categories().find(cat => cat.id === id);
+        const image = category?.image;
+        if (image) {
           image.context = 'category';
           this.deleteFile(image);
         }
         return response;
       }),
       tap(response => {
-        this.categories = this.categories.filter(cat => cat.id != id);
-        this.categoriesSubject.next(this.categories);
+        this.categories.update(cats => cats.filter(cat => cat.id !== id));
         return response;
-      })
-    )
-    .subscribe({
-      next: () => { },
-      error: (error) => {
-        if(error.error.code === 404) 
+      }),
+      catchError((error: ApiResponse<ErrorMessage>) => {
+        if (error.error.code === 404) {
           console.error("Id no encontrado para eliminar categoria.", error);
-      }
-    })
+        }
+        return throwError(() => error);
+      })
+    ).subscribe()
   }
 
   private deleteFile(file: S3File) {
