@@ -32,7 +32,11 @@ export class PurchaseAllComponent {
   paymentTypes: Signal<PaymentType[]> = computed(() => this.paymentTypeService.paymentTypes());
   categories: Signal<Category[]> = computed(() => this.categoryService.categories());
   products: Signal<Product[]> = computed(() => this.productService.products());
-  purchases: Purchase[] = [];
+  purchases: Signal<Purchase[]> = computed(() => {
+    const purchases = this.purchaseService.purchases();
+    this.convertToDataObject();
+    return purchases;
+  });
 
   purchaseMap = new PurchaseMap();
   user = new User();
@@ -43,7 +47,6 @@ export class PurchaseAllComponent {
   hasProducts: PurchaseHasProduct[] = [];
 
   userSubscription: Subscription;
-  purchaseSubscription: Subscription;
 
   isDetailSelected: boolean = false;
   detailSelectedId: number = 0;
@@ -75,7 +78,6 @@ export class PurchaseAllComponent {
       next: (users) => {
         if(users.length == 0) return;
         this.users = users;
-        this.openPurchaseSubscription();
       },
       error: (error: ApiResponse<ErrorMessage>) => {
         if(error.error.code == 404) {
@@ -86,35 +88,16 @@ export class PurchaseAllComponent {
     })
   }
 
-  openPurchaseSubscription() {
-    this.purchaseSubscription = this.purchaseService.storedPurchases$.subscribe({
-      next: (purchases) => {
-        if(purchases.length == 0) return;
-        this.purchases = purchases;
-        this.convertToDataObject();
-        this.isLoading = false;
-      },
-      error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error.code == 404) {
-          this.purchases = [];
-        }
-        this.isLoading = false;
-      }
-    })
-  }
-
   closeSubscriptions() {
     if(this.userSubscription)
       this.userSubscription.unsubscribe();
-    if(this.purchaseSubscription)
-      this.purchaseSubscription.unsubscribe();
   }
 
   convertToDataObject() {
     if(this.users.length === 0 || this.paymentTypes.length === 0 || 
       this.categories.length === 0 || this.products.length === 0 || 
       this.purchases.length === 0) return;
-    this.mappedPurchases = this.purchases.map(purch => {
+    this.mappedPurchases = this.purchases().map(purch => {
       this.user = this.users.find(us => us.id == purch.userId) ?? new User();
       this.paymentType = this.paymentTypes().find(pay => pay.id == purch.paymentTypeId) ?? new PaymentType();
       this.category = this.categories().find(cat => cat.id == purch.categoryId) ?? new Category();
@@ -122,7 +105,7 @@ export class PurchaseAllComponent {
       this.hasProducts = purch.products.filter(php => php.id.purchaseId === purch.id) || [];
       this.hasProducts = this.hasProducts.map(hasProd => {
         this.product = this.products().find(prod => prod.id === hasProd.id.productId) ?? new Product();
-        this.purchase = this.purchases.find(pur => pur.id === hasProd.id.purchaseId) ?? new Purchase();
+        this.purchase = this.purchases().find(pur => pur.id === hasProd.id.purchaseId) ?? new Purchase();
         return { 
           id: hasProd.id, 
           quantity: hasProd.quantity, 

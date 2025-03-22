@@ -14,7 +14,7 @@
         No tienes carritos por el momento 😢
     } @else {
         <p-accordion [value]="[]" [multiple]="true">
-            @for (cart of carts; track cart.id) {
+            @for (cart of carts(); track cart.id) {
                 <p-accordion-panel [value]="cart.categoryId">
                     <p-accordion-header>
                         <section class="flex gap-4 items-center justify-start">

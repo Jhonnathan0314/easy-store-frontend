@@ -1,13 +1,11 @@
-import { Component, computed, OnDestroy, OnInit, Signal } from '@angular/core';
+import { Component, computed, OnInit, Signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DataViewComponent } from '@component/shared/data/data-view/data-view.component';
 import { LoadingDataViewComponent } from '@component/shared/skeleton/loading-data-view/loading-data-view.component';
 import { Category } from '@models/data/category.model';
-import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { PaymentType } from '@models/data/payment-type.model';
 import { Product } from '@models/data/product.model';
 import { Purchase, PurchaseCart, PurchaseHasProductId, PurchaseHasProductRq, PurchaseRq } from '@models/data/purchase.model';
-import { Subscription } from 'rxjs';
 import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/payment-type.service';
 import { ProductService } from 'src/app/core/services/api/data/product/product.service';
 import { PurchaseService } from 'src/app/core/services/api/data/purchase/purchase.service';
@@ -18,13 +16,13 @@ import { PurchaseService } from 'src/app/core/services/api/data/purchase/purchas
   imports: [RouterModule, DataViewComponent, LoadingDataViewComponent],
   templateUrl: './products.component.html'
 })
-export class ProductsComponent implements OnInit, OnDestroy {
+export class ProductsComponent implements OnInit {
   
   products: Signal<Product[]> = computed(() => this.productService.products());
   productToAdd: PurchaseHasProductRq = new PurchaseHasProductRq();
 
-  purchases: PurchaseCart[] = [];
-  cart: PurchaseCart = new PurchaseCart();
+  purchases: Signal<PurchaseCart[]> = computed(() => this.purchaseService.purchases());
+  cart: PurchaseCart = this.purchases().find(cart => cart.categoryId == this.categoryId) ?? new PurchaseCart();;
   purchase: PurchaseRq = new PurchaseRq();
 
   paymentTypes: Signal<PaymentType[]> = computed(() => this.paymentTypeService.paymentTypes());
@@ -33,8 +31,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
   categoryId: number;
 
   isLoading = false;
-
-  purchaseSubscription: Subscription;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -46,39 +42,10 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getIdFromPath();
-    this.purchaseSubscribe();
-  }
-
-  ngOnDestroy(): void {
-    this.closeSubscriptions();
-  }
-
-  closeSubscriptions() {
-    if(this.purchaseSubscription)
-      this.purchaseSubscription.unsubscribe();
   }
 
   getIdFromPath() {
     this.categoryId = parseInt(this.activatedRoute.snapshot.params['_id']);
-  }
-
-  purchaseSubscribe() {
-    this.purchaseSubscription = this.purchaseService.storedPurchases$.subscribe({
-      next: (purchases) => {
-        if(purchases.length == 0) return;
-        this.purchases = purchases.filter(purchase => purchase.state == 'cart');
-        this.cart = this.purchases.find(cart => cart.categoryId == this.categoryId) ?? new PurchaseCart();
-        this.isLoading = false;
-      },
-      error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error.code == 404) {
-          this.purchases = [];
-          this.cart = new PurchaseCart();
-        }else {
-          this.isLoading = false;
-        }
-      }
-    })
   }
 
   addToCart($event: Product) {
@@ -106,7 +73,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   validatePurchase(product: Product) {
-    const cart = this.purchases.find(cart => cart.categoryId == this.categoryId);
+    const cart = this.purchases().find(cart => cart.categoryId == this.categoryId);
     if(cart != undefined) {
       this.prepareProductToAdd(product, cart);
     }else {

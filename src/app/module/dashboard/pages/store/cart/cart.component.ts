@@ -1,8 +1,7 @@
-import { Component, computed, OnDestroy, OnInit, Signal } from '@angular/core';
+import { Component, computed, OnInit, Signal } from '@angular/core';
 import { Category } from '@models/data/category.model';
 import { PurchaseCart, PurchaseHasProduct } from '@models/data/purchase.model';
 import { AccordionModule } from 'primeng/accordion';
-import { Subscription } from 'rxjs';
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
 import { PurchaseService } from 'src/app/core/services/api/data/purchase/purchase.service';
 import { SessionService } from 'src/app/core/services/session/session.service';
@@ -12,7 +11,6 @@ import { ProductService } from 'src/app/core/services/api/data/product/product.s
 import { Product } from '@models/data/product.model';
 import { DividerModule } from 'primeng/divider';
 import { SkeletonModule } from 'primeng/skeleton';
-import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 
 @Component({
   selector: 'app-cart',
@@ -20,17 +18,19 @@ import { ApiResponse, ErrorMessage } from '@models/data/general.model';
   imports: [AccordionModule, DividerModule, SkeletonModule, ButtonComponent],
   templateUrl: './cart.component.html'
 })
-export class CartComponent implements OnInit, OnDestroy {
+export class CartComponent implements OnInit {
 
-  carts: PurchaseCart[] = [];
+  carts: Signal<PurchaseCart[]> = computed(() => {
+    const carts = this.purchaseService.purchases().filter((purchase) => purchase.state == 'cart' && purchase.userId == this.userId)
+    this.savePurchases();
+    return carts;
+  });
   categories: Signal<Category[]> = computed(() => this.categoryService.categories());
   products: Signal<Product[]> = computed(() => this.productService.products());
 
   userId: number = 0;
 
   isLoading = true;
-
-  purchaseSubscription: Subscription;
 
   constructor(
     private sessionService: SessionService,
@@ -42,41 +42,14 @@ export class CartComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.findUserId();
-    this.purchaseSubscribe();
-  }
-
-  ngOnDestroy(): void {
-    this.closeSubscriptions();
-  }
-
-  closeSubscriptions() {
-    if(this.purchaseSubscription)
-      this.purchaseSubscription.unsubscribe();
   }
 
   findUserId() {
     this.userId = this.sessionService.getUserId();
   }
 
-  purchaseSubscribe() {
-    this.purchaseSubscription = this.purchaseService.storedPurchases$.subscribe({
-      next: (purchases) => {
-        if(purchases.length == 0) return;
-        this.carts = purchases.filter((purchase) => purchase.state == 'cart' && purchase.userId == this.userId);
-        this.savePurchases();
-        this.isLoading = false;
-      },
-      error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error.code == 404) {
-          this.carts = [];
-        }
-        this.isLoading = false;
-      }
-    })
-  }
-
   savePurchases() {
-    this.carts.forEach((cart) => {
+    this.carts().forEach((cart) => {
       cart.category = this.categories().find(category => category.id == cart.categoryId);
       cart.products = cart.products.map(product => {
         product.product = this.products().find(prod => prod.id == product.id.productId);
