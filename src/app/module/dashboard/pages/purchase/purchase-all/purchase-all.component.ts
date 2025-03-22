@@ -16,7 +16,6 @@ import { PurchaseService } from 'src/app/core/services/api/data/purchase/purchas
 import { UserService } from 'src/app/core/services/api/data/user/user.service';
 import { PurchaseReportComponent } from "../purchase-report/purchase-report.component";
 import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
-import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 
 @Component({
   selector: 'app-purchase-all',
@@ -28,7 +27,7 @@ export class PurchaseAllComponent {
   
   mappedPurchases: DataObject[] = [];
   
-  users: User[] = [];
+  users: Signal<User[]> = computed(() => this.userService.users());
   paymentTypes: Signal<PaymentType[]> = computed(() => this.paymentTypeService.paymentTypes());
   categories: Signal<Category[]> = computed(() => this.categoryService.categories());
   products: Signal<Product[]> = computed(() => this.productService.products());
@@ -65,40 +64,12 @@ export class PurchaseAllComponent {
     private purchaseService: PurchaseService
   ) { }
 
-  ngOnInit(): void {
-    this.openUserSubscription();
-  }
-
-  ngOnDestroy(): void {
-    this.closeSubscriptions();
-  }
-
-  openUserSubscription() {
-    this.userSubscription = this.userService.storedUsers$.subscribe({
-      next: (users) => {
-        if(users.length == 0) return;
-        this.users = users;
-      },
-      error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error.code == 404) {
-          this.users = [];
-        }
-        this.isLoading = false;
-      }
-    })
-  }
-
-  closeSubscriptions() {
-    if(this.userSubscription)
-      this.userSubscription.unsubscribe();
-  }
-
   convertToDataObject() {
     if(this.users.length === 0 || this.paymentTypes.length === 0 || 
       this.categories.length === 0 || this.products.length === 0 || 
       this.purchases.length === 0) return;
     this.mappedPurchases = this.purchases().map(purch => {
-      this.user = this.users.find(us => us.id == purch.userId) ?? new User();
+      this.user = this.users().find(us => us.id == purch.userId) ?? new User();
       this.paymentType = this.paymentTypes().find(pay => pay.id == purch.paymentTypeId) ?? new PaymentType();
       this.category = this.categories().find(cat => cat.id == purch.categoryId) ?? new Category();
 
