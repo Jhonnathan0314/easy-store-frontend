@@ -6,12 +6,16 @@
   </div>
 } @else if(categories.length == 0 && !isLoading) {
   <div class="p-4 flex flex-col justify-center items-start gap-4">
-    <p class="w-full">No tienes tiendas creadas por el momento.</p>
-    <app-button 
-      label="Crear tienda"
-      icon="pi pi-plus"
-      (clickEvent)="goCreateCategory()"
-    />
+    @if (isAdmin) {
+      <p class="w-full">No tienes tiendas creadas por el momento.</p>
+      <app-button 
+        label="Crear tienda"
+        icon="pi pi-plus"
+        (clickEvent)="goCreateCategory()"
+      />
+    } @else {
+      <p class="w-full">No existen tiendas aún.</p>
+    }
   </div>
 } @else {
   <p-carousel

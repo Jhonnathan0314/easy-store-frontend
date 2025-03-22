@@ -1,10 +1,10 @@
 <div class="w-full px-4 py-4 flex flex-col items-center gap-4 lg:px-40">
     <h1 class="text-center !text-3xl !font-bold">Menu principal</h1>
-    <section class="border-section">
-        <h2 class="h2">Tiendas creadas</h2>
-        <app-carousel-home></app-carousel-home>
-    </section>
     @if(adminMode) {
+        <section class="border-section">
+            <h2 class="h2">Tiendas creadas</h2>
+            <app-carousel-home [isAdmin]="true"></app-carousel-home>
+        </section>
         <section class="border-section px-4 flex flex-wrap justify-center items-center gap-4 md:justify-start">
             <h2 class="h2 w-full">Gestionar tiendas</h2>
             <p class="w-full">En este apartado usted podra ver, crear, actualizar y eliminar las tiendas creadas.</p>
@@ -88,6 +88,11 @@
                 icon="pi pi-plus"
                 (clickEvent)="redirectTo('/dashboard/user/form')"
             />
+        </section>
+    } @else {
+        <section class="border-section">
+            <h2 class="h2">Explorar tiendas</h2>
+            <app-carousel-home [isAdmin]="false"></app-carousel-home>
         </section>
     }
 </div>
