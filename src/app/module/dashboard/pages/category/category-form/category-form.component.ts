@@ -52,7 +52,7 @@ export class CategoryFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
-    this.validateAction()
+    this.validateAction();
   }
 
   initializeForm() {

@@ -25,7 +25,7 @@
           label="Nombre"
           [classes]="paymentTypeForm.controls['name'].status === 'INVALID' && paymentTypeForm.touched ? 'ng-invalid ng-dirty' : ''"
           errorMessage="Nombre inválido"
-          (valueEvent)="receiveValueString('name', $event)"
+          (valueEvent)="receiveValue('name', $event)"
           formControlName="name"
           ngDefaultControl
         />

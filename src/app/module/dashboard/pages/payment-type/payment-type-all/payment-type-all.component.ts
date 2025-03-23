@@ -1,4 +1,4 @@
-import { Component, computed, Signal } from '@angular/core';
+import { Component, computed, effect, Injector, OnInit, Signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { PaymentType } from '@models/data/payment-type.model';
 import { DataObject } from '@models/utils/object.data-view.model';
@@ -14,13 +14,10 @@ import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/
   imports: [RouterModule, ButtonComponent, TableComponent, LoadingTableComponent],
   templateUrl: './payment-type-all.component.html'
 })
-export class PaymentTypeAllComponent {
+export class PaymentTypeAllComponent implements OnInit {
 
   paymentTypes: Signal<PaymentType[]> = computed(() => this.paymentTypeService.paymentTypes());
-  mappedPaymentTypes: Signal<DataObject[]> = computed(() => this.paymentTypes().map((pay) => ({
-    id: pay.id,
-    name: pay.name
-  })));
+  mappedPaymentTypes: DataObject[] = [];
 
   isLoading = true;
 
@@ -28,8 +25,24 @@ export class PaymentTypeAllComponent {
 
   constructor(
     private router: Router,
+    private injector: Injector,
     private paymentTypeService: PaymentTypeService
   ) { }
+
+  ngOnInit(): void {
+    this.extractMappedPaymentTypes();
+  }
+
+  extractMappedPaymentTypes() {
+    effect(() => {
+      if(this.paymentTypes().length === 0) return;
+      this.mappedPaymentTypes = this.paymentTypes().map((pay) => ({
+        id: pay.id,
+        name: pay.name
+      }))
+      this.isLoading = false;
+    }, {injector: this.injector})
+  }
 
   deleteById(paymentType: DataObject) {
     this.paymentTypeService.deleteById(paymentType?.id ?? 0);
