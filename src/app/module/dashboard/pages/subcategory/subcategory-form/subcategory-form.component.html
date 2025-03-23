@@ -8,50 +8,54 @@
       />
         <h1 class="w-full text-center">{{ title }}</h1>
     
-        @if(subcategoryForm.value.id != 0) {
-          <app-input-number
+        @if (isLoading) {
+          <app-loading-form class="w-full" />
+        } @else {
+          @if(subcategoryForm.value.id != 0) {
+            <app-input-number
+              class="w-1/2"
+              [value]="subcategoryForm.value.id"
+              label="Id"
+              [isDisabled]="true"
+              formControlName="id"
+              ngDefaultControl
+            ></app-input-number>
+          }
+          
+          <app-input-text
             class="w-1/2"
-            [value]="subcategoryForm.value.id"
-            label="Id"
-            [isDisabled]="true"
-            formControlName="id"
+            [value]="subcategoryForm.value.name"
+            label="Nombre"
+            [classes]="subcategoryForm.controls['name'].status === 'INVALID' && subcategoryForm.touched ? 'ng-invalid ng-dirty' : ''"
+            errorMessage="Nombre inválido"
+            (valueEvent)="receiveValue('name', $event)"
+            formControlName="name"
             ngDefaultControl
-          ></app-input-number>
+          />
+      
+          <app-input-select
+            class="w-1/2"
+            [options]="mappedCategories"
+            [selectedOption]="subcategoryForm.value.categoryId"
+            label="Tienda"
+            [showClear]="true"
+            [classes]="subcategoryForm.controls['categoryId'].status === 'INVALID' && subcategoryForm.touched ? 'ng-invalid ng-dirty' : ''"
+            errorMessage="Tienda inválida"
+            (valueEvent)="receiveValue('categoryId', $event)"
+            formControlName="categoryId"
+            ngDefaultControl
+          />
+  
+          @if (!isLoading && categories().length == 0) {
+            <p class="text-center text-red-500">Debe crear al menos 1 tienda para poder crear categorias.</p>
+          }
+      
+          <app-button
+            [label]="buttonLabel"
+            [disabled]="(!isLoading && categories().length == 0) || isLoading"
+            (clickEvent)="validateForm()"
+          />
+          <p-toast [life]="10000" />v
         }
-        
-        <app-input-text
-          class="w-1/2"
-          [value]="subcategoryForm.value.name"
-          label="Nombre"
-          [classes]="subcategoryForm.controls['name'].status === 'INVALID' && subcategoryForm.touched ? 'ng-invalid ng-dirty' : ''"
-          errorMessage="Nombre inválido"
-          (valueEvent)="receiveValue('name', $event)"
-          formControlName="name"
-          ngDefaultControl
-        />
-    
-        <app-input-select
-          class="w-1/2"
-          [options]="mappedCategories"
-          [selectedOption]="subcategoryForm.value.categoryId"
-          label="Tienda"
-          [showClear]="true"
-          [classes]="subcategoryForm.controls['categoryId'].status === 'INVALID' && subcategoryForm.touched ? 'ng-invalid ng-dirty' : ''"
-          errorMessage="Tienda inválida"
-          (valueEvent)="receiveValue('categoryId', $event)"
-          formControlName="categoryId"
-          ngDefaultControl
-        />
-
-        @if (!isLoading && categories.length == 0) {
-          <p class="text-center text-red-500">Debe crear al menos 1 tienda para poder crear categorias.</p>
-        }
-    
-        <app-button
-          [label]="buttonLabel"
-          [disabled]="(!isLoading && categories.length == 0) || isLoading"
-          (clickEvent)="validateForm()"
-        />
-        <p-toast [life]="10000" />
     </form>
 </section>

@@ -81,9 +81,9 @@
           }
         </div>
       }
-      @if(filesUploaded) {
+      @if(filesUploadedCopy) {
         <div class="flex flex-wrap gap-4">
-          @for(file of filesUploaded; track file.name) {
+          @for(file of filesUploadedCopy; track file.name) {
             <div
               class="p-8 rounded-border flex flex-col border border-surface items-center gap-4"
             >
@@ -99,14 +99,12 @@
                 >{{ file.name }}</span
               >
               <div>{{ file.size }}</div>
-              @if (removeEnable) {
-                <app-button
-                  icon="pi pi-times"
-                  (clickEvent)="removeUploaded(file)"
-                  [rounded]="true"
-                  severity="danger"
-                />
-              }
+              <app-button
+                icon="pi pi-times"
+                (clickEvent)="removeUploaded(file)"
+                [rounded]="true"
+                severity="danger"
+              />
             </div>
           }
         </div>

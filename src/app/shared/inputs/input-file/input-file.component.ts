@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { S3File } from '@models/utils/file.model';
 import { FileSelectEvent, FileUpload } from 'primeng/fileupload';
 import { ButtonComponent } from '../button/button.component';
@@ -10,11 +10,12 @@ import { ButtonComponent } from '../button/button.component';
   imports: [FileUpload, ButtonComponent, CommonModule],
   templateUrl: './input-file.component.html'
 })
-export class InputFileComponent implements OnInit {
+export class InputFileComponent implements OnChanges {
 
   @Input() fileLimit: number = 1;
   @Input() label: string = '';
   @Input() filesUploaded: S3File[] = [];
+  filesUploadedCopy: S3File[] = [...this.filesUploaded];
 
   @Output() uploadFilesEvent = new EventEmitter<S3File[]>();
   @Output() deleteFileEvent = new EventEmitter<S3File>();
@@ -28,10 +29,8 @@ export class InputFileComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
-    if (this.filesUploaded?.length > 0) {
-      this.removeEnable = true;
-    }
+  ngOnChanges(): void {
+    this.filesUploadedCopy = [...this.filesUploaded];
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -84,8 +83,9 @@ export class InputFileComponent implements OnInit {
     this.filesToUpload = [];
   }
 
-  removeUploaded(file: S3File) {
-    this.deleteFileEvent.emit(file);
+  removeUploaded(fileToDelete: S3File) {
+    this.deleteFileEvent.emit(fileToDelete);
+    this.filesUploadedCopy = this.filesUploadedCopy.filter(file => file.name != fileToDelete.name);
   }
 
 }

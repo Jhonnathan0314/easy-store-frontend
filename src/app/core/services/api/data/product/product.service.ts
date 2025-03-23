@@ -45,12 +45,15 @@ export class ProductService {
   private findAllImages(): Observable<S3File[]> {
     return this.fileProductService.findAllImages(this.products()).pipe(
       tap(responses => {
-        responses.forEach(response => {
-          const productId = parseInt(response.name.split('-')[0]);
-          const product = this.products().find(prod => prod.id == productId);
-          if (product) product.images.push(response);
+        this.products.update(products => {
+          return products.map(product => ({
+            ...product,
+            images: responses.filter(response => {
+              const productId = parseInt(response.name.split('-')[0]);
+              return productId === product.id;
+            })
+          }));
         });
-        this.products.update(() => this.products());
       })
     )
   }
@@ -58,13 +61,17 @@ export class ProductService {
   findProductImages(productId: number): Observable<S3File[]> {
     return this.fileProductService.findImage(this.products().find(prod => prod.id == productId) ?? new Product()).pipe(
       tap(responses => {
-        const files: S3File[] = [];
-        responses.forEach(response => {
-          files.push(response);
+        this.products.update(products => {
+          return products.map(prod => {
+            if (prod.id === productId) {
+              return {
+                ...prod,
+                images: [...responses]
+              };
+            }
+            return prod;
+          });
         });
-        const productIndex = this.products().findIndex(prod => prod.id == productId);
-        this.products()[productIndex].images = files;
-        this.products.update(() => this.products());
       })
     )
   }
@@ -73,10 +80,14 @@ export class ProductService {
     return this.http.get<ApiResponse<Product>>(`${this.apiUrl}/product/${id}`).pipe(
       map(response => response.data),
       tap(product => {
-        const index = this.products().findIndex(prod => prod.id == id);
-        if(index == -1) this.products().push(product);
-        else this.products()[index] = product;
-        this.products.update(() => this.products());
+        this.products.update(products => {
+          const index = products.findIndex(prod => prod.id === id);
+          if (index === -1) {
+            return [...products, { ...product, images: [] }];
+          } else {
+            return products.map(prod => prod.id === id ? { ...product, images: prod.images } : prod);
+          }
+        });
       })
     )
   }
@@ -129,7 +140,7 @@ export class ProductService {
         return this.findById(updatedProduct.id);
       }),
       catchError((error) => {
-        if(error.error.error.code == 406) {
+        if(error.error.error.code == 406 && (filesToUpload.length > 0 || filesToDelete.length > 0)) {
           return concat(
             this.fileProductService.uploadFiles(filesToUpload, product.id),
             this.fileProductService.deleteFiles(filesToDelete, product.id),

@@ -1,4 +1,4 @@
-import { Component, computed, Signal } from '@angular/core';
+import { Component, computed, effect, Injector, OnInit, Signal } from '@angular/core';
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
 import { TableComponent } from "../../../../../shared/data/table/table.component";
 import { Product } from '@models/data/product.model';
@@ -16,25 +16,10 @@ import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/
   imports: [ButtonComponent, TableComponent, LoadingTableComponent],
   templateUrl: './product-all.component.html'
 })
-export class ProductAllComponent {
+export class ProductAllComponent implements OnInit {
 
   products: Signal<Product[]> = computed(() => this.productService.products());
-  mappedProducts: Signal<DataObject[]> = computed<DataObject[]>(() => this.products().map(prod => {
-    const subcategory = this.subcategories().find(sub => sub.id == prod.subcategoryId) ?? new Subcategory();
-    return {
-      id: prod.id,
-      name: prod.name,
-      price: prod.price,
-      quantity: prod.quantity,
-      qualification: prod.qualification,
-      description: prod.description,
-      imageName: prod.imageName,
-      imageObj: prod.imageNumber > 0 && prod.images ? prod.images[0] : undefined,
-      subcategoryId: subcategory.id,
-      subcategoryName: subcategory.name,
-      categoryId: subcategory.categoryId
-    }
-  }));
+  mappedProducts: DataObject[] = [];
   
   subcategories: Signal<Subcategory[]> = computed(() => this.subcategoryService.subcategories());
 
@@ -45,9 +30,37 @@ export class ProductAllComponent {
 
   constructor(
     private router: Router,
+    private injector: Injector,
     private productService: ProductService,
     private subcategoryService: SubcategoryService
   ) { }
+
+  ngOnInit(): void {
+    this.extractMappedProducts();
+  }
+
+  extractMappedProducts() {
+    effect(() => {
+      if(this.products().length === 0 || this.subcategories().length === 0) return;
+      this.mappedProducts = this.products().map(prod => {
+        const subcategory = this.subcategories().find(sub => sub.id == prod.subcategoryId) ?? new Subcategory();
+        return {
+          id: prod.id,
+          name: prod.name,
+          price: prod.price,
+          quantity: prod.quantity,
+          qualification: prod.qualification,
+          description: prod.description,
+          imageName: prod.imageName,
+          imageObj: prod.imageNumber > 0 && prod.images && prod.images.length > 0 ? prod.images[0] : undefined,
+          subcategoryId: subcategory.id,
+          subcategoryName: subcategory.name,
+          categoryId: subcategory.categoryId
+        }
+      })
+      this.isLoading = false;
+    }, {injector: this.injector})
+  }
 
   deleteById(product: DataObject) {
     this.productService.deleteById(product?.id ?? 0);

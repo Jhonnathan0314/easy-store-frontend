@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, Output, Signal } from '@angular/core';
+import { Component, computed, effect, EventEmitter, Injector, Output, Signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
@@ -14,11 +14,12 @@ import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { PrimeNGObject } from '@models/utils/primeng-object.model';
+import { LoadingFormComponent } from "../../../../../shared/skeleton/loading-form/loading-form.component";
 
 @Component({
   selector: 'app-subcategory-form',
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule, ToastModule, ButtonComponent, InputTextComponent, InputNumberComponent, InputSelectComponent],
+  imports: [RouterModule, ReactiveFormsModule, ToastModule, ButtonComponent, InputTextComponent, InputNumberComponent, InputSelectComponent, LoadingFormComponent],
   templateUrl: './subcategory-form.component.html',
   styleUrls: ['../../../../../../../public/assets/css/layout.css'],
   providers: [MessageService]
@@ -45,6 +46,7 @@ export class SubcategoryFormComponent {
     private activatedRoute: ActivatedRoute, 
     private router: Router, 
     private formBuilder: FormBuilder, 
+    private injector: Injector,
     private messageService: MessageService,
     private subcategoryService: SubcategoryService,
     private categoryService: CategoryService
@@ -79,10 +81,11 @@ export class SubcategoryFormComponent {
   }
 
   extractMappedCategories() {
-    this.mappedCategories = this.categoryService.categories().map(cat => ({
-      value: `${cat.id}`,
-      name: cat.name
-    }))
+    effect(() => {
+      if(this.categories().length == 0) return;
+      this.mappedCategories = this.categories().map(cat => ({ value: `${cat.id}`, name: cat.name }))
+      this.isLoading = this.buttonLabel === 'Guardar' && !this.subcategory();
+    }, {injector: this.injector})
   }
 
   prepareCreateForm() {
@@ -97,11 +100,15 @@ export class SubcategoryFormComponent {
   }
 
   prepareUpdateForm() {
-    this.subcategoryForm.patchValue({
-      id: this.subcategoryId,
-      name: this.subcategory.name,
-      categoryId: `${this.subcategory()?.categoryId}`
-    })
+    effect(() => {
+      if(!this.subcategory()) return;
+      this.subcategoryForm.patchValue({
+        id: this.subcategoryId,
+        name: this.subcategory()?.name,
+        categoryId: `${this.subcategory()?.categoryId}`
+      })
+      this.isLoading = this.mappedCategories.length === 0;
+    }, {injector: this.injector})
   }
 
   receiveValue(key: string, value: string | number) {
@@ -121,21 +128,18 @@ export class SubcategoryFormComponent {
   }
 
   createSubcategory() {
-    this.subcategoryService.create(this.subcategory() || new Subcategory()).subscribe({
+    this.subcategoryService.create(this.getObject()).subscribe({
       next: () => {
         this.router.navigateByUrl('/dashboard/subcategory');
       },
       error: () => {
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
-      },
-      complete: () => {
-        this.router.navigateByUrl('/dashboard/category');
       }
     })
   }
 
   updateSubcategory() {
-    this.subcategoryService.update(this.subcategory() || new Subcategory()).subscribe({
+    this.subcategoryService.update(this.getObject()).subscribe({
       next: () => {
         this.router.navigateByUrl('/dashboard/subcategory');
       },
@@ -148,6 +152,14 @@ export class SubcategoryFormComponent {
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
       },
     })
+  }
+
+  getObject(): Subcategory {
+    return {
+      id: this.subcategoryId,
+      name: this.subcategoryForm.value.name,
+      categoryId: this.subcategoryForm.value.categoryId
+    }
   }
 
   goBack() {

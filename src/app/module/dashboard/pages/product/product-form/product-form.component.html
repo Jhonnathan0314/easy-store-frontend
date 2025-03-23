@@ -8,110 +8,115 @@
       />
         <h1 class="w-full text-center">{{ title }}</h1>
     
-        @if(productForm.value.id != 0) {
-          <app-input-number
+        @if (isLoading) {
+          <app-loading-form />
+        } @else {
+          @if(productForm.value.id != 0) {
+            <app-input-number
+              class="w-1/2"
+              [value]="productForm.value.id"
+              label="Id"
+              [isDisabled]="true"
+              formControlName="name"
+              ngDefaultControl
+            />
+          }
+          
+          <app-input-text
             class="w-1/2"
-            [value]="productForm.value.id"
-            label="Id"
-            [isDisabled]="true"
+            [value]="productForm.value.name"
+            label="Nombre"
+            [classes]="productForm.controls['name'].status === 'INVALID' && productForm.touched ? 'ng-invalid ng-dirty' : ''"
+            errorMessage="Nombre inválido"
+            (valueEvent)="receiveValue('name', $event)"
             formControlName="name"
             ngDefaultControl
           />
-        }
-        
-        <app-input-text
-          class="w-1/2"
-          [value]="productForm.value.name"
-          label="Nombre"
-          [classes]="productForm.controls['name'].status === 'INVALID' && productForm.touched ? 'ng-invalid ng-dirty' : ''"
-          errorMessage="Nombre inválido"
-          (valueEvent)="receiveValue('name', $event)"
-          formControlName="name"
-          ngDefaultControl
-        />
-        
-        <app-input-text
-          class="w-1/2"
-          [value]="productForm.value.description"
-          label="Descripción"
-          [classes]="productForm.controls['description'].status === 'INVALID' && productForm.touched ? 'ng-invalid ng-dirty' : ''"
-          errorMessage="Descripción inválida"
-          (valueEvent)="receiveValue('description', $event)"
-          formControlName="description"
-          ngDefaultControl
-        />
-
-        <app-input-number
-          class="w-1/2"
-          [value]="productForm.value.price"
-          label="Precio"
-          [classes]="productForm.controls['price'].status === 'INVALID' && productForm.touched ? 'ng-invalid ng-dirty' : ''"
-          errorMessage="Precio inválido"
-          (valueEvent)="receiveValue('price', $event)"
-          formControlName="price"
-          ngDefaultControl
-        />
-
-        <app-input-number
-          class="w-1/2"
-          [value]="productForm.value.quantity"
-          label="Cantidad"
-          [classes]="productForm.controls['quantity'].status === 'INVALID' && productForm.touched ? 'ng-invalid ng-dirty' : ''"
-          errorMessage="Cantidad inválida"
-          (valueEvent)="receiveValue('quantity', $event)"
-          formControlName="quantity"
-          ngDefaultControl
-        />
-
-        <app-input-number
-          class="w-1/2"
-          [value]="productForm.value.qualification"
-          label="Calificación"
-          [classes]="productForm.controls['qualification'].status === 'INVALID' && productForm.touched ? 'ng-invalid ng-dirty' : ''"
-          errorMessage="Calificación inválida"
-          (valueEvent)="receiveValue('qualification', $event)"
-          formControlName="qualification"
-          ngDefaultControl
-        />
-    
-        <app-input-select
-          class="w-1/2"
-          [options]="mappedSubcategories()"
-          [selectedOption]="productForm.value.subcategoryId"
-          label="Categoria"
-          [showClear]="true"
-          [classes]="productForm.controls['subcategoryId'].status === 'INVALID' && productForm.touched ? 'ng-invalid ng-dirty' : ''"
-          errorMessage="Categoria inválida"
-          (valueEvent)="receiveValue('subcategoryId', $event)"
-          formControlName="subcategoryId"
-          ngDefaultControl
-        />
-
-        @if(viewInputFile) {
-          <app-input-file 
-            class="w-4/5"
-            [fileLimit]="5"
-            [filesUploaded]="product()?.images || []"
-            (uploadFilesEvent)="uploadFiles($event)"
-            (deleteFileEvent)="deleteFile($event)"
+          
+          <app-input-text
+            class="w-1/2"
+            [value]="productForm.value.description"
+            label="Descripción"
+            [classes]="productForm.controls['description'].status === 'INVALID' && productForm.touched ? 'ng-invalid ng-dirty' : ''"
+            errorMessage="Descripción inválida"
+            (valueEvent)="receiveValue('description', $event)"
+            formControlName="description"
+            ngDefaultControl
           />
-        } @else {
+  
+          <app-input-number
+            class="w-1/2"
+            [value]="productForm.value.price"
+            label="Precio"
+            [classes]="productForm.controls['price'].status === 'INVALID' && productForm.touched ? 'ng-invalid ng-dirty' : ''"
+            errorMessage="Precio inválido"
+            (valueEvent)="receiveValue('price', $event)"
+            formControlName="price"
+            ngDefaultControl
+          />
+  
+          <app-input-number
+            class="w-1/2"
+            [value]="productForm.value.quantity"
+            label="Cantidad"
+            [classes]="productForm.controls['quantity'].status === 'INVALID' && productForm.touched ? 'ng-invalid ng-dirty' : ''"
+            errorMessage="Cantidad inválida"
+            (valueEvent)="receiveValue('quantity', $event)"
+            formControlName="quantity"
+            ngDefaultControl
+          />
+  
+          <app-input-number
+            class="w-1/2"
+            [value]="productForm.value.qualification"
+            label="Calificación"
+            [classes]="productForm.controls['qualification'].status === 'INVALID' && productForm.touched ? 'ng-invalid ng-dirty' : ''"
+            errorMessage="Calificación inválida"
+            (valueEvent)="receiveValue('qualification', $event)"
+            formControlName="qualification"
+            ngDefaultControl
+          />
+      
+          <app-input-select
+            class="w-1/2"
+            [options]="mappedSubcategories"
+            [selectedOption]="productForm.value.subcategoryId"
+            label="Categoria"
+            [showClear]="true"
+            [classes]="productForm.controls['subcategoryId'].status === 'INVALID' && productForm.touched ? 'ng-invalid ng-dirty' : ''"
+            errorMessage="Categoria inválida"
+            (valueEvent)="receiveValue('subcategoryId', $event)"
+            formControlName="subcategoryId"
+            ngDefaultControl
+          />
+  
+          @if(viewInputFile) {
+            <app-input-file 
+              class="w-4/5"
+              [fileLimit]="5"
+              [filesUploaded]="product()?.images || []"
+              (uploadFilesEvent)="uploadFiles($event)"
+              (deleteFileEvent)="deleteFile($event)"
+            />
+          } @else {
+            <app-button
+              label="Actualizar imagen"
+              icon="pi pi-image"
+              (clickEvent)="setViewInputFile(true)"
+            />
+          }
+  
+          @if (!isLoading && subcategories().length == 0) {
+            <p class="text-center text-red-500">Debe crear al menos 1 categoria para poder crear productos.</p>
+          }
+      
           <app-button
-            label="Actualizar imagen"
-            icon="pi pi-image"
-            (clickEvent)="setViewInputFile(true)"
+            [label]="buttonLabel"
+            [disabled]="(!isLoading && subcategories().length == 0) || isLoading"
+            (clickEvent)="validateForm()"
           />
         }
-
-        @if (!isLoading && subcategories.length == 0) {
-          <p class="text-center text-red-500">Debe crear al menos 1 categoria para poder crear productos.</p>
-        }
-    
-        <app-button
-          [label]="buttonLabel"
-          [disabled]="(!isLoading && subcategories.length == 0) || isLoading"
-          (clickEvent)="validateForm()"
-        />
+        
     </form>
     <p-toast [life]="10000" />
 </section>
