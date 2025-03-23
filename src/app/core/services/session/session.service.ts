@@ -1,14 +1,25 @@
-import { Inject, Injectable } from '@angular/core';
+import { inject, Inject, Injectable, InjectionToken } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginRequest } from '../../models/data-types/security/security-request.model';
 import { SessionData } from '../../models/data-types/security/security-data.model';
 import { CryptoService } from '../utils/crypto/crypto.service';
 import { DOCUMENT } from '@angular/common';
 
+export const WINDOW = new InjectionToken<Window>('WindowToken', {
+  factory: () => {
+    if(typeof window !== 'undefined') {
+      return window
+    }
+    return new Window(); // does this work?
+  }
+});
+
 @Injectable({
   providedIn: 'root'
 })
 export class SessionService {
+
+  private _window = inject(WINDOW);
 
   localStorage: Storage | undefined;
 
@@ -33,9 +44,11 @@ export class SessionService {
   }
 
   logout() {
-    if (window.location.pathname === '/security/login') return;
-    this.localStorage?.removeItem('object');
-    window.location.href = '/security/login';
+    if (typeof window !== "undefined") {
+      if (window.location.pathname === '/security/login') return;
+      this.localStorage?.removeItem('object');
+      this._window.location.assign('/security/login');
+   }
   }
 
   private validateSession() {
