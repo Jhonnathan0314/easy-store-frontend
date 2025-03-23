@@ -4,7 +4,7 @@
     <p-skeleton width="5rem" />
     <p-skeleton width="10rem" />
   </div>
-} @else if(categories.length == 0 && !isLoading) {
+} @else if(categories().length == 0 && !isLoading) {
   <div class="p-4 flex flex-col justify-center items-start gap-4">
     @if (isAdmin) {
       <p class="w-full">No tienes tiendas creadas por el momento.</p>

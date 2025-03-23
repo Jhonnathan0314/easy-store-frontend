@@ -31,6 +31,8 @@
             <app-loading-table 
                 class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
             />
+        } @else if(!isLoading && mappedPurchases.length == 0) {
+            <p-message class="w-full" severity="info">No se encontraron compras en tus tiendas. 😢</p-message>
         } @else {
             <app-table
                 class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"

@@ -1,4 +1,4 @@
-import { Component, computed, Input, OnInit, Signal } from '@angular/core';
+import { Component, computed, effect, Injector, Input, OnInit, Signal } from '@angular/core';
 import { Category } from 'src/app/core/models/data-types/data/category.model';
 import { CarouselHomeObject, ResponsiveCarouselOptions } from '@models/utils/primeng-object.model';
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
@@ -23,10 +23,11 @@ export class CarouselHomeComponent implements OnInit {
 
   responsiveOptions: ResponsiveCarouselOptions[] = [];
 
-  isLoading = true;
+  isLoading: boolean = true;
 
   constructor(
     private router: Router,
+    private injector: Injector,
     private categoryService: CategoryService
   ) {}
 
@@ -35,8 +36,9 @@ export class CarouselHomeComponent implements OnInit {
   }
 
   defineItems() {
-    this.categories().forEach(category => {
-      this.items.push({
+    effect(() => {
+      if(this.categories().length == 0) return;
+      this.items = this.categories().map(category => ({
         title: category.name,
         img: category.imageName != 'store.png' && category.image ? `data:${category.image?.extension};base64,${category.image?.content}` : '/assets/img/store.png',
         body: category.description,
@@ -44,9 +46,10 @@ export class CarouselHomeComponent implements OnInit {
         route: `store/products/${category.id}`,
         hidden: '',
         classes: ''
-      });
-    });
-    this.defineResponsiveOptions();
+      }));
+      this.defineResponsiveOptions();
+      this.isLoading = false;
+    }, {injector: this.injector})
   }
 
   defineResponsiveOptions() {

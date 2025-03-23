@@ -1,4 +1,4 @@
-import { Component, computed, Signal } from '@angular/core';
+import { Component, computed, effect, Injector, OnInit, Signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subcategory } from '@models/data/subcategory.model';
 import { DataObject } from '@models/utils/object.data-view.model';
@@ -15,18 +15,10 @@ import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/
   imports: [ButtonComponent, TableComponent, LoadingTableComponent],
   templateUrl: './subcategory-all.component.html'
 })
-export class SubcategoryAllComponent {
+export class SubcategoryAllComponent implements OnInit {
 
   subcategories: Signal<Subcategory[]> = computed<Subcategory[]>(() => this.subcategoryService.subcategories());
-  mappedSubcategories: Signal<DataObject[]> = computed<DataObject[]>(() => this.subcategoryService.subcategories().map(sub => {
-    const category = this.categories().find(cat => cat.id == sub.categoryId) ?? new Category();
-    return{
-      id: sub.id,
-      name: sub.name,
-      categoryId: sub.categoryId,
-      categoryName: category.name
-    }
-  }));
+  mappedSubcategories: DataObject[] = [];
   
   categories: Signal<Category[]> = computed<Category[]>(() => this.categoryService.categories());
 
@@ -34,9 +26,30 @@ export class SubcategoryAllComponent {
 
   constructor(
     private router: Router,
+    private injector: Injector,
     private subcategoryService: SubcategoryService,
     private categoryService: CategoryService
   ) { }
+
+  ngOnInit(): void {
+    this.extractMappedSubcategories();
+  }
+
+  extractMappedSubcategories() {
+    effect(() => {
+      if(this.subcategories().length == 0) return;
+      this.mappedSubcategories = this.subcategoryService.subcategories().map(sub => {
+        const category = this.categories().find(cat => cat.id == sub.categoryId) ?? new Category();
+        return {
+          id: sub.id,
+          name: sub.name,
+          categoryId: sub.categoryId,
+          categoryName: category.name
+        }
+      })
+      this.isLoading = false;
+    }, {injector: this.injector})
+  }
 
   deleteById(subcategory: DataObject) {
     this.subcategoryService.deleteById(subcategory?.id ?? 0);

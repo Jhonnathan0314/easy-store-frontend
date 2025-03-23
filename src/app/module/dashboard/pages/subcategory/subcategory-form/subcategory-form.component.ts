@@ -10,7 +10,6 @@ import { CategoryService } from 'src/app/core/services/api/data/category/categor
 import { SubcategoryService } from 'src/app/core/services/api/data/subcategory/subcategory.service';
 import { InputSelectComponent } from "../../../../../shared/inputs/input-select/input-select.component";
 import { Category } from '@models/data/category.model';
-import { Subscription } from 'rxjs';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
@@ -33,19 +32,12 @@ export class SubcategoryFormComponent {
   subcategory: Signal<Subcategory | undefined> = computed<Subcategory | undefined>(() => this.subcategoryService.subcategories().find(sub => sub.id == this.subcategoryId));
   
   categories: Signal<Category[]> = computed<Category[]>(() => this.categoryService.categories());
-  mappedCategories: Signal<PrimeNGObject[]> = computed<PrimeNGObject[]>(() => 
-    this.categoryService.categories().map(cat => ({
-      value: `${cat.id}`,
-      name: cat.name
-    }))
-  );
+  mappedCategories: PrimeNGObject[] = [];
 
   buttonLabel: string = 'Crear';
   title: string = 'Crear categoria';
 
   isLoading: boolean = true;
-
-  categorySubscription: Subscription;
 
   @Output() subcategoryErrorEvent = new EventEmitter<FormErrors>();
 
@@ -73,6 +65,7 @@ export class SubcategoryFormComponent {
 
   validateAction() {
     this.obtainIdFromPath();
+    this.extractMappedCategories();
     if(this.subcategoryId == 0) {
       this.prepareCreateForm();
       return;
@@ -83,6 +76,13 @@ export class SubcategoryFormComponent {
 
   obtainIdFromPath() {
     this.subcategoryId = parseInt(this.activatedRoute.snapshot.params['_id'] ?? 0);
+  }
+
+  extractMappedCategories() {
+    this.mappedCategories = this.categoryService.categories().map(cat => ({
+      value: `${cat.id}`,
+      name: cat.name
+    }))
   }
 
   prepareCreateForm() {

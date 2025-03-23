@@ -11,10 +11,10 @@
             <p-skeleton height="4rem" styleClass="py-4" />
         </div>
     } @else if(carts.length == 0) {
-        No tienes carritos por el momento 😢
+        <p-message severity="info">No tienes carritos por el momento 😢</p-message>
     } @else {
         <p-accordion [value]="[]" [multiple]="true">
-            @for (cart of carts(); track cart.id) {
+            @for (cart of carts; track cart.id) {
                 <p-accordion-panel [value]="cart.categoryId">
                     <p-accordion-header>
                         <section class="flex gap-4 items-center justify-start">

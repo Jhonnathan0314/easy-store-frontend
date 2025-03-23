@@ -1,6 +1,6 @@
-import { Component, computed, OnInit, Signal } from '@angular/core';
+import { Component, computed, effect, Injector, OnInit, Signal } from '@angular/core';
 import { Category } from '@models/data/category.model';
-import { PurchaseCart, PurchaseHasProduct } from '@models/data/purchase.model';
+import { Purchase, PurchaseCart, PurchaseHasProduct } from '@models/data/purchase.model';
 import { AccordionModule } from 'primeng/accordion';
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
 import { PurchaseService } from 'src/app/core/services/api/data/purchase/purchase.service';
@@ -11,20 +11,18 @@ import { ProductService } from 'src/app/core/services/api/data/product/product.s
 import { Product } from '@models/data/product.model';
 import { DividerModule } from 'primeng/divider';
 import { SkeletonModule } from 'primeng/skeleton';
+import { MessageModule } from 'primeng/message';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [AccordionModule, DividerModule, SkeletonModule, ButtonComponent],
+  imports: [AccordionModule, DividerModule, SkeletonModule, MessageModule, ButtonComponent],
   templateUrl: './cart.component.html'
 })
 export class CartComponent implements OnInit {
 
-  carts: Signal<PurchaseCart[]> = computed(() => {
-    const carts = this.purchaseService.purchases().filter((purchase) => purchase.state == 'cart' && purchase.userId == this.userId)
-    this.savePurchases();
-    return carts;
-  });
+  purchases: Signal<Purchase[]> = computed(() => this.purchaseService.purchases());
+  carts: PurchaseCart[] =[];
   categories: Signal<Category[]> = computed(() => this.categoryService.categories());
   products: Signal<Product[]> = computed(() => this.productService.products());
 
@@ -33,23 +31,34 @@ export class CartComponent implements OnInit {
   isLoading = true;
 
   constructor(
+    private router: Router,
+    private injector: Injector,
     private sessionService: SessionService,
     private categoryService: CategoryService,
     private purchaseService: PurchaseService,
     private productService: ProductService,
-    private router: Router
   ) { }
 
   ngOnInit(): void {
     this.findUserId();
+    this.extractCarts();
   }
 
   findUserId() {
     this.userId = this.sessionService.getUserId();
   }
 
+  extractCarts() {
+    effect(() => {
+      this.isLoading = false;
+      if(this.purchases().length == 0) return;
+      this.carts = this.purchaseService.purchases().filter((purchase) => purchase.state == 'cart' && purchase.userId == this.userId);
+      this.savePurchases();
+    }, {injector: this.injector})
+  }
+
   savePurchases() {
-    this.carts().forEach((cart) => {
+    this.carts.forEach((cart) => {
       cart.category = this.categories().find(category => category.id == cart.categoryId);
       cart.products = cart.products.map(product => {
         product.product = this.products().find(prod => prod.id == product.id.productId);
