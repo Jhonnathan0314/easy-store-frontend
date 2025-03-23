@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { LoginRequest } from '../../models/data-types/security/security-request.model';
 import { SessionData } from '../../models/data-types/security/security-data.model';
 import { CryptoService } from '../utils/crypto/crypto.service';
@@ -14,7 +14,7 @@ export class SessionService {
 
   actualPath: string = '';
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute, private cryptoService: CryptoService, @Inject(DOCUMENT) private document: Document) {
+  constructor(private router: Router, private cryptoService: CryptoService, @Inject(DOCUMENT) private document: Document) {
     this.localStorage = this.document.defaultView?.localStorage;
     this.validateSession();
   }
@@ -33,8 +33,9 @@ export class SessionService {
   }
 
   logout() {
+    if (window.location.pathname === '/security/login') return;
     this.localStorage?.removeItem('object');
-    this.redirect('/security/login');
+    window.location.href = '/security/login';
   }
 
   private validateSession() {
