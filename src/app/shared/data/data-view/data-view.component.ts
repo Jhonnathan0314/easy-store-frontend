@@ -30,7 +30,7 @@ export class DataViewComponent implements OnInit, OnChanges {
   @Input() objects: Product[] = [];
   originalObjects: Product[] = [];
 
-  layout: 'list' | 'grid' = 'grid';
+  layout: 'list' | 'grid' = 'list';
   layoutOptions = ['list', 'grid'];
 
   sortOptions: PrimeNGObject[] = [
