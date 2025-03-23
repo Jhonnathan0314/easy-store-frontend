@@ -6,9 +6,11 @@ import { Category } from '@models/data/category.model';
 import { PaymentType } from '@models/data/payment-type.model';
 import { Product } from '@models/data/product.model';
 import { Purchase, PurchaseCart, PurchaseHasProductId, PurchaseHasProductRq, PurchaseRq } from '@models/data/purchase.model';
+import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
 import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/payment-type.service';
 import { ProductService } from 'src/app/core/services/api/data/product/product.service';
 import { PurchaseService } from 'src/app/core/services/api/data/purchase/purchase.service';
+import { SessionService } from 'src/app/core/services/session/session.service';
 
 @Component({
   selector: 'app-products',
@@ -18,7 +20,7 @@ import { PurchaseService } from 'src/app/core/services/api/data/purchase/purchas
 })
 export class ProductsComponent implements OnInit {
   
-  products: Signal<Product[]> = computed(() => this.productService.products());
+  products: Signal<Product[]> = computed(() => this.productService.products().filter(prod => prod.categoryId == this.categoryId));
   productToAdd: PurchaseHasProductRq = new PurchaseHasProductRq();
 
   purchases: Signal<PurchaseCart[]> = computed(() => this.purchaseService.purchases());
@@ -26,9 +28,9 @@ export class ProductsComponent implements OnInit {
   purchase: PurchaseRq = new PurchaseRq();
 
   paymentTypes: Signal<PaymentType[]> = computed(() => this.paymentTypeService.paymentTypes());
-  categories: Category[] = [];
 
   categoryId: number;
+  category: Signal<Category | undefined> = computed(() => this.categoryService.categories().find(cat => cat.id == this.categoryId));
 
   isLoading: boolean = true;
 
@@ -38,7 +40,9 @@ export class ProductsComponent implements OnInit {
     private injector: Injector,
     private productService: ProductService,
     private paymentTypeService: PaymentTypeService,
-    private purchaseService: PurchaseService
+    private purchaseService: PurchaseService,
+    private categoryService: CategoryService,
+    private sessionService: SessionService
   ) {}
 
   ngOnInit(): void {
@@ -51,8 +55,15 @@ export class ProductsComponent implements OnInit {
   }
 
   extractCart() {
+    const isAdmin = this.sessionService.getRole() === 'admin';
     effect(() => {
-      if(this.products().length === 0 || this.paymentTypes().length === 0) return;
+      if(!this.category()) return;
+      if(!isAdmin && this.products().length == 0) {
+        this.productService.findByCategoryId(this.category() ?? new Category());
+      }
+      if(this.paymentTypes().length === 0 && this.category) {
+        this.paymentTypeService.findAllByAccountId(this.category()?.accountId);
+      }
       this.isLoading = false;
       if(this.purchases().length === 0) return;
       this.cart = this.purchases().find(cart => cart.categoryId == this.categoryId) ?? new PurchaseCart();

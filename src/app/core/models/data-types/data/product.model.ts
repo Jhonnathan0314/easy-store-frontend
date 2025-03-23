@@ -12,4 +12,5 @@ export class Product {
     imageNumber: number;
     imageLastNumber: number;
     images: S3File[];
+    categoryId: number;
 }

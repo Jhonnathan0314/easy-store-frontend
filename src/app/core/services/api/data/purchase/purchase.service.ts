@@ -33,9 +33,10 @@ export class PurchaseService {
       tap(purchases => {
         this.purchases.set(purchases);
       }),
-      catchError((error: ApiResponse<ErrorMessage>) => {
+      catchError((error) => {
+        this.purchases.set([]);
         this.purchasesError.set(error.error);
-        return throwError(() => error);
+        return throwError(() => error.error);
       })
     ).subscribe()
   }

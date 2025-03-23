@@ -20,12 +20,21 @@ export class PaymentTypeService {
     private http: HttpClient, 
     private sessionService: SessionService
   ) {
-    this.findAll();
+    this.initFindPaymentTypes();
   }
 
-  private findAll() {
-    const accountId = this.sessionService.getUserId();
-    this.http.get<ApiResponse<PaymentType[]>>(`${this.apiUrl}/payment-type/account/${accountId}`).pipe(
+  private initFindPaymentTypes() {
+    const isAdmin: boolean = this.sessionService.getRole() === 'admin';
+    if(isAdmin) {
+      this.findAllByAccountId();
+    } else {
+      this.paymentTypes.set([]);
+    }
+  }
+
+  findAllByAccountId(accountId?: number) {
+    const accountIdStorage = this.sessionService.getUserId();
+    this.http.get<ApiResponse<PaymentType[]>>(`${this.apiUrl}/payment-type/account/${accountId ?? accountIdStorage}`).pipe(
       map(response => response.data),
       tap(paymentTypes => {
         this.paymentTypes.set(paymentTypes);

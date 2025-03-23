@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import { SessionService } from '../../../session/session.service';
 import { S3File } from '@models/utils/file.model';
 import { FileProductService } from '../../utils/file-product/file-product.service';
+import { Category } from '@models/data/category.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,17 +19,27 @@ export class ProductService {
   products = signal<Product[]>([]);
   productsError = signal<ErrorMessage | null>(null);
 
+  accountId = this.sessionService.getAccountId();
+
   constructor(
     private http: HttpClient,
     private sessionService: SessionService,
     private fileProductService: FileProductService
   ) {
-    this.findByAccount();
+    this.initFindProducts();
   }
 
-  findByAccount() {
-    const accountId = this.sessionService.getAccountId();
-    this.http.get<ApiResponse<Product[]>>(`${this.apiUrl}/product/account/${accountId}`)
+  private initFindProducts() {
+    const isAdmin: boolean = this.sessionService.getRole() === 'admin';
+    if(isAdmin) {
+      this.findByAccount();
+    } else {
+      this.products.set([]);
+    }
+  }
+
+  private findByAccount() {
+    this.http.get<ApiResponse<Product[]>>(`${this.apiUrl}/product/account/${this.accountId}`)
     .pipe(
       map(response => response.data),
       concatMap(products => {
@@ -42,8 +53,8 @@ export class ProductService {
     ).subscribe();
   }
 
-  private findAllImages(): Observable<S3File[]> {
-    return this.fileProductService.findAllImages(this.products()).pipe(
+  private findAllImages(accountId?: number): Observable<S3File[]> {
+    return this.fileProductService.findAllImages(this.products(), accountId).pipe(
       tap(responses => {
         this.products.update(products => {
           return products.map(product => ({
@@ -90,6 +101,19 @@ export class ProductService {
         });
       })
     )
+  }
+
+  findByCategoryId(category: Category) {
+    this.http.get<ApiResponse<Product[]>>(`${this.apiUrl}/product/category/${category.id}`).pipe(
+      map(response => response.data),
+      tap(products => {
+        console.log({category});
+        this.products.update(() => products.map(prod => ({...prod, images: []})));
+      }),
+      concatMap(() => {
+        return this.findAllImages(category.accountId);
+      })
+    ).subscribe()
   }
 
   getById(id: number): Signal<Product | undefined> {

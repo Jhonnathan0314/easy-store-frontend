@@ -15,29 +15,31 @@ export class FileProductService {
 
   apiUrl: string = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
 
+  accountId: number = this.sessionService.getAccountId();
+
   constructor(
     private http: HttpClient, 
     private sessionService: SessionService, 
     private fileService: FileService
   ) { }
 
-  findAllImages(products: Product[]) {
-    const requests = products.map(product => this.getImageRequests(product));
+  findAllImages(products: Product[], accountId?: number) {
+    const requests = products.map(product => this.getImageRequests(product, accountId));
   
     return forkJoin(requests.flat());
   }
 
-  findImage(product: Product) {
-    const requests = this.getImageRequests(product);
+  findImage(product: Product, accountId?: number) {
+    const requests = this.getImageRequests(product, accountId);
   
     return forkJoin(requests);
   }
 
-  private getImageRequests(product: Product) {
+  private getImageRequests(product: Product, accountId?: number) {
     if (product.imageNumber == 0 || !product.imageName || product.imageName == 'product.png') return [];
 
     return product.imageName.split(",").map(imageName => {
-      return this.fileService.getFile({ name: imageName, context: "product" } as S3File);
+      return this.fileService.getFile({ name: imageName, context: "product", accountId: accountId ?? this.accountId } as S3File);
     });
   }
 
@@ -52,7 +54,7 @@ export class FileProductService {
   }
 
   private putProductFile(file: S3File, productId: number): Observable<Product> {
-    file.accountId = this.sessionService.getAccountId();
+    file.accountId = this.accountId;
     return this.http.put<ApiResponse<Product>>(`${this.apiUrl}/s3/product/put/${productId}`, file)
       .pipe(
         map(response => response.data)
@@ -70,7 +72,7 @@ export class FileProductService {
   }
 
   private deleteProductFile(file: S3File, productId: number): Observable<Product> {
-    file.accountId = this.sessionService.getAccountId();
+    file.accountId = this.accountId;
     file.content = '';
     return this.http.put<ApiResponse<Product>>(`${this.apiUrl}/s3/product/delete/${productId}/account/${file.accountId}`, file)
       .pipe(
