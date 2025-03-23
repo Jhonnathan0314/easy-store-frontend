@@ -1,4 +1,4 @@
-import { Component, computed, OnInit, Signal } from '@angular/core';
+import { Component, computed, effect, Injector, OnInit, Signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DataViewComponent } from '@component/shared/data/data-view/data-view.component';
 import { LoadingDataViewComponent } from '@component/shared/skeleton/loading-data-view/loading-data-view.component';
@@ -22,7 +22,7 @@ export class ProductsComponent implements OnInit {
   productToAdd: PurchaseHasProductRq = new PurchaseHasProductRq();
 
   purchases: Signal<PurchaseCart[]> = computed(() => this.purchaseService.purchases());
-  cart: PurchaseCart = this.purchases().find(cart => cart.categoryId == this.categoryId) ?? new PurchaseCart();;
+  cart: PurchaseCart = new PurchaseCart();
   purchase: PurchaseRq = new PurchaseRq();
 
   paymentTypes: Signal<PaymentType[]> = computed(() => this.paymentTypeService.paymentTypes());
@@ -30,11 +30,12 @@ export class ProductsComponent implements OnInit {
 
   categoryId: number;
 
-  isLoading = false;
+  isLoading: boolean = true;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
+    private injector: Injector,
     private productService: ProductService,
     private paymentTypeService: PaymentTypeService,
     private purchaseService: PurchaseService
@@ -42,10 +43,20 @@ export class ProductsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getIdFromPath();
+    this.extractCart();
   }
 
   getIdFromPath() {
     this.categoryId = parseInt(this.activatedRoute.snapshot.params['_id']);
+  }
+
+  extractCart() {
+    effect(() => {
+      if(this.products().length === 0 || this.paymentTypes().length === 0) return;
+      this.isLoading = false;
+      if(this.purchases().length === 0) return;
+      this.cart = this.purchases().find(cart => cart.categoryId == this.categoryId) ?? new PurchaseCart();
+    }, {injector: this.injector})
   }
 
   addToCart($event: Product) {

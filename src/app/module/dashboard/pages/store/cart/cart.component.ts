@@ -12,12 +12,16 @@ import { Product } from '@models/data/product.model';
 import { DividerModule } from 'primeng/divider';
 import { SkeletonModule } from 'primeng/skeleton';
 import { MessageModule } from 'primeng/message';
+import { ErrorMessage } from '@models/data/general.model';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [AccordionModule, DividerModule, SkeletonModule, MessageModule, ButtonComponent],
-  templateUrl: './cart.component.html'
+  imports: [AccordionModule, DividerModule, SkeletonModule, MessageModule, ToastModule, ButtonComponent],
+  templateUrl: './cart.component.html',
+  providers: [MessageService]
 })
 export class CartComponent implements OnInit {
 
@@ -34,6 +38,7 @@ export class CartComponent implements OnInit {
     private router: Router,
     private injector: Injector,
     private sessionService: SessionService,
+    private messageService: MessageService,
     private categoryService: CategoryService,
     private purchaseService: PurchaseService,
     private productService: ProductService,
@@ -52,7 +57,7 @@ export class CartComponent implements OnInit {
     effect(() => {
       this.isLoading = false;
       if(this.purchases().length == 0) return;
-      this.carts = this.purchaseService.purchases().filter((purchase) => purchase.state == 'cart' && purchase.userId == this.userId);
+      this.carts = this.purchases().filter((purchase) => purchase.state == 'cart' && purchase.userId == this.userId);
       this.savePurchases();
     }, {injector: this.injector})
   }
@@ -71,8 +76,9 @@ export class CartComponent implements OnInit {
     product.quantity += 1;
     this.purchaseService.updatePurchaseHasProduct(product).subscribe({
       next: () => { },
-      error: () => {
-        console.log('Ha ocurrio un error al actualizar el articulo del carrito.');
+      error: (error: ErrorMessage) => {
+        product.quantity -= 1;
+        this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.detail});
       }
     })
   }
@@ -81,8 +87,10 @@ export class CartComponent implements OnInit {
     product.quantity -= 1;
     this.purchaseService.updatePurchaseHasProduct(product).subscribe({
       next: () => { },
-      error: () => {
-        console.log('Ha ocurrio un error al actualizar el articulo del carrito.');
+      error: (error: ErrorMessage) => {
+        if(error.code === 404) {
+          product.quantity += 1;
+        }
       }
     })
   }

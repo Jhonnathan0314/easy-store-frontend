@@ -1,6 +1,6 @@
 @if (isLoading) {
   <app-loading-data-view />
-} @else if(products.length === 0 && !isLoading) {
+} @else if(products().length === 0 && !isLoading) {
   Esta tienda no tiene productos por el momento 😢
 } @else {
   <app-data-view
