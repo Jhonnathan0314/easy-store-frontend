@@ -107,7 +107,6 @@ export class PurchaseService {
     .pipe(
       map(response => response.data),
       tap(hasProduct => {
-        console.log('tap');
         this.purchases.update(purchases => {
           const purchaseIndex = purchases.findIndex(p => p.id === purchaseHasProduct.id.purchaseId);
           if (purchaseIndex !== -1) {
@@ -126,7 +125,6 @@ export class PurchaseService {
         this.productService.findById(purchaseHasProduct.id.productId);
       }),
       catchError((error) => {
-        console.log('catchError');
         return throwError(() => error.error.error)
       })
     );
