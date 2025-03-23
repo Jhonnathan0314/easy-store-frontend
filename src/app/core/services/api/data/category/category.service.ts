@@ -23,12 +23,35 @@ export class CategoryService {
     private sessionService: SessionService,
     private fileService: FileService
   ) {
-    this.findAllByAccount();
+    this.initFindCategories();
+  }
+
+  private initFindCategories() {
+    const isAdmin: boolean = this.sessionService.getRole() === 'admin';
+    if(isAdmin) {
+      this.findAllByAccount();
+    }else {
+      this.findAll();
+    }
   }
 
   private findAllByAccount() {
     const accountId = this.sessionService.getAccountId();
     this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/category/account/${accountId}`).pipe(
+      map(response => response.data),
+      tap(categories => {
+        this.categories.set(categories);
+        this.findImages();
+      }),
+      catchError((error: ApiResponse<ErrorMessage>) => {
+        this.categoriesError.set(error.error);
+        return throwError(() => error);
+      })
+    ).subscribe();
+  }
+
+  private findAll() {
+    this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/category`).pipe(
       map(response => response.data),
       tap(categories => {
         this.categories.set(categories);
@@ -64,6 +87,7 @@ export class CategoryService {
         const file: S3File = new S3File();
         file.context = "category";
         file.name = category.imageName;
+        file.accountId = category.accountId;
         return this.fileService.getFile(file);
       } else {
         return of(null);

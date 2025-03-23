@@ -21,7 +21,6 @@ export class FileService {
   ) { }
 
   getFile(file: S3File): Observable<S3File> {
-    file.accountId = this.sessionService.getAccountId();
     return this.http.get<ApiResponse<S3File>>(`${this.apiUrl}/s3/get/accountId/${file.accountId}/context/${file.context}/objectName/${file.name}`)
       .pipe(
         map(response => response.data)
