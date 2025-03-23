@@ -35,7 +35,7 @@ export class CategoryAllComponent {
   ) { }
 
   deleteById(category: DataObject) {
-    this.categoryService.deleteById(category?.id ?? 0);
+    this.categoryService.deleteById(category.id ?? 0);
   }
 
   goCreate() {

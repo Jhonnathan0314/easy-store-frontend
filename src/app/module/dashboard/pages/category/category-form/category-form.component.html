@@ -8,57 +8,61 @@
       />
         <h1 class="w-full text-center">{{ title }}</h1>
     
-        @if(categoryForm.value.id != 0) {
-          <app-input-number
-            class="w-1/2"
-            [value]="categoryForm.value.id"
-            label="Id"
-            [isDisabled]="true"
-          ></app-input-number>
-        }
-        
-        <app-input-text
-          class="w-1/2"
-          [value]="categoryForm.value.name"
-          label="Nombre"
-          [classes]="categoryForm.controls['name'].status === 'INVALID' && categoryForm.touched ? 'ng-invalid ng-dirty' : ''"
-          errorMessage="Nombre inválido"
-          (valueEvent)="receiveValue('name', $event)"
-          formControlName="name"
-          ngDefaultControl
-        />
-    
-        <app-input-text
-          class="w-1/2"
-          [value]="categoryForm.value.description"
-          label="Descripción"
-          [classes]="categoryForm.controls['description'].status === 'INVALID' && categoryForm.touched ? 'ng-invalid ng-dirty' : ''"
-          errorMessage="Descripción inválida"
-          (valueEvent)="receiveValue('description', $event)"
-          formControlName="description"
-          ngDefaultControl
-        />
-
-        @if(viewInputFile) {
-          <app-input-file 
-            class="w-4/5"
-            label="Imagen"
-            [fileLimit]="1"
-            [filesUploaded]="filesUploaded"
-            (uploadFilesEvent)="uploadFiles($event)"
-          />
+        @if (isLoading) {
+          <app-loading-form class="w-full" />
         } @else {
-          <app-button
-            label="Actualizar imagen"
-            icon="pi pi-image"
-            (clickEvent)="setViewInputFile(true)"
+          @if(categoryForm.value.id != 0) {
+            <app-input-number
+              class="w-1/2"
+              [value]="categoryForm.value.id"
+              label="Id"
+              [isDisabled]="true"
+            ></app-input-number>
+          }
+          
+          <app-input-text
+            class="w-1/2"
+            [value]="categoryForm.value.name"
+            label="Nombre"
+            [classes]="categoryForm.controls['name'].status === 'INVALID' && categoryForm.touched ? 'ng-invalid ng-dirty' : ''"
+            errorMessage="Nombre inválido"
+            (valueEvent)="receiveValue('name', $event)"
+            formControlName="name"
+            ngDefaultControl
           />
+      
+          <app-input-text
+            class="w-1/2"
+            [value]="categoryForm.value.description"
+            label="Descripción"
+            [classes]="categoryForm.controls['description'].status === 'INVALID' && categoryForm.touched ? 'ng-invalid ng-dirty' : ''"
+            errorMessage="Descripción inválida"
+            (valueEvent)="receiveValue('description', $event)"
+            formControlName="description"
+            ngDefaultControl
+          />
+  
+          @if(viewInputFile) {
+            <app-input-file 
+              class="w-4/5"
+              label="Imagen"
+              [fileLimit]="1"
+              [filesUploaded]="filesUploaded"
+              (uploadFilesEvent)="uploadFiles($event)"
+            />
+          } @else {
+            <app-button
+              label="Actualizar imagen"
+              icon="pi pi-image"
+              (clickEvent)="setViewInputFile(true)"
+            />
+          }
+      
+          <app-button
+            [label]="buttonLabel"
+            (clickEvent)="validateForm()"
+          />
+          <p-toast [life]="10000" />
         }
-    
-        <app-button
-          [label]="buttonLabel"
-          (clickEvent)="validateForm()"
-        />
-        <p-toast [life]="10000" />
     </form>
 </section>

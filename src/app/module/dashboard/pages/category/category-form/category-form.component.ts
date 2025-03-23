@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, OnInit, Output, Signal } from '@angular/core';
+import { Component, effect, EventEmitter, Injector, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Category } from '@models/data/category.model';
@@ -12,11 +12,12 @@ import { S3File } from '@models/utils/file.model';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
+import { LoadingFormComponent } from "../../../../../shared/skeleton/loading-form/loading-form.component";
 
 @Component({
   selector: 'app-category-form',
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule, InputTextComponent, ButtonComponent, InputNumberComponent, InputFileComponent, ToastModule],
+  imports: [RouterModule, ReactiveFormsModule, InputTextComponent, ButtonComponent, InputNumberComponent, InputFileComponent, ToastModule, LoadingFormComponent],
   templateUrl: './category-form.component.html',
   styleUrls: ['../../../../../../../public/assets/css/layout.css'],
   providers: [MessageService]
@@ -27,7 +28,7 @@ export class CategoryFormComponent implements OnInit {
   formErrors: FormErrors;
 
   categoryId: number = 0;
-  category: Signal<Category | undefined> = computed(() => this.categoryService.categories().find(cat => cat.id === this.categoryId));
+  category: Category | undefined = undefined;
 
   filesToUpload: S3File[] = [];
   filesUploaded: S3File[] = [];
@@ -36,6 +37,7 @@ export class CategoryFormComponent implements OnInit {
   title: string = 'Crear tienda';
 
   viewInputFile: boolean = true;
+  isLoading: boolean = true;
 
   @Output() categoryErrorEvent = new EventEmitter<FormErrors>();
 
@@ -43,6 +45,7 @@ export class CategoryFormComponent implements OnInit {
     private activatedRoute: ActivatedRoute, 
     private router: Router, 
     private formBuilder: FormBuilder, 
+    private injector: Injector,
     private messageService: MessageService,
     private categoryService: CategoryService
   ) { }
@@ -67,6 +70,7 @@ export class CategoryFormComponent implements OnInit {
       return;
     }
     this.setUpdateTitles();
+    this.prepareUpdateForm();
   }
 
   obtainIdFromPath() {
@@ -77,6 +81,7 @@ export class CategoryFormComponent implements OnInit {
     this.categoryForm.patchValue({
       id: this.categoryId
     })
+    this.isLoading = false;
   }
 
   setUpdateTitles() {
@@ -85,14 +90,19 @@ export class CategoryFormComponent implements OnInit {
   }
 
   prepareUpdateForm() {
-    if(this.category()?.imageName != 'store.png') {
-      this.viewInputFile = false;
-    }
-    this.categoryForm.patchValue({
-      id: this.categoryId,
-      name: this.category.name,
-      description: this.category()?.description
-    });
+    effect(() => {
+      this.category = this.categoryService.getById(this.categoryId)();
+      if(!this.category) return;
+      if(this.category?.imageName != 'store.png') {
+        this.viewInputFile = false;
+      }
+      this.categoryForm.patchValue({
+        id: this.categoryId,
+        name: this.category?.name,
+        description: this.category?.description
+      });
+      this.isLoading = false;
+    }, {injector: this.injector})
   }
 
   validateForm() {
@@ -112,8 +122,7 @@ export class CategoryFormComponent implements OnInit {
   }
 
   createCategory() {
-    if(!this.category()) return;
-    this.categoryService.create(this.category() ?? new Category(), this.filesToUpload[0] ?? null).subscribe({
+    this.categoryService.create(this.getCreateObject(), this.filesToUpload[0] ?? null).subscribe({
       next: () => {
         this.router.navigateByUrl('/dashboard/category');
       },
@@ -129,9 +138,20 @@ export class CategoryFormComponent implements OnInit {
     })
   }
 
+  getCreateObject(): Category {
+    return {
+      id: this.categoryId,
+      name: this.categoryForm.value.name,
+      description: this.categoryForm.value.description,
+      imageName: 'store.png',
+      userId: 0,
+      accountId: 0,
+      image: new S3File()
+    }
+  }
+
   updateCategory() {
-    if(!this.category()) return;
-    this.categoryService.update(this.category() ?? new Category(), this.filesToUpload[0] ?? null).subscribe({
+    this.categoryService.update(this.getUpdateObject(), this.filesToUpload[0] ?? null).subscribe({
       next: () => {
         this.router.navigateByUrl('/dashboard/category');
       },
@@ -147,6 +167,18 @@ export class CategoryFormComponent implements OnInit {
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
       }
     })
+  }
+
+  getUpdateObject(): Category {
+    return {
+      id: this.categoryId,
+      name: this.categoryForm.value.name,
+      description: this.categoryForm.value.description,
+      imageName: this.category?.imageName ?? 'store.png',
+      userId: 0,
+      accountId: 0,
+      image: this.category?.image ?? new S3File()
+    }
   }
 
   uploadFiles(files: S3File[]) {
