@@ -54,7 +54,7 @@
                                     <app-button
                                         icon="pi pi-plus"
                                         [rounded]="true"
-                                        [disabled]="product.product?.quantity == 0"
+                                        [disabled]="product.product?.quantity == 0 || (product.quantity == product.product?.quantity)"
                                         (clickEvent)="plusProductToCart(product)"
                                     />
                                 </div>
