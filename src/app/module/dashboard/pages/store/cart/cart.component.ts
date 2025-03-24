@@ -6,7 +6,7 @@ import { CategoryService } from 'src/app/core/services/api/data/category/categor
 import { PurchaseService } from 'src/app/core/services/api/data/purchase/purchase.service';
 import { SessionService } from 'src/app/core/services/session/session.service';
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ProductService } from 'src/app/core/services/api/data/product/product.service';
 import { Product } from '@models/data/product.model';
 import { DividerModule } from 'primeng/divider';
@@ -19,7 +19,7 @@ import { MessageService } from 'primeng/api';
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [AccordionModule, DividerModule, SkeletonModule, MessageModule, ToastModule, ButtonComponent],
+  imports: [RouterModule, AccordionModule, DividerModule, SkeletonModule, MessageModule, ToastModule, ButtonComponent],
   templateUrl: './cart.component.html',
   providers: [MessageService]
 })
