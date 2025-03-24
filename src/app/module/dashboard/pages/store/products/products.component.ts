@@ -135,10 +135,6 @@ export class ProductsComponent implements OnInit {
     this.purchase.paymentTypeId = this.paymentTypes()[0].id;
   }
 
-  buyNow($event: Product) {
-    console.log("products componente buy now event: ", $event);
-  }
-
   goCart() {
     this.router.navigateByUrl('/dashboard/store/cart');
   }

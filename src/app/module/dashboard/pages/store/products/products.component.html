@@ -9,7 +9,6 @@
       [product]="selectedProduct" 
       (addToCartEvent)="addToCart($event)"
       (removeFromCartEvent)="removeFromCart($event)"
-      (buyNowEvent)="buyNow($event)"
       (goCartEvent)="goCart()"
       (goBackCartEvent)="hideDetailProduct()"
     />
@@ -20,7 +19,6 @@
       [cart]="cart"
       (addToCartEvent)="addToCart($event)"
       (removeFromCartEvent)="removeFromCart($event)"
-      (buyNowEvent)="buyNow($event)"
       (goCartEvent)="goCart()"
       (viewProductEvent)="viewProduct($event)"
     ></app-data-view>

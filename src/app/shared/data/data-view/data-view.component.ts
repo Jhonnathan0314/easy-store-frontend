@@ -22,7 +22,6 @@ export class DataViewComponent implements OnInit, OnChanges {
 
   @Output() addToCartEvent = new EventEmitter<Product>();
   @Output() removeFromCartEvent = new EventEmitter<Product>();
-  @Output() buyNowEvent = new EventEmitter<Product>();
   @Output() goCartEvent = new EventEmitter<Product>();
   @Output() viewProductEvent = new EventEmitter<Product>();
   
@@ -133,10 +132,6 @@ export class DataViewComponent implements OnInit, OnChanges {
 
   goToCart() {
     this.goCartEvent.emit();
-  }
-
-  buyNow(product: Product) {
-    this.buyNowEvent.emit(product);
   }
 
   viewProduct(product: Product) {
