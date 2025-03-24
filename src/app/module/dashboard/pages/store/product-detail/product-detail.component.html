@@ -6,7 +6,7 @@
         (clickEvent)="goBackStore()"
     />
     <div class="w-full md:w-1/3">
-        <p-galleria [value]="product?.images ?? defaultImages" [responsiveOptions]="responsiveOptions" [showItemNavigators]="true" [circular]="true" class="w-full md:w-1/3" [numVisible]="5">
+        <p-galleria [value]="product?.images?.length == 0 ? defaultImages : product?.images " [responsiveOptions]="responsiveOptions" [showItemNavigators]="true" [circular]="true" class="w-full md:w-1/3" [numVisible]="5">
             <ng-template pTemplate="item" let-image>
                 <img 
                     [src]="image.name ? 'data:' + image.extension + ';base64,' + image.content : image.src"
