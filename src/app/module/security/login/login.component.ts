@@ -15,12 +15,12 @@ import { SecurityService } from 'src/app/core/services/api/security/security.ser
 import { SessionService } from 'src/app/core/services/session/session.service';
 import { ThemeService } from 'src/app/core/services/utils/theme/theme.service';
 import { ButtonIconPosition } from '@enums/primeng.enum';
-import { InputNumberComponent } from "../../../shared/inputs/input-number/input-number.component";
+import { MessageModule } from 'primeng/message';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ToastModule, DividerModule, RouterModule, ReactiveFormsModule, InputTextComponent, InputPasswordComponent, ButtonComponent, InputNumberComponent],
+  imports: [ToastModule, MessageModule, DividerModule, RouterModule, ReactiveFormsModule, InputTextComponent, InputPasswordComponent, ButtonComponent],
   templateUrl: './login.component.html',
   styleUrls: ['../../../../../public/assets/css/layout.css']
 })
@@ -46,7 +46,6 @@ export class LoginComponent {
 
   initializeForm() {
     this.loginForm = this.formBuilder.group({
-      accountId: [null, [Validators.required]],
       username: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(5)]]
     });
@@ -66,15 +65,15 @@ export class LoginComponent {
       return;
     }
 
-    this.loginRequest = this.loginForm.value;
+    this.loginRequest = {...this.loginForm.value};
     this.login();
   }
 
   login() {
     this.securityService.login(this.loginRequest).subscribe({
       next: (res) => this.sessionService.saveSession(this.loginRequest, res.data.token),
-      error: (error) => {
-        if(error.error.error.code === 404) this.loginError = true;
+      error: () => {
+        this.loginError = true;
       }
     });
   }
