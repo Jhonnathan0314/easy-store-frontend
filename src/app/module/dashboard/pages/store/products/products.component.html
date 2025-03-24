@@ -3,13 +3,26 @@
 } @else if(products().length === 0 && !isLoading) {
   Esta tienda no tiene productos por el momento 😢
 } @else {
-  <app-data-view
-    class="w-full"
-    [objects]="products()"
-    [cart]="cart"
-    (addToCartEvent)="addToCart($event)"
-    (removeFromCartEvent)="removeFromCart($event)"
-    (buyNowEvent)="buyNow($event)"
-    (goCartEvent)="goCart()"
-  ></app-data-view>
+  @if (viewDetail) {
+    <app-product-detail 
+      [cart]="cart" 
+      [product]="selectedProduct" 
+      (addToCartEvent)="addToCart($event)"
+      (removeFromCartEvent)="removeFromCart($event)"
+      (buyNowEvent)="buyNow($event)"
+      (goCartEvent)="goCart()"
+      (goBackCartEvent)="hideDetailProduct()"
+    />
+  } @else {
+    <app-data-view
+      class="w-full"
+      [objects]="products()"
+      [cart]="cart"
+      (addToCartEvent)="addToCart($event)"
+      (removeFromCartEvent)="removeFromCart($event)"
+      (buyNowEvent)="buyNow($event)"
+      (goCartEvent)="goCart()"
+      (viewProductEvent)="viewProduct($event)"
+    ></app-data-view>
+  }
 }

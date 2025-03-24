@@ -11,11 +11,12 @@ import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/
 import { ProductService } from 'src/app/core/services/api/data/product/product.service';
 import { PurchaseService } from 'src/app/core/services/api/data/purchase/purchase.service';
 import { SessionService } from 'src/app/core/services/session/session.service';
+import { ProductDetailComponent } from "../product-detail/product-detail.component";
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [RouterModule, DataViewComponent, LoadingDataViewComponent],
+  imports: [RouterModule, DataViewComponent, LoadingDataViewComponent, ProductDetailComponent],
   templateUrl: './products.component.html'
 })
 export class ProductsComponent implements OnInit {
@@ -32,6 +33,9 @@ export class ProductsComponent implements OnInit {
   categoryId: number;
   category: Signal<Category | undefined> = computed(() => this.categoryService.categories().find(cat => cat.id == this.categoryId));
 
+  selectedProduct: Product | undefined = undefined;
+
+  viewDetail: boolean = false;
   isLoading: boolean = true;
 
   constructor(
@@ -66,7 +70,7 @@ export class ProductsComponent implements OnInit {
       }
       this.isLoading = false;
       if(this.purchases().length === 0) return;
-      this.cart = this.purchases().find(cart => cart.categoryId == this.categoryId) ?? new PurchaseCart();
+      this.cart = this.purchases().find(cart => cart.categoryId == this.categoryId && cart.state == 'cart') ?? new PurchaseCart();
     }, {injector: this.injector})
   }
 
@@ -137,6 +141,16 @@ export class ProductsComponent implements OnInit {
 
   goCart() {
     this.router.navigateByUrl('/dashboard/store/cart');
+  }
+
+  viewProduct(product: Product) {
+    this.viewDetail = true;
+    this.selectedProduct = product;
+  }
+
+  hideDetailProduct() {
+    this.viewDetail = false;
+    this.selectedProduct = undefined;
   }
 
 }

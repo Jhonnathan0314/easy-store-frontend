@@ -1,0 +1,70 @@
+<div class="border-2 border-section w-full flex flex-wrap justify-center items-center gap-8 p-4 md:py-12">
+    <app-button 
+        class="w-full" 
+        label="Volver"
+        icon="pi pi-arrow-left"
+        (clickEvent)="goBackStore()"
+    />
+    <div class="w-full md:w-1/3">
+        <p-galleria [value]="product?.images ?? defaultImages" [responsiveOptions]="responsiveOptions" [showItemNavigators]="true" [circular]="true" class="w-full md:w-1/3" [numVisible]="5">
+            <ng-template pTemplate="item" let-image>
+                <img 
+                    [src]="image.name ? 'data:' + image.extension + ';base64,' + image.content : image.src"
+                    [alt]="image.name ? image.name : 'product.png'"
+                    class="w-full max-w-80 py-8"
+                />
+            </ng-template>
+            <ng-template pTemplate="thumbnail" let-image>
+                <img 
+                    [src]="image.name ? 'data:' + image.extension + ';base64,' + image.content : '/assets/img/product.png'"
+                    [alt]="image.name ? image.name : 'product.png'"
+                    class="w-16"
+                />
+            </ng-template>
+        </p-galleria>
+    </div>
+    <div class="w-full md:w-3/5 flex flex-col items-start justify-center gap-4">
+        <h1 class="w-1/2" height="1rem">{{product?.name}}</h1>
+        <div
+            class="bg-surface-0 flex items-center gap-2 justify-center py-1 px-2"
+            style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)"
+        >
+            <span class="text-surface-900 font-medium text-sm">{{ product?.qualification }}</span>
+            <i class="pi pi-star-fill text-yellow-500"></i>
+        </div>
+        <h2 class="w-1/4" height="1rem">{{product?.price}}</h2>
+        <p>{{product?.description}}</p>
+        @if (cartHasProduct(product)) {
+            <app-button
+                icon="pi pi-cart-minus"
+                label="Eliminar del carrito"
+                severity="danger"
+                [disabled]="product?.quantity == 0"
+                class="flex-auto md:flex-initial whitespace-nowrap"
+                (clickEvent)="removeFromCart(product)"
+            ></app-button>
+            <app-button
+                icon="pi pi-shopping-cart"
+                label="Ver carrito"
+                [disabled]="product?.quantity == 0"
+                class="flex-auto md:flex-initial whitespace-nowrap"
+                (clickEvent)="goToCart()"
+            ></app-button>
+        } @else {
+            <app-button
+                icon="pi pi-cart-plus"
+                label="Agregar al carrito"
+                [disabled]="product?.quantity == 0"
+                class="flex-auto md:flex-initial whitespace-nowrap"
+                (clickEvent)="addToCart(product)"
+            ></app-button>
+            <app-button
+                icon="pi pi-shopping-cart"
+                label="Comprar ahora"
+                [disabled]="product?.quantity == 0"
+                class="flex-auto md:flex-initial whitespace-nowrap"
+                (clickEvent)="buyNow(product)"
+            ></app-button>
+        }
+    </div>
+</div>
