@@ -17,11 +17,13 @@ import { S3File } from '@models/utils/file.model';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { LoadingFormComponent } from "../../../../../shared/skeleton/loading-form/loading-form.component";
+import { ErrorMessage } from '@models/data/general.model';
+import { MessageModule } from 'primeng/message';
 
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule, ToastModule, ButtonComponent, InputNumberComponent, InputTextComponent, InputSelectComponent, InputFileComponent, LoadingFormComponent],
+  imports: [ReactiveFormsModule, RouterModule, ToastModule, MessageModule, ButtonComponent, InputNumberComponent, InputTextComponent, InputSelectComponent, InputFileComponent, LoadingFormComponent],
   templateUrl: './product-form.component.html',
   styleUrls: ['../../../../../../../public/assets/css/layout.css'],
   providers: [MessageService]
@@ -34,6 +36,7 @@ export class ProductFormComponent implements OnInit {
   productId: number = 0;
   product: Signal<Product | undefined> = computed(() => this.productService.products().find(prod => prod.id == this.productId));
 
+  subcategoriesError: Signal<ErrorMessage | null> = computed(() => this.subcategoryService.subcategoriesError());
   subcategories: Signal<Subcategory[]> = computed(() => this.subcategoryService.subcategories());
   mappedSubcategories: PrimeNGObject[] = [];
   
@@ -46,6 +49,7 @@ export class ProductFormComponent implements OnInit {
 
   viewInputFile: boolean = true;
   isLoading: boolean = true;
+  hasUnexpectedError: boolean = false;
 
   subcategorySubscription: Subscription;
 
@@ -63,6 +67,7 @@ export class ProductFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
+    this.validateSubcategoriesError();
     this.validateAction();
   }
 
@@ -76,6 +81,14 @@ export class ProductFormComponent implements OnInit {
       qualification: [null, [Validators.required]],
       subcategoryId: [null, [Validators.required]]
     });
+  }
+
+  validateSubcategoriesError() {
+    effect(() => {
+      if(this.subcategoriesError() == null) return;
+      if(this.subcategoriesError()?.code !== 404) this.hasUnexpectedError = true;
+      this.isLoading = false;
+    }, {injector: this.injector})
   }
 
   validateAction() {
