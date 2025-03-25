@@ -16,6 +16,7 @@ import { UserService } from 'src/app/core/services/api/data/user/user.service';
 import { PurchaseReportComponent } from "../purchase-report/purchase-report.component";
 import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
 import { MessageModule } from 'primeng/message';
+import { ErrorMessage } from '@models/data/general.model';
 
 @Component({
   selector: 'app-purchase-all',
@@ -27,10 +28,19 @@ export class PurchaseAllComponent implements OnInit {
   
   mappedPurchases: DataObject[] = [];
   
+  usersError: Signal<ErrorMessage | null> = computed(() => this.userService.usersError());
   users: Signal<User[]> = computed(() => this.userService.users());
+
+  paymentTypesError: Signal<ErrorMessage | null> = computed(() => this.paymentTypeService.paymentTypesError());
   paymentTypes: Signal<PaymentType[]> = computed(() => this.paymentTypeService.paymentTypes());
+
+  categoriesError: Signal<ErrorMessage | null> = computed(() => this.categoryService.categoriesError());
   categories: Signal<Category[]> = computed(() => this.categoryService.categories());
+  
+  productsError: Signal<ErrorMessage | null> = computed(() => this.productService.productsError());
   products: Signal<Product[]> = computed(() => this.productService.products());
+
+  purchasesError: Signal<ErrorMessage | null> = computed(() => this.purchaseService.purchasesError());
   purchases: Signal<Purchase[]> = computed(() => this.purchaseService.purchases());
 
   purchaseMap = new PurchaseMap();
@@ -48,6 +58,7 @@ export class PurchaseAllComponent implements OnInit {
   viewChart: boolean = false;
 
   isLoading: boolean = true;
+  hasUnexpectedError: boolean = false;
 
   constructor(
     private router: Router,
@@ -60,7 +71,48 @@ export class PurchaseAllComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.validateUsersError();
+    this.validatePaymentTypesError();
+    this.validateCategoriesError();
+    this.validateProductsError();
+    this.validatePurchasesError();
     this.convertToDataObject();
+  }
+  
+  validateUsersError() {
+    effect(() => {
+      if(this.usersError() == null) return;
+      this.hasUnexpectedError = true;
+    }, {injector: this.injector})
+  }
+  
+  validatePaymentTypesError() {
+    effect(() => {
+      if(this.paymentTypesError() == null) return;
+      this.hasUnexpectedError = true;
+    }, {injector: this.injector})
+  }
+  
+  validateCategoriesError() {
+    effect(() => {
+      if(this.categoriesError() == null) return;
+      this.hasUnexpectedError = true;
+    }, {injector: this.injector})
+  }
+  
+  validateProductsError() {
+    effect(() => {
+      if(this.productsError() == null) return;
+      this.hasUnexpectedError = true;
+    }, {injector: this.injector})
+  }
+  
+  validatePurchasesError() {
+    effect(() => {
+      if(this.purchasesError() == null) return;
+      if(this.purchasesError()?.code !== 404) this.hasUnexpectedError = true;
+      this.isLoading = false;
+    }, {injector: this.injector})
   }
 
   convertToDataObject() {

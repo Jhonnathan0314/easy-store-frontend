@@ -30,8 +30,8 @@ export class UserService {
       tap(users => {
         this.users.set(users);
       }),
-      catchError((error: ApiResponse<ErrorMessage>) => {
-        this.usersError.set(error.error);
+      catchError((error: {error: ApiResponse<ErrorMessage>}) => {
+        this.usersError.set(error.error.error);
         return throwError(() => error);
       })
     ).subscribe()
