@@ -6,11 +6,13 @@ import { CarouselModule } from 'primeng/carousel';
 import { Router, RouterModule } from '@angular/router';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ButtonComponent } from "../../../../shared/inputs/button/button.component";
+import { ErrorMessage } from '@models/data/general.model';
+import { MessageModule } from 'primeng/message';
 
 @Component({
   selector: 'app-carousel-home',
   standalone: true,
-  imports: [CarouselModule, SkeletonModule, RouterModule, ButtonComponent],
+  imports: [CarouselModule, SkeletonModule, MessageModule, RouterModule, ButtonComponent],
   templateUrl: './carousel-home.component.html',
   styleUrls: ['../../../../../../public/assets/css/layout.css']
 })
@@ -19,11 +21,14 @@ export class CarouselHomeComponent implements OnInit {
   @Input() isAdmin: boolean = false;
 
   categories: Signal<Category[]> = computed(() => this.categoryService.categories());
+  categoriesError: Signal<ErrorMessage | null> = computed(() => this.categoryService.categoriesError())
+
   items: CarouselHomeObject[] = [];
 
   responsiveOptions: ResponsiveCarouselOptions[] = [];
 
   isLoading: boolean = true;
+  hasUnexpectedError: boolean = false;
 
   constructor(
     private router: Router,
@@ -33,6 +38,7 @@ export class CarouselHomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.defineItems();
+    this.validateCategoriesError();
   }
 
   defineItems() {
@@ -48,6 +54,14 @@ export class CarouselHomeComponent implements OnInit {
         classes: ''
       }));
       this.defineResponsiveOptions();
+      this.isLoading = false;
+    }, {injector: this.injector})
+  }
+
+  validateCategoriesError() {
+    effect(() => {
+      if(this.categoriesError() == null) return;
+      if(this.categoriesError()?.code == 404) this.hasUnexpectedError = true;
       this.isLoading = false;
     }, {injector: this.injector})
   }

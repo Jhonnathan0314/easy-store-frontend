@@ -43,8 +43,8 @@ export class CategoryService {
         this.categories.set(categories);
         this.findImages();
       }),
-      catchError((error: ApiResponse<ErrorMessage>) => {
-        this.categoriesError.set(error.error);
+      catchError((error: {error: ApiResponse<ErrorMessage>}) => {
+        this.categoriesError.set(error.error.error);
         return throwError(() => error);
       })
     ).subscribe();
@@ -57,8 +57,8 @@ export class CategoryService {
         this.categories.set(categories);
         this.findImages();
       }),
-      catchError((error: ApiResponse<ErrorMessage>) => {
-        this.categoriesError.set(error.error);
+      catchError((error: {error: ApiResponse<ErrorMessage>}) => {
+        this.categoriesError.set(error.error.error);
         return throwError(() => error);
       })
     ).subscribe();
@@ -130,7 +130,7 @@ export class CategoryService {
         }
         return categoryCreated;
       }),
-      catchError((error: ApiResponse<ErrorMessage>) => {
+      catchError((error: {error: ApiResponse<ErrorMessage>}) => {
         return throwError(() => error.error);
       })
     )
@@ -211,8 +211,8 @@ export class CategoryService {
         this.categories.update(cats => cats.filter(cat => cat.id !== id));
         return response;
       }),
-      catchError((error: ApiResponse<ErrorMessage>) => {
-        if (error.error.code === 404) {
+      catchError((error: {error: ApiResponse<ErrorMessage>}) => {
+        if (error.error.error.code === 404) {
           console.error("Id no encontrado para eliminar categoria.", error);
         }
         return throwError(() => error);

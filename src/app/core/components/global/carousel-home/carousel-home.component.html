@@ -7,7 +7,7 @@
 } @else if(categories().length == 0 && !isLoading) {
   <div class="p-4 flex flex-col justify-center items-start gap-4">
     @if (isAdmin) {
-      <p class="w-full">No tienes tiendas creadas por el momento.</p>
+      <p-message icon="pi pi-exclamation-triangle" severity="warn">No tienes tiendas creadas por el momento.</p-message>
       <app-button 
         label="Crear tienda"
         icon="pi pi-plus"
@@ -17,6 +17,8 @@
       <p class="w-full">No existen tiendas aún.</p>
     }
   </div>
+} @else if(hasUnexpectedError) {
+  <p-message severity="error">Ha ocurrido un error inesperado, por favor, intentelo de nuevo más tarde.</p-message>
 } @else {
   <p-carousel
     [value]="items"
