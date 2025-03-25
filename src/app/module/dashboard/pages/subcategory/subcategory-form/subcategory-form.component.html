@@ -46,16 +46,18 @@
             ngDefaultControl
           />
   
-          @if (!isLoading && categories().length == 0) {
-            <p class="text-center text-red-500">Debe crear al menos 1 tienda para poder crear categorias.</p>
+          @if (hasUnexpectedError) {
+            <p-message severity="error">Ha ocurrido un error inesperado, por favor, intentelo de nuevo más tarde.</p-message>
+          } @else if (!isLoading && categories().length == 0) {
+            <p-message severity="warn">Debe crear al menos 1 tienda para poder crear categorias.</p-message>
           }
       
           <app-button
             [label]="buttonLabel"
-            [disabled]="(!isLoading && categories().length == 0) || isLoading"
+            [disabled]="(!isLoading && categories().length == 0) || isLoading || hasUnexpectedError"
             (clickEvent)="validateForm()"
           />
-          <p-toast [life]="10000" />v
+          <p-toast [life]="10000" />
         }
     </form>
 </section>

@@ -1,4 +1,4 @@
-import { Component, computed, effect, EventEmitter, Injector, Output, Signal } from '@angular/core';
+import { Component, computed, effect, EventEmitter, Injector, OnInit, Output, Signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
@@ -15,16 +15,17 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { PrimeNGObject } from '@models/utils/primeng-object.model';
 import { LoadingFormComponent } from "../../../../../shared/skeleton/loading-form/loading-form.component";
+import { MessageModule } from 'primeng/message';
 
 @Component({
   selector: 'app-subcategory-form',
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule, ToastModule, ButtonComponent, InputTextComponent, InputNumberComponent, InputSelectComponent, LoadingFormComponent],
+  imports: [RouterModule, ReactiveFormsModule, ToastModule, MessageModule, ButtonComponent, InputTextComponent, InputNumberComponent, InputSelectComponent, LoadingFormComponent],
   templateUrl: './subcategory-form.component.html',
   styleUrls: ['../../../../../../../public/assets/css/layout.css'],
   providers: [MessageService]
 })
-export class SubcategoryFormComponent {
+export class SubcategoryFormComponent implements OnInit {
 
   subcategoryForm: FormGroup;
   formErrors: FormErrors;
@@ -33,12 +34,14 @@ export class SubcategoryFormComponent {
   subcategory: Signal<Subcategory | undefined> = computed<Subcategory | undefined>(() => this.subcategoryService.subcategories().find(sub => sub.id == this.subcategoryId));
   
   categories: Signal<Category[]> = computed<Category[]>(() => this.categoryService.categories());
+  categoriesError: Signal<ErrorMessage | null> = computed(() => this.categoryService.categoriesError());
   mappedCategories: PrimeNGObject[] = [];
 
   buttonLabel: string = 'Crear';
   title: string = 'Crear categoria';
 
   isLoading: boolean = true;
+  hasUnexpectedError: boolean = false;
 
   @Output() subcategoryErrorEvent = new EventEmitter<FormErrors>();
 
@@ -54,6 +57,7 @@ export class SubcategoryFormComponent {
 
   ngOnInit(): void {
     this.initializeForm();
+    this.validateCategoriesError();
     this.validateAction();
   }
 
@@ -63,6 +67,14 @@ export class SubcategoryFormComponent {
       name: ['', [Validators.required]],
       categoryId: [null, [Validators.required]]
     });
+  }
+
+  validateCategoriesError() {
+    effect(() => {
+      if(this.categoriesError() == null) return;
+      if(this.categoriesError()?.code !== 404) this.hasUnexpectedError = true;
+      this.isLoading = false;
+    }, {injector: this.injector})
   }
 
   validateAction() {
