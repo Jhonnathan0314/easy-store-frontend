@@ -8,6 +8,7 @@ import { Router, RouterModule } from '@angular/router';
 import { LoadingTableComponent } from "../../../../../shared/skeleton/loading-table/loading-table.component";
 import { ErrorMessage } from '@models/data/general.model';
 import { MessageModule } from 'primeng/message';
+import { Category } from '@models/data/category.model';
 
 @Component({
   selector: 'app-category-all',
@@ -17,16 +18,9 @@ import { MessageModule } from 'primeng/message';
 })
 export class CategoryAllComponent implements OnInit {
 
-  mappedCategories: Signal<DataObject[]> = computed<DataObject[]>(() => 
-    this.categoryService.categories().map(cat => ({
-      id: cat.id,
-      name: cat.name,
-      description: cat.description,
-      imageName: cat.imageName,
-      imageObj: cat.image ?? undefined
-    }))
-  );
   categoriesError: Signal<ErrorMessage | null> = computed(() => this.categoryService.categoriesError());
+  categories: Signal<Category[]> = computed(() => this.categoryService.categories());
+  mappedCategories: DataObject[] = [];
   
   isLoading: boolean = true;
   hasUnexpectedError: boolean = false;
@@ -41,6 +35,21 @@ export class CategoryAllComponent implements OnInit {
 
   ngOnInit(): void {
     this.validateCategoriesError();
+    this.extractMappedCategories();
+  }
+
+  extractMappedCategories() {
+    effect(() => {
+      if(this.categories().length == 0) return;
+      this.mappedCategories = this.categories().map(cat => ({
+        id: cat.id,
+        name: cat.name,
+        description: cat.description,
+        imageName: cat.imageName,
+        imageObj: cat.image ?? undefined
+      }))
+      this.isLoading = false;
+    }, {injector: this.injector})
   }
 
   validateCategoriesError() {
