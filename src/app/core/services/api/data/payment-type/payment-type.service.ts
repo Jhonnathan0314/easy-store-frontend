@@ -39,8 +39,8 @@ export class PaymentTypeService {
       tap(paymentTypes => {
         this.paymentTypes.set(paymentTypes);
       }),
-      catchError((error: ApiResponse<ErrorMessage>) => {
-        this.paymentTypesError.set(error.error);
+      catchError((error: {error: ApiResponse<ErrorMessage>}) => {
+        this.paymentTypesError.set(error.error.error);
         return throwError(() => error)
       })
     ).subscribe()
