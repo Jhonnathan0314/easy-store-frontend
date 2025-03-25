@@ -31,8 +31,8 @@ export class SubcategoryService {
       tap(subcategories => {
         this.subcategories.set(subcategories);
       }),
-      catchError((error: ApiResponse<ErrorMessage>) => {
-        this.subcategoriesError.set(error.error);
+      catchError((error: {error: ApiResponse<ErrorMessage>}) => {
+        this.subcategoriesError.set(error.error.error);
         return throwError(() => error);
       })
     ).subscribe()
