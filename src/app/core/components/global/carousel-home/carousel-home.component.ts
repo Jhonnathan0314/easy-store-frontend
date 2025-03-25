@@ -61,7 +61,7 @@ export class CarouselHomeComponent implements OnInit {
   validateCategoriesError() {
     effect(() => {
       if(this.categoriesError() == null) return;
-      if(this.categoriesError()?.code == 404) this.hasUnexpectedError = true;
+      if(this.categoriesError()?.code !== 404) this.hasUnexpectedError = true;
       this.isLoading = false;
     }, {injector: this.injector})
   }
