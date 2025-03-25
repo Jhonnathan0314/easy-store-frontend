@@ -7,6 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "build:ssr": "ng build && ng run easy-store-frontend:server",
     "serve:ssr:easy-store-frontend": "node dist/easy-store-frontend/server/server.mjs"
   },
   "private": true,
