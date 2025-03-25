@@ -14,7 +14,7 @@
         <app-loading-table 
             class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
         />
-    } @else if (mappedCategories().length == 0 && !isLoading) {
+    } @else if (mappedCategories().length == 0 && !isLoading && !hasUnexpectedError) {
         <p-message icon="pi pi-exclamation-triangle" severity="warn">No tienes tiendas creadas por el momento.</p-message>
     } @else if(hasUnexpectedError) {
         <p-message severity="error">Ha ocurrido un error inesperado, por favor, intentelo de nuevo más tarde.</p-message>
