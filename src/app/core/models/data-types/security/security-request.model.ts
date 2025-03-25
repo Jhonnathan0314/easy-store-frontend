@@ -13,3 +13,10 @@ export class RegisterRequest {
     password: string;
     role: Role;
 }
+
+export class ResetPasswordRequest {
+    username: string;
+    password: string;
+    confirmPassword: string;
+    code: number;
+}

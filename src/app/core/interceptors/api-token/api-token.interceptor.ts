@@ -4,6 +4,7 @@ import { SessionService } from "../../services/session/session.service";
 
 export const apiToken: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
     if(req.url.includes("auth")) return next(req.clone());
+    if(req.url.includes("forgot-password")) return next(req.clone());
 
     const sessionService = inject(SessionService);
 
