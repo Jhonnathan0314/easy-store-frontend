@@ -47,7 +47,8 @@ export class SessionService {
     if (typeof window !== "undefined") {
       if (window.location.pathname === '/security/login') return;
       this.localStorage?.removeItem('object');
-      this._window.location.assign('/security/login');
+      this.router.navigateByUrl('/security/login');
+      // this._window.location.assign('/security/login');
    }
   }
 
