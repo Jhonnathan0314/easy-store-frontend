@@ -46,8 +46,8 @@ export class ProductService {
         this.products.set(products.map(prod => ({...prod, images: []})));
         return this.findAllImages();
       }),
-      catchError((error: ApiResponse<ErrorMessage>) => {
-        this.productsError.set(error.error);
+      catchError((error: {error: ApiResponse<ErrorMessage>}) => {
+        this.productsError.set(error.error.error);
         return throwError(() => error);
       })
     ).subscribe();
@@ -136,7 +136,7 @@ export class ProductService {
       concatMap(createdProduct => {
         return this.findById(createdProduct.id);
       }),
-      catchError((error: ApiResponse<ErrorMessage>) => {
+      catchError((error: {error: ApiResponse<ErrorMessage>}) => {
         return throwError(() => error.error);
       })
     );

@@ -9,21 +9,26 @@ import { Subscription } from 'rxjs';
 import { SubcategoryService } from 'src/app/core/services/api/data/subcategory/subcategory.service';
 import { Router } from '@angular/router';
 import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
+import { ErrorMessage } from '@models/data/general.model';
+import { MessageModule } from 'primeng/message';
 
 @Component({
   selector: 'app-product-all',
   standalone: true,
-  imports: [ButtonComponent, TableComponent, LoadingTableComponent],
+  imports: [MessageModule, ButtonComponent, TableComponent, LoadingTableComponent],
   templateUrl: './product-all.component.html'
 })
 export class ProductAllComponent implements OnInit {
 
+  productsError: Signal<ErrorMessage | null> = computed(() => this.productService.productsError());
   products: Signal<Product[]> = computed(() => this.productService.products());
   mappedProducts: DataObject[] = [];
   
+  subcategoriesError: Signal<ErrorMessage | null> = computed(() => this.subcategoryService.subcategoriesError());
   subcategories: Signal<Subcategory[]> = computed(() => this.subcategoryService.subcategories());
 
-  isLoading = true;
+  isLoading: boolean = true;
+  hasUnexpectedError: boolean = false;
 
   productSubscription: Subscription;
   subcategorySubscription: Subscription;
@@ -37,6 +42,8 @@ export class ProductAllComponent implements OnInit {
 
   ngOnInit(): void {
     this.extractMappedProducts();
+    this.validateProductsError();
+    this.validateSubcategoriesError();
   }
 
   extractMappedProducts() {
@@ -58,6 +65,22 @@ export class ProductAllComponent implements OnInit {
           categoryId: subcategory.categoryId
         }
       })
+      this.isLoading = false;
+    }, {injector: this.injector})
+  }
+
+  validateProductsError() {
+    effect(() => {
+      if(this.productsError() == null) return;
+      if(this.productsError()?.code !== 404) this.hasUnexpectedError = true;
+      this.isLoading = false;
+    }, {injector: this.injector})
+  }
+
+  validateSubcategoriesError() {
+    effect(() => {
+      if(this.subcategoriesError() == null) return;
+      if(this.subcategoriesError()?.code !== 404) this.hasUnexpectedError = true;
       this.isLoading = false;
     }, {injector: this.injector})
   }
