@@ -28,6 +28,7 @@ export class ProductAllComponent implements OnInit {
   subcategories: Signal<Subcategory[]> = computed(() => this.subcategoryService.subcategories());
 
   isLoading: boolean = true;
+  isWorking: boolean = false;
   hasUnexpectedError: boolean = false;
 
   productSubscription: Subscription;
@@ -65,6 +66,7 @@ export class ProductAllComponent implements OnInit {
         }
       })
       this.isLoading = false;
+      if(this.isWorking) this.isWorking = false;
     }, {injector: this.injector})
   }
 
@@ -85,6 +87,7 @@ export class ProductAllComponent implements OnInit {
   }
 
   deleteById(product: DataObject) {
+    this.isWorking = true;
     this.productService.deleteById(product?.id ?? 0);
   }
 

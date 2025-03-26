@@ -24,6 +24,7 @@
             [objects]="mappedProducts"
             [updateButton]="true"
             [deleteButton]="true"
+            [disableButtons]="isWorking"
             updateRedirectPath="product/form"
             (deleteEvent)="deleteById($event)"
         />
