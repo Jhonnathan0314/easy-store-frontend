@@ -26,6 +26,7 @@ export class SubcategoryAllComponent implements OnInit {
   categories: Signal<Category[]> = computed<Category[]>(() => this.categoryService.categories());
 
   isLoading: boolean = true;
+  isWorking: boolean = false;
   hasUnexpectedError: boolean = false;
 
   constructor(
@@ -52,6 +53,7 @@ export class SubcategoryAllComponent implements OnInit {
         }
       })
       this.isLoading = false;
+      if(this.isWorking) this.isWorking = false;
     }, {injector: this.injector})
   }
 
@@ -64,6 +66,7 @@ export class SubcategoryAllComponent implements OnInit {
   }
 
   deleteById(subcategory: DataObject) {
+    this.isWorking = true;
     this.subcategoryService.deleteById(subcategory?.id ?? 0);
   }
 

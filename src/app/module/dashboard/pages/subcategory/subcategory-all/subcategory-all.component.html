@@ -24,6 +24,7 @@
             [objects]="mappedSubcategories"
             [updateButton]="true"
             [deleteButton]="true"
+            [disableButtons]="isWorking"
             updateRedirectPath="subcategory/form"
             (deleteEvent)="deleteById($event)"
         />
