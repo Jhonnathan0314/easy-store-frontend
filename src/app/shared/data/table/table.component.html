@@ -296,12 +296,12 @@
                 @if(hasFields.subcategoryName) { <td>{{ obj.subcategoryName }}</td> }
                 @if(updateButton) { 
                     <td>
-                        <app-button icon="pi pi-pencil" [rounded]="true" (clickEvent)="updateAction(obj.id)" />
+                        <app-button icon="pi pi-pencil" [rounded]="true" [disabled]="disableButtons" (clickEvent)="updateAction(obj.id)" />
                     </td>
                 }
                 @if(deleteButton) {
                     <td>
-                        <app-button icon="pi pi-trash" [rounded]="true" severity="danger" [confirmClick]="true" (clickEvent)="deleteAction(obj.id)" />
+                        <app-button icon="pi pi-trash" [rounded]="true" severity="danger" [disabled]="disableButtons" [confirmClick]="true" (clickEvent)="deleteAction(obj.id)" />
                     </td>
                 }
             </tr>

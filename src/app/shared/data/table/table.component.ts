@@ -17,6 +17,7 @@ export class TableComponent implements OnChanges {
   @Input() purchaseHasProductIndex: number = -1;
   @Input() updateButton: boolean = false;
   @Input() deleteButton: boolean = false;
+  @Input() disableButtons: boolean = false;
   @Input() updateRedirectPath: string = 'home';
 
   @Output() deleteEvent = new EventEmitter<DataObject>();
