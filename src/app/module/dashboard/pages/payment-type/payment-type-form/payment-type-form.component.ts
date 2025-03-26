@@ -31,6 +31,7 @@ export class PaymentTypeFormComponent {
   title: string = 'Crear tipo de pago';
 
   isLoading: boolean = true;
+  isWorking: boolean = false;
 
   @Output() paymentTypeErrorEvent = new EventEmitter<FormErrors>();
 
@@ -106,10 +107,8 @@ export class PaymentTypeFormComponent {
   }
 
   createCategory() {
+    this.isWorking = true;
     this.paymentTypeService.create(this.getObject()).subscribe({
-      next: () => {
-        this.router.navigateByUrl('/dashboard/payment-type');
-      },
       error: (error: ApiResponse<ErrorMessage>) => {
         if(error.error){
           if(error.error.code == 409) {
@@ -118,15 +117,17 @@ export class PaymentTypeFormComponent {
           }
         }
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
+      },
+      complete: () => {
+        this.isWorking = false;
+        this.router.navigateByUrl('/dashboard/payment-type');
       }
     })
   }
 
   updateCategory() {
+    this.isWorking = true;
     this.paymentTypeService.update(this.getObject()).subscribe({
-      next: () => {
-        this.router.navigateByUrl('/dashboard/payment-type');
-      },
       error: (error: ApiResponse<ErrorMessage>) => {
         if(error.error){
           if(error.error.code == 406) {
@@ -135,6 +136,10 @@ export class PaymentTypeFormComponent {
           return;
         }
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
+      },
+      complete: () => {
+        this.isWorking = false;
+        this.router.navigateByUrl('/dashboard/payment-type');
       }
     })
   }
