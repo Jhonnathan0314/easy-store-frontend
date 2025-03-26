@@ -27,6 +27,7 @@ export class DataViewComponent implements OnInit, OnChanges {
   @Output() viewProductEvent = new EventEmitter<Product>();
   
   @Input() cart: PurchaseCart = new PurchaseCart();
+  @Input() disableButtons: boolean = false;
 
   @Input() objects: Product[] = [];
   originalObjects: Product[] = [];

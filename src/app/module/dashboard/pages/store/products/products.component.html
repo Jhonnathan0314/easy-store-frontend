@@ -7,6 +7,7 @@
     <app-product-detail 
       [cart]="cart" 
       [product]="selectedProduct" 
+      [disableButtons]="isWorking"
       (addToCartEvent)="addToCart($event)"
       (removeFromCartEvent)="removeFromCart($event)"
       (goCartEvent)="goCart()"
@@ -17,6 +18,7 @@
       class="w-full"
       [objects]="products()"
       [cart]="cart"
+      [disableButtons]="isWorking"
       (addToCartEvent)="addToCart($event)"
       (removeFromCartEvent)="removeFromCart($event)"
       (goCartEvent)="goCart()"

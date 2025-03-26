@@ -58,6 +58,7 @@
                                     icon="pi pi-eye"
                                     label="Ver detalles"
                                     class="flex-auto md:flex-initial whitespace-nowrap"
+                                    [disabled]="disableButtons"
                                     (clickEvent)="viewProduct(item)"
                                 />
                                 @if (cartHasProduct(item)) {
@@ -65,14 +66,14 @@
                                         icon="pi pi-cart-minus"
                                         label="Eliminar del carrito"
                                         severity="danger"
-                                        [disabled]="item.quantity == 0"
+                                        [disabled]="item.quantity == 0 || disableButtons"
                                         class="flex-auto md:flex-initial whitespace-nowrap"
                                         (clickEvent)="removeFromCart(item)"
                                     ></app-button>
                                     <app-button
                                         icon="pi pi-shopping-cart"
                                         label="Ver carrito"
-                                        [disabled]="item.quantity == 0"
+                                        [disabled]="item.quantity == 0 || disableButtons"
                                         class="flex-auto md:flex-initial whitespace-nowrap"
                                         (clickEvent)="goToCart()"
                                     ></app-button>
@@ -80,7 +81,7 @@
                                     <app-button
                                         icon="pi pi-cart-plus"
                                         label="Agregar al carrito"
-                                        [disabled]="item.quantity == 0"
+                                        [disabled]="item.quantity == 0 || disableButtons"
                                         class="flex-auto md:flex-initial whitespace-nowrap"
                                         (clickEvent)="addToCart(item)"
                                     ></app-button>
@@ -88,7 +89,7 @@
                                         <app-button 
                                             icon="pi pi-shopping-cart"
                                             label="Comprar ahora"
-                                            [disabled]="item.quantity == 0"
+                                            [disabled]="item.quantity == 0 || disableButtons"
                                             class="flex-auto md:flex-initial whitespace-nowrap"
                                         />
                                     </a>
@@ -140,6 +141,7 @@
                                             icon="pi pi-eye"
                                             label="Ver detalles"
                                             class="flex-auto md:flex-initial whitespace-nowrap"
+                                            [disabled]="disableButtons"
                                             (clickEvent)="viewProduct(item)"
                                         />
                                         @if (cartHasProduct(item)) {
@@ -147,14 +149,14 @@
                                                 icon="pi pi-cart-minus"
                                                 label="Eliminar del carrito"
                                                 severity="danger"
-                                                [disabled]="item.quantity == 0"
+                                                [disabled]="item.quantity == 0 || disableButtons"
                                                 class="flex-auto md:flex-initial whitespace-nowrap"
                                                 (clickEvent)="removeFromCart(item)"
                                             ></app-button>
                                             <app-button
                                                 icon="pi pi-shopping-cart"
                                                 label="Ver carrito"
-                                                [disabled]="item.quantity == 0"
+                                                [disabled]="item.quantity == 0 || disableButtons"
                                                 class="flex-auto md:flex-initial whitespace-nowrap"
                                                 (clickEvent)="goToCart()"
                                             ></app-button>
@@ -162,7 +164,7 @@
                                             <app-button
                                                 icon="pi pi-cart-plus"
                                                 label="Agregar al carrito"
-                                                [disabled]="item.quantity == 0"
+                                                [disabled]="item.quantity == 0 || disableButtons"
                                                 class="flex-auto md:flex-initial whitespace-nowrap"
                                                 (clickEvent)="addToCart(item)"
                                             ></app-button>
@@ -170,7 +172,7 @@
                                                 <app-button 
                                                     icon="pi pi-shopping-cart"
                                                     label="Comprar ahora"
-                                                    [disabled]="item.quantity == 0"
+                                                    [disabled]="item.quantity == 0 || disableButtons"
                                                     class="flex-auto md:flex-initial whitespace-nowrap"
                                                 />
                                             </a>

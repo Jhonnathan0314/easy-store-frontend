@@ -23,6 +23,7 @@ export class ProductDetailComponent {
 
   @Input() cart: PurchaseCart = new PurchaseCart();
   @Input() product: Product | undefined = undefined;
+  @Input() disableButtons: boolean = false;
 
   defaultImages: {src: string}[] = [
     {

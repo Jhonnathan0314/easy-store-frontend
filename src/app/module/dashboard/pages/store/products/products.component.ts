@@ -37,6 +37,7 @@ export class ProductsComponent implements OnInit {
 
   viewDetail: boolean = false;
   isLoading: boolean = true;
+  isWorking: boolean = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -75,35 +76,43 @@ export class ProductsComponent implements OnInit {
   }
 
   addToCart($event: Product) {
-    this.validatePurchase($event);
+    if(!this.validatePurchase($event)) return;
+    this.isWorking = true;
     this.purchaseService.addPurchaseHasProduct(this.productToAdd).subscribe({
-      next: () => { },
       error: (error) => {
         console.log("Ha ocurrido un error mientras agregaba producto al carrito", {error});
+      },
+      complete: () => {
+        this.isWorking = false;
       }
     })
   }
 
   removeFromCart($event: Product) {
+    this.isWorking = true;
     const hasProductId: PurchaseHasProductId = {
       productId: $event.id,
       purchaseId: this.cart.id
     }
     this.purchaseService.deletePurchaseHasProductById(hasProductId).subscribe({
-      next: () => { },
       error: (error) => {
         console.log("Ha ocurrido un error mientras eliminaba producto del carrito", {error});
+      },
+      complete: () => {
+        this.isWorking = false;
       }
     })
 
   }
 
-  validatePurchase(product: Product) {
+  validatePurchase(product: Product): boolean {
     const cart = this.purchases().find(cart => cart.categoryId == this.categoryId);
     if(cart != undefined) {
       this.prepareProductToAdd(product, cart);
+      return true;
     }else {
       this.createPurchase(product);
+      return false;
     }
   }
 
@@ -118,13 +127,15 @@ export class ProductsComponent implements OnInit {
   }
 
   createPurchase(product: Product) {
+    this.isWorking = true;
     this.prepareNewPurchase();
     this.purchaseService.generate(this.purchase).subscribe({
-      next: () => {
-        this.addToCart(product);
-      },
       error: (error) => {
         console.log('Ha ocurrido un error al crear el carrito.', error);
+      },
+      complete: () => {
+        this.isWorking = false;
+        this.addToCart(product);
       }
     })
   }
