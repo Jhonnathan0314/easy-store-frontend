@@ -114,7 +114,7 @@
       
           <app-button
             [label]="buttonLabel"
-            [disabled]="(!isLoading && subcategories().length == 0) || isLoading"
+            [disabled]="(!isLoading && subcategories().length == 0) || isLoading || isWorking"
             (clickEvent)="validateForm()"
           />
         }

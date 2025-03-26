@@ -49,6 +49,7 @@ export class ProductFormComponent implements OnInit {
 
   viewInputFile: boolean = true;
   isLoading: boolean = true;
+  isWorking: boolean = false;
   hasUnexpectedError: boolean = false;
 
   subcategorySubscription: Subscription;
@@ -157,25 +158,33 @@ export class ProductFormComponent implements OnInit {
   }
 
   createProduct() {
+    this.isWorking = true;
     this.productService.create(this.getObject(), this.filesToUpload).subscribe({
       next: (product) => {
         this.productService.findProductImages(product.id).subscribe();
-        this.router.navigateByUrl('/dashboard/product');
       },
       error: () => {
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
+      },
+      complete: () => {
+        this.isWorking = false;
+        this.router.navigateByUrl('/dashboard/product');
       }
     })
   }
 
   updateProduct() {
+    this.isWorking = true;
     this.productService.update(this.getObject(), this.filesToUpload, this.filesToDelete).subscribe({
       next: () => {
-        this.productService.findProductImages(this.productId).subscribe();
-        this.router.navigateByUrl('/dashboard/product');
       },
       error: (error) => {
         this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.error.detail});
+      },
+      complete: () => {
+        this.productService.findProductImages(this.productId).subscribe();
+        this.isWorking = false;
+        this.router.navigateByUrl('/dashboard/product');
       }
     })
   }
