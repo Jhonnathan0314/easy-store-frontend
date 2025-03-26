@@ -164,7 +164,7 @@ export class CategoryService {
       }),
       tap(categoryUpdated => {
         this.categories.update(cats => cats.map(cat => cat.id === category.id 
-          ? { ...categoryUpdated, image: cat.image ?? file } 
+          ? { ...categoryUpdated, image: file ?? cat.image } 
           : cat
         ));
         return categoryUpdated;
