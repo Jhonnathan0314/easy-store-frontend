@@ -36,6 +36,7 @@ export class ProductService {
     } else {
       this.products.set([]);
     }
+    this.productsError.set(null);
   }
 
   private findByAccount() {
@@ -47,7 +48,7 @@ export class ProductService {
         return this.findAllImages();
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
-        this.productsError.set(error.error.error);
+        this.productsError.update(() => error.error.error);
         return throwError(() => error);
       })
     ).subscribe();
@@ -187,6 +188,14 @@ export class ProductService {
       concatMap(() => this.http.delete<ApiResponse<object>>(`${this.apiUrl}/product/delete/${id}`)),
       tap(() => {
         this.products.update(() => this.products().filter(prod => prod.id !== id));
+        if(this.products().length == 0) {
+          const error: ErrorMessage = {
+            code: 404,
+            title: 'No hay productos.',
+            detail: 'No se encontraron productos.'
+          };
+          this.productsError.update(() => error)
+        }
       }),
       catchError(() => {
         return of(null);

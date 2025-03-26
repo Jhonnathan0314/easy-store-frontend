@@ -48,7 +48,6 @@ export class ProductAllComponent implements OnInit {
 
   extractMappedProducts() {
     effect(() => {
-      if(this.products().length === 0 || this.subcategories().length === 0) return;
       this.mappedProducts = this.products().map(prod => {
         const subcategory = this.subcategories().find(sub => sub.id == prod.subcategoryId) ?? new Subcategory();
         return {
