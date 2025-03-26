@@ -23,6 +23,7 @@ export class CategoryAllComponent implements OnInit {
   mappedCategories: DataObject[] = [];
   
   isLoading: boolean = true;
+  isWorking: boolean = false;
   hasUnexpectedError: boolean = false;
   
   categorySubscription: Subscription;
@@ -48,6 +49,7 @@ export class CategoryAllComponent implements OnInit {
         imageObj: cat.image ?? undefined
       }))
       this.isLoading = false;
+      if(this.isWorking) this.isWorking = false;
     }, {injector: this.injector})
   }
 
@@ -60,6 +62,7 @@ export class CategoryAllComponent implements OnInit {
   }
 
   deleteById(category: DataObject) {
+    this.isWorking = true;
     this.categoryService.deleteById(category.id ?? 0);
   }
 
