@@ -10,7 +10,8 @@ import { S3File } from '@models/utils/file.model';
   selector: 'app-product-detail',
   standalone: true,
   imports: [FormsModule, GalleriaModule, ButtonComponent],
-  templateUrl: './product-detail.component.html'
+  templateUrl: './product-detail.component.html',
+  styleUrls: ['../../../../../../../public/assets/css/layout.css']
 })
 export class ProductDetailComponent {
 

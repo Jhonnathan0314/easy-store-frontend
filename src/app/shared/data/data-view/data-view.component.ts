@@ -16,7 +16,8 @@ import { DividerModule } from 'primeng/divider';
   selector: 'app-data-view',
   standalone: true,
   imports: [CommonModule, FormsModule, DataViewModule, DividerModule, SelectButtonModule, TagModule, ButtonComponent, InputTextComponent, InputSelectComponent],
-  templateUrl: './data-view.component.html'
+  templateUrl: './data-view.component.html',
+  styleUrls: ['../../../../../public/assets/css/layout.css']
 })
 export class DataViewComponent implements OnInit, OnChanges {
 

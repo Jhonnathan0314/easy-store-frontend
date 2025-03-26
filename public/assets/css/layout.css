@@ -7,7 +7,6 @@
     .bg-section {
         @apply !rounded-border !flex !flex-col !justify-center !items-center !px-8 !py-8;
         background-color: var(--p-surface-card-background)
-
     }
 
     .h2 {
