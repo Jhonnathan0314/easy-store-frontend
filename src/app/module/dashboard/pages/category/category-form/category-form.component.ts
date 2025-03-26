@@ -38,6 +38,7 @@ export class CategoryFormComponent implements OnInit {
 
   viewInputFile: boolean = true;
   isLoading: boolean = true;
+  isWorking: boolean = false;
 
   @Output() categoryErrorEvent = new EventEmitter<FormErrors>();
 
@@ -122,10 +123,8 @@ export class CategoryFormComponent implements OnInit {
   }
 
   createCategory() {
+    this.isWorking = true;
     this.categoryService.create(this.getCreateObject(), this.filesToUpload[0] ?? null).subscribe({
-      next: () => {
-        this.router.navigateByUrl('/dashboard/category');
-      },
       error: (error: ApiResponse<ErrorMessage>) => {
         if(error.error){
           if(error.error.code == 409) {
@@ -134,6 +133,10 @@ export class CategoryFormComponent implements OnInit {
           }
         }
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
+      },
+      complete: () => {
+        this.isWorking = false;
+        this.router.navigateByUrl('/dashboard/category');
       }
     })
   }
@@ -151,10 +154,8 @@ export class CategoryFormComponent implements OnInit {
   }
 
   updateCategory() {
+    this.isWorking = true;
     this.categoryService.update(this.getUpdateObject(), this.filesToUpload[0] ?? null).subscribe({
-      next: () => {
-        this.router.navigateByUrl('/dashboard/category');
-      },
       error: (error: ApiResponse<ErrorMessage>) => {
         if(error.error){
           if(error.error.code == 406 && this.filesToUpload.length == 0) {
@@ -165,6 +166,10 @@ export class CategoryFormComponent implements OnInit {
           return;
         }
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
+      },
+      complete: () => {
+        this.isWorking = false;
+        this.router.navigateByUrl('/dashboard/category');
       }
     })
   }

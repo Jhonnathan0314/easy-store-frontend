@@ -60,6 +60,7 @@
       
           <app-button
             [label]="buttonLabel"
+            [disabled]="isWorking"
             (clickEvent)="validateForm()"
           />
           <p-toast [life]="10000" />
