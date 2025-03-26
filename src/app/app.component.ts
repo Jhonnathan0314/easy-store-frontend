@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { PrimeNG } from 'primeng/config';
+import { SessionService } from './core/services/session/session.service';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,10 @@ import { PrimeNG } from 'primeng/config';
 })
 export class AppComponent implements OnInit {
 
-  constructor(private primeng: PrimeNG) {}
+  constructor(
+    private primeng: PrimeNG,
+    private sessionService: SessionService
+  ) {}
 
   ngOnInit(): void {
     this.primeng.ripple.set(true);
@@ -21,6 +25,8 @@ export class AppComponent implements OnInit {
       menu: 1000,
       tooltip: 1100
     };
+
+    this.sessionService.validateSession();
   }
 
 }

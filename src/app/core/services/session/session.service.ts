@@ -1,33 +1,26 @@
-import { inject, Inject, Injectable, InjectionToken } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginRequest } from '../../models/data-types/security/security-request.model';
 import { SessionData } from '../../models/data-types/security/security-data.model';
 import { CryptoService } from '../utils/crypto/crypto.service';
-import { DOCUMENT } from '@angular/common';
-
-export const WINDOW = new InjectionToken<Window>('WindowToken', {
-  factory: () => {
-    if(typeof window !== 'undefined') {
-      return window
-    }
-    return new Window(); // does this work?
-  }
-});
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SessionService {
 
-  private _window = inject(WINDOW);
-
   localStorage: Storage | undefined;
 
   actualPath: string = '';
 
-  constructor(private router: Router, private cryptoService: CryptoService, @Inject(DOCUMENT) private document: Document) {
+  constructor(
+    private router: Router, 
+    private cryptoService: CryptoService, 
+    @Inject(DOCUMENT) private document: Document,
+    @Inject(PLATFORM_ID) private platformId: object
+  ) {
     this.localStorage = this.document.defaultView?.localStorage;
-    this.validateSession();
   }
 
   saveSession(loginRequest: LoginRequest, token: string) {
@@ -44,19 +37,22 @@ export class SessionService {
   }
 
   logout() {
-    if (typeof window !== "undefined") {
-      if (window.location.pathname === '/security/login') return;
-      this.localStorage?.removeItem('object');
-      this.router.navigateByUrl('/security/login');
-      // this._window.location.assign('/security/login');
-   }
+    this.localStorage?.removeItem('object');
+    this.router.navigateByUrl('/security/login').then(() => {
+      if(isPlatformBrowser(this.platformId))
+        window.location.reload();
+    });
   }
 
-  private validateSession() {
-    if (this.isLogged()) {
-      this.actualPath = window.location.href;
-      if(!this.actualPath.includes('dashboard')) this.redirect('/dashboard');
-    } else {
+  validateSession() {
+    const isLogged = this.isLogged();
+    let currentPath: string = ''
+    if(isPlatformBrowser(this.platformId))
+      currentPath = window.location.href;
+
+    if (isLogged && !currentPath.includes('/dashboard')) {
+      this.redirect('/dashboard');
+    } else if(!isLogged && !currentPath.includes('/security')) {
       this.logout();
     }
   }
