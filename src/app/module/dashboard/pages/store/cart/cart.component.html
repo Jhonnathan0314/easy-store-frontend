@@ -30,6 +30,7 @@
                             <app-button 
                                 class="w-full sm:w-auto"
                                 label="Buscar más productos"
+                                [disabled]="isWorking"
                                 (clickEvent)="goToStore(cart.categoryId)"
                             />
                         </section>
@@ -47,14 +48,14 @@
                                     <app-button
                                         icon="pi pi-minus"
                                         [rounded]="true"
-                                        [disabled]="product.quantity == 1"
+                                        [disabled]="product.quantity == 1 || isWorking"
                                         (clickEvent)="minusProductToCart(product)"
                                     />
                                     <span class="w-1/4 text-center">{{ product.quantity }}</span>
                                     <app-button
                                         icon="pi pi-plus"
                                         [rounded]="true"
-                                        [disabled]="product.product?.quantity == 0 || (product.quantity == product.product?.quantity)"
+                                        [disabled]="product.product?.quantity == 0 || (product.quantity == product.product?.quantity) || isWorking"
                                         (clickEvent)="plusProductToCart(product)"
                                     />
                                 </div>
@@ -62,6 +63,7 @@
                                     label="Eliminar"
                                     icon="pi pi-trash"
                                     severity="danger"
+                                    [disabled]="isWorking"
                                     (clickEvent)="deleteFromCart(product)"
                                 />
                             </div>
@@ -73,6 +75,7 @@
                                 <app-button 
                                     label="Continuar con el pago"
                                     icon="pi pi-list-check"
+                                    [disabled]="cart.products.length == 0"
                                 />
                             </a>
                         </footer>
