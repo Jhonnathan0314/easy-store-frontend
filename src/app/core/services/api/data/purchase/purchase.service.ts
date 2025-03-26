@@ -105,6 +105,7 @@ export class PurchaseService {
             }
             purchase.products = products;
             purchases[purchaseIndex] = purchase;
+            purchases[purchaseIndex].total = products.map(prod => prod.quantity * prod.unitPrice).reduce((a, b) => a + b, 0);
           }
           return [...purchases];
         });
@@ -120,18 +121,18 @@ export class PurchaseService {
         this.purchases.update(purchases => {
           const purchaseIndex = purchases.findIndex(p => p.id === purchaseHasProduct.id.purchaseId);
           if (purchaseIndex !== -1) {
-            const purchase = { ...purchases[purchaseIndex] };
-            const products = [...purchase.products];
-            const productIndex = products.findIndex(prod => prod.id.productId === purchaseHasProduct.id.productId);
-            if (productIndex !== -1) {
-              products[productIndex] = hasProduct;
+            const purchaseUpdated = { ...purchases[purchaseIndex] };
+            const productsUpdated = [...purchaseUpdated.products];
+            const productUpdatedIndex = productsUpdated.findIndex(prod => prod.id.productId === purchaseHasProduct.id.productId);
+            if (productUpdatedIndex !== -1) {
+              productsUpdated[productUpdatedIndex] = hasProduct;
             }
-            purchase.products = products;
-            purchases[purchaseIndex] = purchase;
+            purchaseUpdated.products = productsUpdated;
+            purchases[purchaseIndex] = purchaseUpdated;
+            purchases[purchaseIndex].total = productsUpdated.map(prod => prod.quantity * prod.unitPrice).reduce((a, b) => a + b, 0);
           }
           return [...purchases];
         });
-  
         this.productService.findById(purchaseHasProduct.id.productId);
       }),
       catchError((error) => {
@@ -149,6 +150,7 @@ export class PurchaseService {
           if (purchaseIndex !== -1) {
             const purchase = { ...purchases[purchaseIndex] };
             purchase.products = purchase.products.filter(prod => prod.id.productId !== id.productId);
+            purchase.total = purchase.products.map(prod => prod.quantity * prod.unitPrice).reduce((a, b) => a + b, 0);
             purchases[purchaseIndex] = purchase;
           }
           return [...purchases];

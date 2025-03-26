@@ -25,14 +25,20 @@ import { MessageService } from 'primeng/api';
 })
 export class CartComponent implements OnInit {
 
+  purchasesError: Signal<ErrorMessage | null> = computed(() => this.purchaseService.purchasesError());
   purchases: Signal<Purchase[]> = computed(() => this.purchaseService.purchases());
   carts: PurchaseCart[] =[];
+
+  categoriesError: Signal<ErrorMessage | null> = computed(() => this.categoryService.categoriesError());
   categories: Signal<Category[]> = computed(() => this.categoryService.categories());
+
+  productsError: Signal<ErrorMessage | null> = computed(() => this.productService.productsError());
   products: Signal<Product[]> = computed(() => this.productService.products());
 
   userId: number = 0;
 
-  isLoading = true;
+  isLoading: boolean = true;
+  hasUnexpectedError: boolean = false;
 
   constructor(
     private router: Router,
@@ -46,6 +52,9 @@ export class CartComponent implements OnInit {
 
   ngOnInit(): void {
     this.findUserId();
+    this.validateCategoriesError();
+    this.validateProductsError();
+    this.validatePurchasesError();
     this.extractCarts();
   }
 
@@ -53,10 +62,33 @@ export class CartComponent implements OnInit {
     this.userId = this.sessionService.getUserId();
   }
 
+  validateCategoriesError() {
+    effect(() => {
+      if(this.categoriesError() == null) return;
+      if(this.categoriesError()?.code !== 404) this.hasUnexpectedError = true;
+      this.isLoading = false;
+    }, {injector: this.injector})
+  }
+
+  validateProductsError() {
+    effect(() => {
+      if(this.productsError() == null) return;
+      if(this.productsError()?.code !== 404) this.hasUnexpectedError = true;
+      this.isLoading = false;
+    }, {injector: this.injector})
+  }
+
+  validatePurchasesError() {
+    effect(() => {
+      if(this.purchasesError() == null) return;
+      if(this.purchasesError()?.code !== 404) this.hasUnexpectedError = true;
+      this.isLoading = false;
+    }, {injector: this.injector})
+  }
+
   extractCarts() {
     effect(() => {
       this.isLoading = false;
-      if(this.purchases().length == 0) return;
       this.carts = this.purchases().filter((purchase) => purchase.state == 'cart' && purchase.userId == this.userId);
       this.savePurchases();
     }, {injector: this.injector})
