@@ -54,7 +54,7 @@
       
           <app-button
             [label]="buttonLabel"
-            [disabled]="(!isLoading && categories().length == 0) || isLoading || hasUnexpectedError"
+            [disabled]="(!isLoading && categories().length == 0) || isLoading || hasUnexpectedError || isWorking"
             (clickEvent)="validateForm()"
           />
           <p-toast [life]="10000" />

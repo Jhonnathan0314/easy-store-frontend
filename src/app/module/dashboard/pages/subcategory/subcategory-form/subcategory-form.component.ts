@@ -41,6 +41,7 @@ export class SubcategoryFormComponent implements OnInit {
   title: string = 'Crear categoria';
 
   isLoading: boolean = true;
+  isWorking: boolean = false;
   hasUnexpectedError: boolean = false;
 
   @Output() subcategoryErrorEvent = new EventEmitter<FormErrors>();
@@ -140,20 +141,24 @@ export class SubcategoryFormComponent implements OnInit {
   }
 
   createSubcategory() {
+    this.isWorking = true;
     this.subcategoryService.create(this.getObject()).subscribe({
       next: () => {
-        this.router.navigateByUrl('/dashboard/subcategory');
       },
       error: () => {
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
+      },
+      complete: () => {
+        this.isWorking = false;
+        this.router.navigateByUrl('/dashboard/subcategory');
       }
     })
   }
 
   updateSubcategory() {
+    this.isWorking = true;
     this.subcategoryService.update(this.getObject()).subscribe({
       next: () => {
-        this.router.navigateByUrl('/dashboard/subcategory');
       },
       error: (error: ApiResponse<ErrorMessage>) => {
         if(error.error) {
@@ -163,6 +168,10 @@ export class SubcategoryFormComponent implements OnInit {
         }
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
       },
+      complete: () => {
+        this.isWorking = false;
+        this.router.navigateByUrl('/dashboard/subcategory');
+      }
     })
   }
 
