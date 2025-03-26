@@ -40,7 +40,6 @@ export class CategoryAllComponent implements OnInit {
 
   extractMappedCategories() {
     effect(() => {
-      if(this.categories().length == 0) return;
       this.mappedCategories = this.categories().map(cat => ({
         id: cat.id,
         name: cat.name,

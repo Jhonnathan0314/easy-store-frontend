@@ -28,6 +28,7 @@ export class CategoryService {
 
   private initFindCategories() {
     const isAdmin: boolean = this.sessionService.getRole() === 'admin';
+    this.categoriesError.set(null);
     if(isAdmin) {
       this.findAllByAccount();
     }else {
@@ -44,7 +45,7 @@ export class CategoryService {
         this.findImages();
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
-        this.categoriesError.set(error.error.error);
+        this.categoriesError.update(() => error.error.error);
         return throwError(() => error);
       })
     ).subscribe();
@@ -198,18 +199,24 @@ export class CategoryService {
   deleteById(id: number) {
     this.http.delete<ApiResponse<object>>(`${this.apiUrl}/category/delete/${id}`)
     .pipe(
-      tap(response => {
+      tap(() => {
         const category = this.categories().find(cat => cat.id === id);
         const image = category?.image;
         if (image) {
           image.context = 'category';
           this.deleteFile(image);
         }
-        return response;
       }),
-      tap(response => {
+      tap(() => {
         this.categories.update(cats => cats.filter(cat => cat.id !== id));
-        return response;
+        if(this.categories().length == 0) {
+          const error: ErrorMessage = {
+            code: 404,
+            title: 'No hay categorias.',
+            detail: 'No se encontraron categorias.'
+          };
+          this.categoriesError.update(() => error)
+        }
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
         if (error.error.error.code === 404) {
