@@ -42,7 +42,6 @@ export class SubcategoryAllComponent implements OnInit {
 
   extractMappedSubcategories() {
     effect(() => {
-      if(this.subcategories().length == 0) return;
       this.mappedSubcategories = this.subcategoryService.subcategories().map(sub => {
         const category = this.categories().find(cat => cat.id == sub.categoryId) ?? new Category();
         return {

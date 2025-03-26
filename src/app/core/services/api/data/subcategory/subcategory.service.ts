@@ -11,7 +11,7 @@ import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 })
 export class SubcategoryService {
 
-  apiUrl: string = '';
+  apiUrl: string = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
 
   subcategories = signal<Subcategory[]>([]);
   subcategoriesError = signal<ErrorMessage | null>(null);
@@ -20,8 +20,8 @@ export class SubcategoryService {
     private http: HttpClient, 
     private sessionService: SessionService
   ) {
-    this.apiUrl = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
     this.findAllByAccountId();
+    this.subcategoriesError.set(null);
   }
 
   private findAllByAccountId() {
@@ -32,7 +32,7 @@ export class SubcategoryService {
         this.subcategories.set(subcategories);
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
-        this.subcategoriesError.set(error.error.error);
+        this.subcategoriesError.update(() => error.error.error);
         return throwError(() => error);
       })
     ).subscribe()
@@ -77,6 +77,14 @@ export class SubcategoryService {
     this.http.delete<ApiResponse<object>>(`${this.apiUrl}/subcategory/delete/${id}`).pipe(
       tap(() => {
         this.subcategories.update(subcats => subcats.filter(subcat => subcat.id != id));
+        if(this.subcategories().length == 0) {
+          const error: ErrorMessage = {
+            code: 404,
+            title: 'No hay subcategorias.',
+            detail: 'No se encontraron subcategorias.'
+          };
+          this.subcategoriesError.update(() => error)
+        }
       })
     ).subscribe()
   }
