@@ -29,6 +29,7 @@ export class ForgotPasswordComponent implements OnInit {
   invalidUsername: boolean = false;
   emailSent: boolean = false;
   hasError: boolean = false;
+  isWorking: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -60,12 +61,15 @@ export class ForgotPasswordComponent implements OnInit {
 
   sendEmail() {
     this.emailSent = true;
+    this.isWorking = true;
     this.emailService.sendOtpPassword(this.forgotPasswordForm.value.username).subscribe({
       next: () => {
         this.sendEmailInterval();
+        this.isWorking = false;
       },
       error: () => {
         this.emailSent = false;
+        this.isWorking = false;
       }
     });
   }
@@ -91,12 +95,15 @@ export class ForgotPasswordComponent implements OnInit {
   }
 
   changePassword() {
+    this.isWorking = true;
     this.securityService.resetPassword(this.request).subscribe({
       next: () => {
         this.successMessage();
+        this.isWorking = false;
       },
       error: () => {
         this.hasError = true;
+        this.isWorking = false;
       }
     })
   }
