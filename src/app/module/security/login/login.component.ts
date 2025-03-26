@@ -32,6 +32,8 @@ export class LoginComponent {
   loginRequest: LoginRequest = new LoginRequest();
 
   loginError: boolean = false;
+
+  isWorking: boolean = false;
   
   constructor(
     private formBuilder: FormBuilder,
@@ -70,10 +72,15 @@ export class LoginComponent {
   }
 
   login() {
+    this.isWorking = true;
     this.securityService.login(this.loginRequest).subscribe({
-      next: (res) => this.sessionService.saveSession(this.loginRequest, res.data.token),
+      next: (res) => {
+        this.sessionService.saveSession(this.loginRequest, res.data.token);
+        this.isWorking = false;
+      },
       error: () => {
         this.loginError = true;
+        this.isWorking = false;
       }
     });
   }

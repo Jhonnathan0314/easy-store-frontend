@@ -28,6 +28,7 @@
   
     <app-button
       label="Ingresar"
+      [disabled]="isWorking"
       (clickEvent)="validateForm()"
     />
 
