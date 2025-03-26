@@ -24,6 +24,7 @@ export class PurchaseService {
   ) {
     this.apiUrl = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
     this.findAllByUser();
+    this.purchasesError.set(null);
   }
   
   private findAllByUser() {
@@ -35,7 +36,7 @@ export class PurchaseService {
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
         this.purchases.set([]);
-        this.purchasesError.set(error.error.error);
+        this.purchasesError.update(() => error.error.error);
         return throwError(() => error.error);
       })
     ).subscribe()
@@ -74,6 +75,14 @@ export class PurchaseService {
     this.http.delete<ApiResponse<object>>(`${this.apiUrl}/purchase/delete/${id}`).pipe(
       tap(() => {
         this.purchases.update(pur => pur.filter(pur => pur.id != id));
+        if(this.purchases().length == 0) {
+          const error: ErrorMessage = {
+            code: 404,
+            title: 'No hay compras.',
+            detail: 'No se encontraron compras.'
+          };
+          this.purchasesError.update(() => error)
+        }
       })
     ).subscribe()
   }
