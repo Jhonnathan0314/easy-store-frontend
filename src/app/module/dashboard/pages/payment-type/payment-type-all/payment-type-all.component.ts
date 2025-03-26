@@ -23,6 +23,7 @@ export class PaymentTypeAllComponent implements OnInit {
   mappedPaymentTypes: DataObject[] = [];
 
   isLoading: boolean = true;
+  isWorking: boolean = false;
   hasUnexpectedError: boolean = false;
 
   paymentTypeSubscription: Subscription;
@@ -45,6 +46,7 @@ export class PaymentTypeAllComponent implements OnInit {
         name: pay.name
       }))
       this.isLoading = false;
+      if(this.isWorking) this.isWorking = false;
     }, {injector: this.injector})
   }
 
@@ -57,6 +59,7 @@ export class PaymentTypeAllComponent implements OnInit {
   }
 
   deleteById(paymentType: DataObject) {
+    this.isWorking = true;
     this.paymentTypeService.deleteById(paymentType?.id ?? 0);
   }
 

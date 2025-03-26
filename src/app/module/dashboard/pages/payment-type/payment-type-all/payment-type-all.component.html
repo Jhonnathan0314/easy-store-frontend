@@ -24,6 +24,7 @@
             [objects]="mappedPaymentTypes"
             [updateButton]="true"
             [deleteButton]="true"
+            [disableButtons]="isWorking"
             updateRedirectPath="payment-type/form"
             (deleteEvent)="deleteById($event)"
         />
