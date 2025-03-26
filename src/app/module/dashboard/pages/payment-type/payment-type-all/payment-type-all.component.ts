@@ -40,7 +40,6 @@ export class PaymentTypeAllComponent implements OnInit {
 
   extractMappedPaymentTypes() {
     effect(() => {
-      if(this.paymentTypes().length === 0) return;
       this.mappedPaymentTypes = this.paymentTypes().map((pay) => ({
         id: pay.id,
         name: pay.name

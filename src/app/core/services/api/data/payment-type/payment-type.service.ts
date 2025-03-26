@@ -30,6 +30,7 @@ export class PaymentTypeService {
     } else {
       this.paymentTypes.set([]);
     }
+    this.paymentTypesError.set(null);
   }
 
   findAllByAccountId(accountId?: number) {
@@ -40,7 +41,7 @@ export class PaymentTypeService {
         this.paymentTypes.set(paymentTypes);
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
-        this.paymentTypesError.set(error.error.error);
+        this.paymentTypesError.update(() => error.error.error);
         return throwError(() => error)
       })
     ).subscribe()
@@ -89,6 +90,14 @@ export class PaymentTypeService {
     this.http.delete<ApiResponse<object>>(`${this.apiUrl}/payment-type/delete/${id}`).pipe(
       tap(() => {
         this.paymentTypes.update(types => types.filter(type => type.id != id));
+        if(this.paymentTypes().length == 0) {
+          const error: ErrorMessage = {
+            code: 404,
+            title: 'No hay tipos de pago.',
+            detail: 'No se encontraron tipos de pago.'
+          };
+          this.paymentTypesError.update(() => error)
+        }
       }),
       catchError((error) => throwError(() => error.error))
     ).subscribe()
