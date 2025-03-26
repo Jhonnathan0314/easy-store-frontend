@@ -22,6 +22,8 @@ export class RegisterComponent {
   registerRequest: RegisterRequest = new RegisterRequest();
   formErrors: FormErrors;
 
+  isWorking: boolean = false;
+
   @Output() registerErrorEvent = new EventEmitter();
 
   constructor(
@@ -74,9 +76,16 @@ export class RegisterComponent {
   }
 
   register(){
+    this.isWorking = true;
     this.securityService.register(this.registerRequest).subscribe({
-      next: (res) => this.sessionService.saveSession(this.registerRequest, res.data.token),
-      error: (error) => console.log("Error en register: ", error)
+      next: (res) => {
+        this.sessionService.saveSession(this.registerRequest, res.data.token);
+        this.isWorking = false;
+      },
+      error: (error) => {
+        console.log("Error en register: ", error);
+        this.isWorking = false;
+      }
     });
   }
 

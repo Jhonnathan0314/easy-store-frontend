@@ -57,7 +57,12 @@
       ngDefaultControl
     />
 
-    <app-button [confirmClick]="true" label="Crear cuenta" (clickEvent)="validateForm()"></app-button>
+    <app-button 
+      [confirmClick]="true" 
+      label="Crear cuenta" 
+      [disabled]="isWorking"
+      (clickEvent)="validateForm()" 
+    />
 
     <a [routerLink]="['/security/login']">Ingresar</a>
     
