@@ -1,11 +1,8 @@
-import { DOCUMENT } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, computed, effect, Injector, Signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuBarComponent } from '@component/shared/menus/menu-bar/menu-bar.component';
 import { MenuItem } from 'primeng/api';
-import { Subscription } from 'rxjs';
 import { SessionService } from 'src/app/core/services/session/session.service';
-import { AdminService } from 'src/app/core/services/utils/admin/admin.service';
 import { ThemeService } from 'src/app/core/services/utils/theme/theme.service';
 
 @Component({
@@ -14,57 +11,34 @@ import { ThemeService } from 'src/app/core/services/utils/theme/theme.service';
   imports: [MenuBarComponent],
   templateUrl: './topbar.component.html'
 })
-export class TopbarComponent implements OnInit, OnDestroy {
+export class TopbarComponent {
+
+  role: Signal<string> = computed(() => this.sessionService.role());
 
   items: MenuItem[] = [];
 
   mode: string = '';
 
-  adminMode: boolean = false;
-  adminModeSubscription: Subscription;
-
   constructor(
+    private injector: Injector,
+    private router: Router,
     private themeService: ThemeService, 
-    private router: Router, 
-    private sessionService: SessionService,
-    private adminService: AdminService,
-    @Inject(DOCUMENT) private document: Document
+    private sessionService: SessionService
   ) {
-    this.configMenuItems();
-  }
-
-  ngOnInit(): void {
-    this.openSubscriptions();
-  }
-
-  ngOnDestroy(): void {
-    this.adminModeSubscription.unsubscribe();
-  }
-
-  openSubscriptions() {
-    this.adminModeSubscription = this.adminService.storedAdminMode$.subscribe({
-      next: (adminMode) => {
-        this.adminMode = adminMode;
-        this.configMenuItems();
-      }
-    })
-  }
-
-  updateThemeText() {
-    const element = this.document.querySelector('html')?.classList;
-    this.mode = 'claro';
-    if(element?.length == 0) this.mode = 'oscuro';
     this.configMenuItems();
   }
 
   configMenuItems() {
     this.mode = this.themeService.getMode() === 'claro' ? 'oscuro' : 'claro';
-
-    if(this.adminMode) {
-      this.buildItemsObjectAdmin();
-    } else {
-      this.buildItemsObjectClient();
-    }
+    effect(() => {
+      if(this.role() === 'admin') {
+        this.buildItemsObjectAdmin();
+      } else if(this.role() === 'client') {
+        this.buildItemsObjectClient();
+      } else if(this.role() === 'ghost') {
+        this.buildItemsObjectGhost();
+      }
+    }, {injector: this.injector})
     
   }
 
@@ -182,12 +156,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
           this.themeService.switchMode(this.mode);
           this.configMenuItems();
         }
-      },
-      { 
-        label: 'Salir', 
-        icon: 'pi pi-fw pi-sign-out text-primary', 
-        command: () => { this.sessionService.logout(); } 
-      },
+      }
     ];
   }
 
@@ -241,12 +210,61 @@ export class TopbarComponent implements OnInit, OnDestroy {
           this.themeService.switchMode(this.mode);
           this.configMenuItems();
         }
-      },
+      }
+    ];
+  }
+
+  buildItemsObjectGhost() {
+    this.items = [
       { 
-        label: 'Salir', 
-        icon: 'pi pi-fw pi-sign-out text-primary', 
-        command: () => { this.sessionService.logout(); } 
+        label: 'Mis carritos', 
+        icon: 'pi pi-shopping-cart',
+        command: () => this.router.navigateByUrl('/dashboard/store/cart')
       },
+      {
+        label: 'Temas',
+        icon: 'pi pi-fw pi-palette',
+        items: [
+          {
+            label: 'Verde',
+            command: () => { 
+              this.themeService.switchTheme('green');
+            }
+          },
+          {
+            label: 'Azul',
+            command: () => { 
+              this.themeService.switchTheme('sky');
+            }
+          },
+          {
+            label: 'Naranja',
+            command: () => { 
+              this.themeService.switchTheme('amber');
+            }
+          },
+          {
+            label: 'Rosado',
+            command: () => { 
+              this.themeService.switchTheme('pink');
+            }
+          },
+          {
+            label: 'Violeta',
+            command: () => { 
+              this.themeService.switchTheme('violet');
+            }
+          }
+        ],
+      },
+      {
+        label: 'Modo ' + this.mode,
+        icon: `pi ${this.mode === 'claro' ? 'pi-sun' : 'pi-moon'}`,
+        command: () => { 
+          this.themeService.switchMode(this.mode);
+          this.configMenuItems();
+        }
+      }
     ];
   }
 

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { computed, Injectable, Signal, signal } from '@angular/core';
+import { computed, effect, Injectable, Injector, Signal, signal } from '@angular/core';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { Product } from '@models/data/product.model';
 import { catchError, concat, concatMap, last, map, Observable, of, tap, throwError } from 'rxjs';
@@ -21,22 +21,24 @@ export class ProductService {
 
   accountId = this.sessionService.getAccountId();
 
+  role: Signal<string> = computed(() => this.sessionService.role());
+
   constructor(
     private http: HttpClient,
+    private injector: Injector,
     private sessionService: SessionService,
     private fileProductService: FileProductService
   ) {
-    this.initFindProducts();
-  }
-
-  private initFindProducts() {
-    const isAdmin: boolean = this.sessionService.getRole() === 'admin';
-    if(isAdmin) {
-      this.findByAccount();
-    } else {
-      this.products.set([]);
-    }
+    this.products.set([]);
     this.productsError.set(null);
+    this.validateRole();
+  }
+  
+  validateRole() {
+    effect(() => {
+      if(this.role() === '') return;
+      if(this.role() === 'admin') this.findByAccount();
+    }, {injector: this.injector})
   }
 
   private findByAccount() {
@@ -44,7 +46,8 @@ export class ProductService {
     .pipe(
       map(response => response.data),
       concatMap(products => {
-        this.products.set(products.map(prod => ({...prod, images: []})));
+        this.products.update(() => products.map(prod => ({...prod, images: []})));
+        this.productsError.update(() => null);
         return this.findAllImages();
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
@@ -108,7 +111,6 @@ export class ProductService {
     this.http.get<ApiResponse<Product[]>>(`${this.apiUrl}/product/category/${category.id}`).pipe(
       map(response => response.data),
       tap(products => {
-        console.log({category});
         this.products.update(() => products.map(prod => ({...prod, images: []})));
       }),
       concatMap(() => {

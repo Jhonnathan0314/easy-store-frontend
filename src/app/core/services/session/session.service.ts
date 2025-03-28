@@ -1,9 +1,8 @@
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { Router } from '@angular/router';
+import { Inject, Injectable, signal } from '@angular/core';
 import { LoginRequest } from '../../models/data-types/security/security-request.model';
 import { SessionData } from '../../models/data-types/security/security-data.model';
 import { CryptoService } from '../utils/crypto/crypto.service';
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -14,13 +13,23 @@ export class SessionService {
 
   actualPath: string = '';
 
+  role = signal<string>('');
+
   constructor(
-    private router: Router, 
     private cryptoService: CryptoService, 
-    @Inject(DOCUMENT) private document: Document,
-    @Inject(PLATFORM_ID) private platformId: object
+    @Inject(DOCUMENT) private document: Document
   ) {
     this.localStorage = this.document.defaultView?.localStorage;
+    this.role.set('');
+  }
+
+  isLogged(): boolean {
+    const object = this.getSessionData();
+    if(!object) return false;
+    if(!object.isValid()) return false;
+    if(this.isTokenExpired(object.token)) return false;
+    this.role.update(() => this.getRole());
+    return true;
   }
 
   saveSession(loginRequest: LoginRequest, token: string) {
@@ -32,88 +41,48 @@ export class SessionService {
       accountId: this.getTokenAttribute(token, "account_id"),
     };
     this.localStorage?.setItem("object", this.cryptoService.encryptObject(sessionData));
-    if (this.isTokenExpired() || !this.isValidSessionData()) this.logout();
-    this.validateSession();
+    this.role.update(() => this.getTokenAttribute(token, "user_role"));
   }
 
   logout() {
     this.localStorage?.removeItem('object');
-    this.router.navigateByUrl('/security/login').then(() => {
-      if(isPlatformBrowser(this.platformId))
-        window.location.reload();
-    });
+    this.role.update(() => '');
   }
 
-  validateSession() {
-    const isLogged = this.isLogged();
-    let currentPath: string = ''
-    if(isPlatformBrowser(this.platformId))
-      currentPath = window.location.href;
-
-    if (isLogged && !currentPath.includes('/dashboard')) {
-      this.redirect('/dashboard');
-    } else if(!isLogged && !currentPath.includes('/security')) {
-      this.logout();
-    }
-  }
-
-  private isValidSessionData(): boolean {
-    return this.getSessionData().isValid() && !this.isTokenExpired();
-  }
-
-  isLogged(): boolean {
-    return this.localStorage?.getItem("object") != null && this.isValidSessionData();
-  }
-
-  private redirect(path: string) {
-    this.router.navigateByUrl(path);
-  }
-
-  isTokenExpired(): boolean {
-    const sessionData = this.getSessionData();
-    const token = sessionData.token;
-    const tokenPayload = this.decodePayload(token)
-
+  isTokenExpired(token: string): boolean {
+    const tokenPayload = this.decodeTokenPayload(token);
     if (!tokenPayload) return true;
 
     const now = Math.floor(new Date().getTime() / 1000);
     return tokenPayload.exp < now;
   }
 
-  private decodePayload(token: string) {
-    const parts = token.split('.');
-    if (parts.length !== 3) return null;
-
-    const payload = parts[1];
-    const decoded = atob(payload);
-    return JSON.parse(decoded);
-  }
-
-  private getSessionData(): SessionData {
-    const localStorageValue = this.cryptoService.decryptObject(this.localStorage?.getItem("object") ?? "") as SessionData;
-
-    const sessionData: SessionData = new SessionData();
-    sessionData.token = localStorageValue.token;
-    sessionData.username = localStorageValue.username;
-    sessionData.role = localStorageValue.role;
-    sessionData.userId = localStorageValue.userId;
-    sessionData.accountId = localStorageValue.accountId;
-    
-    return sessionData;
+  private getSessionData(): SessionData | null {
+    if(this.localStorage?.getItem("object")) {
+      return Object.assign(new SessionData(), this.cryptoService.decryptObject(this.localStorage?.getItem("object") ?? ""));
+    } else {
+      return null;
+    }
   }
 
   private getTokenAttribute(token: string, attribute: string) {
-    return this.decodePayload(token)[attribute];
+    return this.decodeTokenPayload(token)[attribute];
   }
 
-  getUsername() { return this.getSessionData().username; }
+  private decodeTokenPayload(token: string) {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    return JSON.parse(atob(parts[1]));
+  }
 
-  getUserId() { return this.getSessionData().userId; }
+  getUsername() { return this.getSessionData()?.username ?? ''; }
 
-  getAccountId() { return this.getSessionData().accountId; }
+  getUserId() { return this.getSessionData()?.userId ?? -1; }
 
-  getRole() { return this.getSessionData().role; }
+  getAccountId() { return this.getSessionData()?.accountId ?? -1; }
+
+  getRole() { return this.getSessionData()?.role ?? ''; }
   
-  getToken() { return this.getSessionData().token; }
+  getToken() { return this.getSessionData()?.token ?? ''; }
 
 }

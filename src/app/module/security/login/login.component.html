@@ -1,27 +1,25 @@
 <section class="w-full h-fit px-4 pt-4 flex flex-col gap-4 justify-center lg:flex-row lg:px-40 lg:pt-20">
-  <form class="py-8 w-full bg-section gap-10 flex flex-col items-center justify-center" [formGroup]="loginForm">
+  <form class="py-8 w-full bg-section gap-8" [formGroup]="loginForm">
     <h1 class="w-full text-center">¡Bienvenido de vuelta!</h1>
 
     <app-input-text
-      class="w-1/2"
       [value]="loginForm.value.username"
       label="Correo electronico"
       [classes]="loginForm.controls['username'].status === 'INVALID' && loginForm.touched ? 'ng-invalid ng-dirty' : ''"
       errorMessage="Correo electrónico inválido"
-      (valueEvent)="receiveValueString('username', $event)"
+      (valueEvent)="receiveValue('username', $event)"
       formControlName="username"
       ngDefaultControl
     />
   
     <app-input-password
-      class="w-1/2"
       [value]="loginForm.value.password"
       label="Contraseña"
       [classes]="loginForm.controls['password'].status === 'INVALID' && loginForm.touched ? 'ng-invalid ng-dirty' : ''"
       errorMessage="Contraseña inválida"
       [feedback]="false"
       [toggleMask]="true"
-      (valueEvent)="receiveValueString('password', $event)"
+      (valueEvent)="receiveValue('password', $event)"
       formControlName="password"
       ngDefaultControl
     />

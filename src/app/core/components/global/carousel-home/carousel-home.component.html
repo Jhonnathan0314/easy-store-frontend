@@ -6,14 +6,14 @@
   </div>
 } @else if(categories().length == 0 && !isLoading) {
   <div class="p-4 flex flex-col justify-center items-start gap-4">
-    @if (isAdmin) {
+    @if (role() === 'admin') {
       <p-message icon="pi pi-exclamation-triangle" severity="warn">No tienes tiendas creadas por el momento.</p-message>
       <app-button 
         label="Crear tienda"
         icon="pi pi-plus"
         (clickEvent)="goCreateCategory()"
       />
-    } @else {
+    } @else if (role() === 'client' || role() === 'ghost') {
       <p class="w-full">No existen tiendas aún.</p>
     }
   </div>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed, effect, Injector, Signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
@@ -12,10 +12,10 @@ import { ToastModule } from 'primeng/toast';
 import { DividerModule } from 'primeng/divider';
 
 import { SecurityService } from 'src/app/core/services/api/security/security.service';
-import { SessionService } from 'src/app/core/services/session/session.service';
 import { ThemeService } from 'src/app/core/services/utils/theme/theme.service';
 import { ButtonIconPosition } from '@enums/primeng.enum';
 import { MessageModule } from 'primeng/message';
+import { ErrorMessage } from '@models/data/general.model';
 
 @Component({
   selector: 'app-login',
@@ -31,19 +31,21 @@ export class LoginComponent {
   loginForm: FormGroup;
   loginRequest: LoginRequest = new LoginRequest();
 
-  loginError: boolean = false;
+  securityError: Signal<ErrorMessage | null> = computed(() => this.securityService.securityError());
 
+  loginError: boolean = false;
   isWorking: boolean = false;
   
   constructor(
     private formBuilder: FormBuilder,
+    private injector: Injector,
     public themeService: ThemeService,
-    private securityService: SecurityService,
-    private sessionService: SessionService
+    private securityService: SecurityService
   ) {}
 
   ngOnInit(): void {
     this.initializeForm();
+    this.validateSecurityError();
   }
 
   initializeForm() {
@@ -53,12 +55,15 @@ export class LoginComponent {
     });
   }
 
-  receiveValueString(key: string, value: string) {
-    this.loginForm.patchValue({ [key]: value });
-  }
-
-  receiveValueNumber(key: string, value: number) {
-    this.loginForm.patchValue({ [key]: value });
+  validateSecurityError() {
+    effect(() => {
+      if(this.securityError() == null) {
+        this.loginError = false;
+        return;
+      }
+      this.loginError = true;
+      this.isWorking = false;
+    }, {injector: this.injector})
   }
 
   validateForm() {
@@ -73,16 +78,11 @@ export class LoginComponent {
 
   login() {
     this.isWorking = true;
-    this.securityService.login(this.loginRequest).subscribe({
-      next: (res) => {
-        this.sessionService.saveSession(this.loginRequest, res.data.token);
-        this.isWorking = false;
-      },
-      error: () => {
-        this.loginError = true;
-        this.isWorking = false;
-      }
-    });
+    this.securityService.login(this.loginRequest);
+  }
+
+  receiveValue(key: string, value: string) {
+    this.loginForm.patchValue({ [key]: value });
   }
 
 }

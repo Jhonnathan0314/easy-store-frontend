@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { computed, Injectable, Signal, signal } from '@angular/core';
+import { computed, effect, Injectable, Injector, Signal, signal } from '@angular/core';
 import { Subcategory } from '@models/data/subcategory.model';
 import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { SessionService } from '../../../session/session.service';
@@ -16,12 +16,23 @@ export class SubcategoryService {
   subcategories = signal<Subcategory[]>([]);
   subcategoriesError = signal<ErrorMessage | null>(null);
 
+  role: Signal<string> = computed(() => this.sessionService.role());
+
   constructor(
     private http: HttpClient, 
+    private injector: Injector,
     private sessionService: SessionService
   ) {
-    this.findAllByAccountId();
+    this.subcategories.set([]);
     this.subcategoriesError.set(null);
+    this.validateRole();
+  }
+
+  validateRole() {
+    effect(() => {
+      if(this.role() === '') return;
+      this.findAllByAccountId();
+    }, {injector: this.injector})
   }
 
   private findAllByAccountId() {
@@ -29,10 +40,12 @@ export class SubcategoryService {
     this.http.get<ApiResponse<Subcategory[]>>(`${this.apiUrl}/subcategory/account/${accountId}`).pipe(
       map(response => response.data),
       tap(subcategories => {
-        this.subcategories.set(subcategories);
+        this.subcategories.update(() => subcategories);
+        this.subcategoriesError.update(() => null);
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
         this.subcategoriesError.update(() => error.error.error);
+        this.subcategories.update(() => []);
         return throwError(() => error);
       })
     ).subscribe()

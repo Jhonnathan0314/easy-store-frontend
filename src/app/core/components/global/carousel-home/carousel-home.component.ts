@@ -1,4 +1,4 @@
-import { Component, computed, effect, Injector, Input, OnInit, Signal } from '@angular/core';
+import { Component, computed, effect, Injector, OnInit, Signal } from '@angular/core';
 import { Category } from 'src/app/core/models/data-types/data/category.model';
 import { CarouselHomeObject, ResponsiveCarouselOptions } from '@models/utils/primeng-object.model';
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
@@ -8,6 +8,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { ButtonComponent } from "../../../../shared/inputs/button/button.component";
 import { ErrorMessage } from '@models/data/general.model';
 import { MessageModule } from 'primeng/message';
+import { SessionService } from 'src/app/core/services/session/session.service';
 
 @Component({
   selector: 'app-carousel-home',
@@ -18,7 +19,7 @@ import { MessageModule } from 'primeng/message';
 })
 export class CarouselHomeComponent implements OnInit {
 
-  @Input() isAdmin: boolean = false;
+  role: Signal<string> = computed(() => this.sessionService.role());
 
   categories: Signal<Category[]> = computed(() => this.categoryService.categories());
   categoriesError: Signal<ErrorMessage | null> = computed(() => this.categoryService.categoriesError())
@@ -33,15 +34,16 @@ export class CarouselHomeComponent implements OnInit {
   constructor(
     private router: Router,
     private injector: Injector,
+    private sessionService: SessionService,
     private categoryService: CategoryService
   ) {}
 
   ngOnInit(): void {
-    this.defineItems();
+    this.validateCategories();
     this.validateCategoriesError();
   }
 
-  defineItems() {
+  validateCategories() {
     effect(() => {
       if(this.categories().length == 0) return;
       this.items = this.categories().map(category => ({

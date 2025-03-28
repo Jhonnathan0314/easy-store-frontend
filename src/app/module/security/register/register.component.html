@@ -64,6 +64,10 @@
       (clickEvent)="validateForm()" 
     />
 
+    @if(registerError) {
+      <p-message severity="error">Ya existe una cuenta con el correo electrónico ingresado.</p-message>
+    }
+
     <a [routerLink]="['/security/login']">Ingresar</a>
     
   </form>

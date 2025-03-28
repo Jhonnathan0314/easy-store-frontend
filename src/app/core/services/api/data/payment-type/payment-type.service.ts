@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { computed, Injectable, Signal, signal } from '@angular/core';
+import { computed, effect, Injectable, Injector, Signal, signal } from '@angular/core';
 import { PaymentType } from '@models/data/payment-type.model';
 import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { SessionService } from '../../../session/session.service';
@@ -16,21 +16,23 @@ export class PaymentTypeService {
   paymentTypes = signal<PaymentType[]>([]);
   paymentTypesError = signal<ErrorMessage | null>(null);
   
+  role: Signal<string> = computed(() => this.sessionService.role());
+
   constructor(
     private http: HttpClient, 
+    private injector: Injector,
     private sessionService: SessionService
   ) {
-    this.initFindPaymentTypes();
-  }
-
-  private initFindPaymentTypes() {
-    const isAdmin: boolean = this.sessionService.getRole() === 'admin';
-    if(isAdmin) {
-      this.findAllByAccountId();
-    } else {
-      this.paymentTypes.set([]);
-    }
+    this.paymentTypes.set([]);
     this.paymentTypesError.set(null);
+    this.validateRole();
+  }
+  
+  validateRole() {
+    effect(() => {
+      if(this.role() === '') return;
+      if(this.role() === 'admin') this.findAllByAccountId();
+    }, {injector: this.injector})
   }
 
   findAllByAccountId(accountId?: number) {
@@ -38,10 +40,12 @@ export class PaymentTypeService {
     this.http.get<ApiResponse<PaymentType[]>>(`${this.apiUrl}/payment-type/account/${accountId ?? accountIdStorage}`).pipe(
       map(response => response.data),
       tap(paymentTypes => {
-        this.paymentTypes.set(paymentTypes);
+        this.paymentTypes.update(() => paymentTypes);
+        this.paymentTypesError.update(() => null);
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
         this.paymentTypesError.update(() => error.error.error);
+        this.paymentTypes.update(() => []);
         return throwError(() => error)
       })
     ).subscribe()

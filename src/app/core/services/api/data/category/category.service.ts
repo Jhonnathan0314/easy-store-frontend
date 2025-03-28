@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { computed, Injectable, Signal, signal } from '@angular/core';
+import { computed, effect, Injectable, Injector, Signal, signal } from '@angular/core';
 import { catchError, forkJoin, map, Observable, of, tap, throwError } from 'rxjs';
 import { Category } from 'src/app/core/models/data-types/data/category.model';
 import { ApiResponse, ErrorMessage } from 'src/app/core/models/data-types/data/general.model';
@@ -17,23 +17,29 @@ export class CategoryService {
 
   categories = signal<Category[]>([]);
   categoriesError = signal<ErrorMessage | null>(null);
+
+  role: Signal<string> = computed(() => this.sessionService.role());
   
   constructor(
     private http: HttpClient, 
+    private injector: Injector,
     private sessionService: SessionService,
     private fileService: FileService
   ) {
-    this.initFindCategories();
+    this.categories.set([]);
+    this.categoriesError.set(null);
+    this.validateRole();
   }
 
-  private initFindCategories() {
-    const isAdmin: boolean = this.sessionService.getRole() === 'admin';
-    this.categoriesError.set(null);
-    if(isAdmin) {
-      this.findAllByAccount();
-    }else {
-      this.findAll();
-    }
+  validateRole() {
+    effect(() => {
+      if(this.role() === '') return;
+      if(this.role() === 'admin') {
+        this.findAllByAccount();
+      }else {
+        this.findAll();
+      }
+    }, {injector: this.injector})
   }
 
   private findAllByAccount() {
@@ -41,7 +47,8 @@ export class CategoryService {
     this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/category/account/${accountId}`).pipe(
       map(response => response.data),
       tap(categories => {
-        this.categories.set(categories);
+        this.categories.update(() => categories);
+        this.categoriesError.update(() => null);
         this.findImages();
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
@@ -55,11 +62,12 @@ export class CategoryService {
     this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/category`).pipe(
       map(response => response.data),
       tap(categories => {
-        this.categories.set(categories);
+        this.categories.update(() => categories);
+        this.categoriesError.update(() => null);
         this.findImages();
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
-        this.categoriesError.set(error.error.error);
+        this.categoriesError.update(() => error.error.error);
         return throwError(() => error);
       })
     ).subscribe();
@@ -70,11 +78,12 @@ export class CategoryService {
   
     forkJoin(requests).subscribe({
       next: (responses) => {
-        const updatedCategories = this.categories().map((cat, i) => ({
-          ...cat,
-          image: responses[i] ?? null
-        }));
-        this.categories.set(updatedCategories);
+        this.categories.update(categories => {
+          return categories.map((cat, i) => ({
+            ...cat,
+            image: responses[i] ?? null
+          }));
+        });
       },
       error: (error) => {
         console.error("Error al cargar imágenes", error);
@@ -189,7 +198,6 @@ export class CategoryService {
 
   private uploadFile(file: S3File) {
     this.fileService.putFile(file).subscribe({
-      next: () => { },
       error: (error) => {
         console.log("Ha ocurrido un error al cargar el archivo ", {name: file.name, error});
       }
@@ -229,7 +237,6 @@ export class CategoryService {
 
   private deleteFile(file: S3File) {
     this.fileService.deleteFile(file).subscribe({
-      next: () => { },
       error: (error) => {
         console.log("Ha ocurrido un error al eliminar el archivo ", {name: file.name, error});
       }

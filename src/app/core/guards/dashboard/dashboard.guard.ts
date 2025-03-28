@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { computed, Injectable, Signal } from '@angular/core';
 import { SessionService } from '../../services/session/session.service';
 
 @Injectable({
@@ -6,8 +7,17 @@ import { SessionService } from '../../services/session/session.service';
 })
 export class DashboardGuard {
   
-  constructor(private sessionService: SessionService){ }
+  role: Signal<string> = computed(() => this.sessionService.role());
 
-  canActivate() { return this.sessionService.isLogged() && !this.sessionService.isTokenExpired() }
+  constructor(
+    private router: Router,
+    private sessionService: SessionService
+  ){ }
+
+  canActivate() { 
+    const isAdmin = this.role() === 'admin';
+    if(!isAdmin) this.router.navigateByUrl('/dashboard/home');
+    return isAdmin;
+  }
   
 }

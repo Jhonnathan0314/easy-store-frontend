@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, signal } from '@angular/core';
+import { computed, effect, Injectable, Injector, Signal, signal } from '@angular/core';
 import { Purchase, PurchaseHasProduct, PurchaseHasProductId, PurchaseHasProductRq, PurchaseRq } from '@models/data/purchase.model';
 import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { SessionService } from '../../../session/session.service';
@@ -12,19 +12,29 @@ import { ProductService } from '../product/product.service';
 })
 export class PurchaseService {
 
-  apiUrl: string = '';
+  apiUrl: string = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
 
   purchases = signal<Purchase[]>([]);
   purchasesError = signal<ErrorMessage | null>(null)
   
+  role: Signal<string> = computed(() => this.sessionService.role());
+
   constructor(
     private http: HttpClient, 
+    private injector: Injector,
     private sessionService: SessionService,
     private productService: ProductService
   ) {
-    this.apiUrl = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
-    this.findAllByUser();
+    this.purchases.set([]);
     this.purchasesError.set(null);
+    this.validateRole();
+  }
+  
+  validateRole() {
+    effect(() => {
+      if(this.role() === '') return;
+      this.findAllByUser();
+    }, {injector: this.injector})
   }
   
   private findAllByUser() {
@@ -32,11 +42,12 @@ export class PurchaseService {
     this.http.get<ApiResponse<Purchase[]>>(`${this.apiUrl}/purchase/user/${userId}`).pipe(
       map(response => response.data),
       tap(purchases => {
-        this.purchases.set(purchases);
+        this.purchases.update(() => purchases);
+        this.purchasesError.update(() => null);
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
-        this.purchases.set([]);
         this.purchasesError.update(() => error.error.error);
+        this.purchases.update(() => []);
         return throwError(() => error.error);
       })
     ).subscribe()
