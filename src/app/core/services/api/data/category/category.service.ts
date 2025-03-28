@@ -33,10 +33,10 @@ export class CategoryService {
 
   validateRole() {
     effect(() => {
-      if(this.role() === '') return;
-      if(this.role() === 'admin') {
+      if (this.role() === '') return;
+      if (this.role() === 'admin') {
         this.findAllByAccount();
-      }else {
+      }else if (this.role() === 'client' || this.role() === 'ghost') {
         this.findAll();
       }
     }, {injector: this.injector})

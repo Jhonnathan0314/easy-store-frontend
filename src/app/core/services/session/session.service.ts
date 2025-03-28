@@ -20,7 +20,7 @@ export class SessionService {
     @Inject(DOCUMENT) private document: Document
   ) {
     this.localStorage = this.document.defaultView?.localStorage;
-    this.role.set('');
+    this.role.set(this.getRole());
   }
 
   isLogged(): boolean {

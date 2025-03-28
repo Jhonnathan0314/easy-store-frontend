@@ -21,6 +21,7 @@ export class SecurityService {
     private http: HttpClient,
     private sessionService: SessionService
   ) {
+    this.security.set(sessionService.isLogged() ? sessionService.getToken() : '');
     this.securityError.set(null);
   }
 
