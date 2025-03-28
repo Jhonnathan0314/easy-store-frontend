@@ -70,7 +70,6 @@ export class AppComponent implements OnInit {
 
   validateSession() {
     const isLogged = this.sessionService.isLogged();
-    console.log('validateSession', {isLogged});
     if(isLogged) return;
     this.securityService.loginGhost();
   }
