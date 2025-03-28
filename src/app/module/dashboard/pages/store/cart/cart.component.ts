@@ -1,3 +1,4 @@
+import { StaticDataService } from './../../../../../core/services/utils/data/static-data/static-data.service';
 import { Component, computed, effect, Injector, OnInit, Signal } from '@angular/core';
 import { Category } from '@models/data/category.model';
 import { Purchase, PurchaseCart, PurchaseHasProduct } from '@models/data/purchase.model';
@@ -15,13 +16,14 @@ import { MessageModule } from 'primeng/message';
 import { ErrorMessage } from '@models/data/general.model';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { WhatsappPipe } from 'src/app/core/pipes/whatsapp/whatsapp.pipe';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
   imports: [RouterModule, AccordionModule, DividerModule, SkeletonModule, MessageModule, ToastModule, ButtonComponent],
   templateUrl: './cart.component.html',
-  providers: [MessageService]
+  providers: [MessageService, WhatsappPipe]
 })
 export class CartComponent implements OnInit {
 
@@ -37,6 +39,8 @@ export class CartComponent implements OnInit {
 
   userId: number = 0;
 
+  cartRedirect: string = "";
+
   isLoading: boolean = true;
   isWorking: boolean = false;
   hasUnexpectedError: boolean = false;
@@ -44,6 +48,8 @@ export class CartComponent implements OnInit {
   constructor(
     private router: Router,
     private injector: Injector,
+    public whatsappPipe: WhatsappPipe,
+    public staticDataService: StaticDataService,
     private sessionService: SessionService,
     private messageService: MessageService,
     private categoryService: CategoryService,
@@ -148,6 +154,12 @@ export class CartComponent implements OnInit {
 
   goToStore(categoryId: number) {
     this.router.navigateByUrl(`/dashboard/store/products/${categoryId}`)
+  }
+
+  buyNow(cart: PurchaseCart) {
+    const productText = this.whatsappPipe.getProductsText(cart);
+    this.cartRedirect = this.staticDataService.getCartMessage(`${cart.id}`, productText);
+    window.open(this.cartRedirect, '_blank');
   }
 
 }
