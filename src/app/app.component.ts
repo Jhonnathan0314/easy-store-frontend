@@ -42,20 +42,28 @@ export class AppComponent implements OnInit {
 
   validateSecurity() {
     effect(() => {
-      if (this.security() === 'login') {
-        this.router.navigateByUrl('/security/login');
-      } else if (this.security() === 'register') {
-        this.router.navigateByUrl('/security/register');
-      } else if (this.security() === 'logout') {
-        this.validateSession();
-        this.router.navigateByUrl('/dashboard/home')
-      }else {
-        if (isPlatformBrowser(this.platformId)) {
-          const currentPath = window.location.href;
-          if(!currentPath.includes('dashboard')) {
-            this.router.navigateByUrl('/dashboard/home')
+      switch (this.security()) {
+        case 'login':
+          this.router.navigateByUrl('/security/login');
+          break;
+
+        case 'register':
+          this.router.navigateByUrl('/security/register');
+          break;
+      
+        case 'logout':
+          this.validateSession();
+          this.router.navigateByUrl('/dashboard/home');
+          break;
+
+        default:
+          if (isPlatformBrowser(this.platformId)) {
+            const currentPath = window.location.href;
+            if (!currentPath.includes('dashboard')) {
+              this.router.navigateByUrl('/dashboard/home');
+            }
           }
-        }
+          break;
       }
     }, {injector: this.injector})
   }
