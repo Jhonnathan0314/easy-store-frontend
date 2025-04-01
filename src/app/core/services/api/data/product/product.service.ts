@@ -17,6 +17,7 @@ export class ProductService {
   apiUrl: string = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
 
   products = signal<Product[]>([]);
+  productImagesFinded = signal<number[]>([]);
   productsError = signal<ErrorMessage | null>(null);
 
   accountId = this.sessionService.getAccountId();
@@ -31,6 +32,7 @@ export class ProductService {
   ) {
     this.products.set([]);
     this.productsError.set(null);
+    this.productImagesFinded.set([]);
     this.validateRole();
   }
   
@@ -48,7 +50,7 @@ export class ProductService {
       concatMap(products => {
         this.products.update(() => products.map(prod => ({...prod, images: []})));
         this.productsError.update(() => null);
-        return this.findAllImages();
+        return this.findAllFirstImage();
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
         this.productsError.update(() => error.error.error);
@@ -57,8 +59,8 @@ export class ProductService {
     ).subscribe();
   }
 
-  private findAllImages(accountId?: number): Observable<S3File[]> {
-    return this.fileProductService.findAllImages(this.products(), accountId).pipe(
+  private findAllFirstImage(accountId?: number): Observable<S3File[]> {
+    return this.fileProductService.findAllFirstImage(this.products(), accountId).pipe(
       tap(responses => {
         this.products.update(products => {
           return products.map(product => ({
@@ -84,6 +86,7 @@ export class ProductService {
                 images: [...responses]
               };
             }
+            this.productImagesFinded.update(ids => ids.includes(productId) ? ids : [...ids, productId]);
             return prod;
           });
         });
@@ -114,7 +117,7 @@ export class ProductService {
         this.products.update(() => products.map(prod => ({...prod, images: []})));
       }),
       concatMap(() => {
-        return this.findAllImages(category.accountId);
+        return this.findAllFirstImage(category.accountId);
       })
     ).subscribe()
   }

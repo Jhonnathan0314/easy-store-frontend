@@ -23,19 +23,26 @@ export class FileProductService {
     private fileService: FileService
   ) { }
 
-  findAllImages(products: Product[], accountId?: number) {
-    const requests = products.map(product => this.getImageRequests(product, accountId));
+  findAllFirstImage(products: Product[], accountId?: number): Observable<S3File[]> {
+    const requests = products.map(product => this.getImageRequest(product, accountId));
   
     return forkJoin(requests.flat());
   }
 
-  findImage(product: Product, accountId?: number) {
-    const requests = this.getImageRequests(product, accountId);
+  private getImageRequest(product: Product, accountId?: number): Observable<S3File> {
+    if (product.imageNumber == 0 || !product.imageName || product.imageName == 'product.png') return of();
+
+    const firstImageName = product.imageName.split(",")[0];
+    return this.fileService.getFile({ name: firstImageName, context: "product", accountId: accountId ?? this.accountId } as S3File);
+  }
+
+  findImage(product: Product, accountId?: number): Observable<S3File[]> {
+    const requests = this.getImagesRequest(product, accountId);
   
     return forkJoin(requests);
   }
 
-  private getImageRequests(product: Product, accountId?: number) {
+  private getImagesRequest(product: Product, accountId?: number): Observable<S3File>[] {
     if (product.imageNumber == 0 || !product.imageName || product.imageName == 'product.png') return [];
 
     return product.imageName.split(",").map(imageName => {

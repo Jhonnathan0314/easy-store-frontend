@@ -102,6 +102,7 @@
             <app-button
               label="Actualizar imagen"
               icon="pi pi-image"
+              [disabled]="isWorking"
               (clickEvent)="setViewInputFile(true)"
             />
           }

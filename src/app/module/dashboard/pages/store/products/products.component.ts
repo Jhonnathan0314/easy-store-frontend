@@ -22,6 +22,7 @@ import { ProductDetailComponent } from "../product-detail/product-detail.compone
 export class ProductsComponent implements OnInit {
   
   products: Signal<Product[]> = computed(() => this.productService.products().filter(prod => prod.categoryId == this.categoryId));
+  productImagesFinded: Signal<number[]> = computed(() => this.productService.productImagesFinded());
   productToAdd: PurchaseHasProductRq = new PurchaseHasProductRq();
 
   purchases: Signal<PurchaseCart[]> = computed(() => this.purchaseService.purchases());
@@ -34,6 +35,8 @@ export class ProductsComponent implements OnInit {
   category: Signal<Category | undefined> = computed(() => this.categoryService.categories().find(cat => cat.id == this.categoryId));
 
   selectedProduct: Product | undefined = undefined;
+
+  idsFinded: number[] = [];
 
   viewDetail: boolean = false;
   isLoading: boolean = true;
@@ -151,8 +154,22 @@ export class ProductsComponent implements OnInit {
   }
 
   viewProduct(product: Product) {
+    this.isWorking = true;
+    if(!this.productImagesFinded().includes(product.id)) {
+      this.productService.findProductImages(product.id).subscribe({
+        complete: () => {
+          this.showDetailProduct(product.id);
+        }
+      });
+    }else {
+      this.showDetailProduct(product.id);
+    }
+  }
+
+  showDetailProduct(id: number) {
     this.viewDetail = true;
-    this.selectedProduct = product;
+    this.selectedProduct = this.products().find(prod => prod.id == id);
+    this.isWorking = false;
   }
 
   hideDetailProduct() {

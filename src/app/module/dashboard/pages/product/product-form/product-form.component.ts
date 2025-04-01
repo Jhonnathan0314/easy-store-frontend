@@ -35,6 +35,7 @@ export class ProductFormComponent implements OnInit {
 
   productId: number = 0;
   product: Signal<Product | undefined> = computed(() => this.productService.products().find(prod => prod.id == this.productId));
+  productImagesFinded: Signal<number[]> = computed(() => this.productService.productImagesFinded());
 
   subcategoriesError: Signal<ErrorMessage | null> = computed(() => this.subcategoryService.subcategoriesError());
   subcategories: Signal<Subcategory[]> = computed(() => this.subcategoryService.subcategories());
@@ -129,7 +130,7 @@ export class ProductFormComponent implements OnInit {
   prepareUpdateForm() {
     effect(() => {
       if(!this.product()) return;
-      if(this.product()?.imageName != 'store.png') {
+      if(this.product()?.imageName != 'store.png' && !this.productImagesFinded().includes(this.productId)) {
         this.viewInputFile = false;
       }
       this.productForm.patchValue({
@@ -211,7 +212,18 @@ export class ProductFormComponent implements OnInit {
   }
 
   setViewInputFile(value: boolean) {
-    this.viewInputFile = value;
+    this.isWorking = true;
+    if(!this.productImagesFinded().includes(this.productId)) {
+      this.productService.findProductImages(this.productId).subscribe({
+        complete: () => {
+          this.viewInputFile = value;
+          this.isWorking = false;
+        }
+      });
+    }else {
+      this.viewInputFile = value;
+      this.isWorking = false;
+    }
   }
 
   goBack() {
