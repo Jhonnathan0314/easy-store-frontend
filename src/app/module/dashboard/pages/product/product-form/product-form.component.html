@@ -91,6 +91,7 @@
           />
   
           @if(viewInputFile) {
+            <p-message severity="info">Recuerde que puede tener máximo 5 imagenes por producto.</p-message>
             <app-input-file 
               class="w-4/5"
               [fileLimit]="5"
