@@ -53,7 +53,7 @@
     <div class="flex flex-col gap-8 pt-4">
       @if(files?.length > 0) {
         <div class="flex flex-wrap gap-4">
-          @for(file of files; track file.name) {
+          @for(file of files; track $index) {
             <div
               class="p-8 rounded-border flex flex-col border border-surface items-center gap-4"
             >
@@ -74,7 +74,7 @@
               @if (removeEnable) {
                 <app-button
                   icon="pi pi-times"
-                  (clickEvent)="callback(removeFileCallback)"
+                  (clickEvent)="onRemove(file, $index, removeFileCallback)"
                   [rounded]="true"
                   severity="danger"
                 />

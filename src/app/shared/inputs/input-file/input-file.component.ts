@@ -33,8 +33,7 @@ export class InputFileComponent implements OnChanges {
     this.filesUploadedCopy = [...this.filesUploaded];
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  callback(callback: any) {
+  callback(callback: () => void) {
     callback();
   }
 
@@ -67,9 +66,13 @@ export class InputFileComponent implements OnChanges {
     this.removeEnable = false;
   }
 
-  onRemove($event: {name: string}) {
-    this.filesToUpload = this.filesToUpload.filter(file => file.name == $event.name)
-    if(this.filesToUpload.length == 0) {  
+  onRemove($event: File, index: number, removeFileCallback?: (file: File, index: number) => void) {
+    this.filesToUpload = this.filesToUpload.filter(file => file.name !== $event.name);
+
+    if(typeof removeFileCallback === 'function')
+      removeFileCallback($event, index);
+
+    if (this.filesToUpload.length === 0) {
       this.selectEnable = true;
       this.sendEnable = false;
       this.clearEnable = false;
