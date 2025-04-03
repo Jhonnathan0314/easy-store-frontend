@@ -68,9 +68,11 @@ export class ProductsComponent implements OnInit {
       if(!this.category()) return;
       if(!isAdmin && this.products().length == 0) {
         this.productService.findByCategoryId(this.category() ?? new Category());
+        return;
       }
       if(this.paymentTypes().length === 0 && this.category) {
         this.paymentTypeService.findAllByAccountId(this.category()?.accountId);
+        return;
       }
       this.isLoading = false;
       if(this.purchases().length === 0) return;
@@ -156,7 +158,7 @@ export class ProductsComponent implements OnInit {
   viewProduct(product: Product) {
     this.isWorking = true;
     if(!this.productImagesFinded().includes(product.id)) {
-      this.productService.findProductImages(product.id).subscribe({
+      this.productService.findProductImages(product.id, this.category()?.accountId).subscribe({
         complete: () => {
           this.showDetailProduct(product.id);
         }

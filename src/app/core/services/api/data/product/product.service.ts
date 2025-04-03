@@ -40,6 +40,7 @@ export class ProductService {
     effect(() => {
       if(this.role() === '') return;
       if(this.role() === 'admin') this.findByAccount();
+      this.accountId = this.sessionService.getAccountId();
     }, {injector: this.injector})
   }
 
@@ -75,8 +76,8 @@ export class ProductService {
     )
   }
 
-  findProductImages(productId: number): Observable<S3File[]> {
-    return this.fileProductService.findImage(this.products().find(prod => prod.id == productId) ?? new Product()).pipe(
+  findProductImages(productId: number, accountId?: number): Observable<S3File[]> {
+    return this.fileProductService.findImage(this.products().find(prod => prod.id == productId) ?? new Product(), accountId).pipe(
       tap(responses => {
         this.products.update(products => {
           return products.map(prod => {
