@@ -21,6 +21,7 @@ export class InputNumberComponent implements OnChanges {
   @Input() icon: string = '';
   @Input() classes: string = '';
   @Input() errorMessage: string = '';
+  @Input() decimalMask: boolean = false;
   @Input() isDisabled: boolean = false;
 
   @Output() valueEvent = new EventEmitter<number>();

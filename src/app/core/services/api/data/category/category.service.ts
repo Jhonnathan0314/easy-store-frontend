@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, effect, Injectable, Injector, Signal, signal } from '@angular/core';
 import { catchError, forkJoin, map, Observable, of, tap, throwError } from 'rxjs';
-import { Category } from 'src/app/core/models/data-types/data/category.model';
+import { Category, CategoryHasPaymentType, CategoryHasPaymentTypeId } from 'src/app/core/models/data-types/data/category.model';
 import { ApiResponse, ErrorMessage } from 'src/app/core/models/data-types/data/general.model';
 import { environment } from 'src/environments/environment';
 import { SessionService } from '../../../session/session.service';
@@ -243,4 +243,40 @@ export class CategoryService {
     })
   }
 
+  // CATEGORY HAS PAYMENT TYPE
+  createCategoryHasPaymentType(hasPaymentType: CategoryHasPaymentType): Observable<CategoryHasPaymentType> {
+    return this.http.post<ApiResponse<CategoryHasPaymentType>>(`${this.apiUrl}/category-has-payment-type`, hasPaymentType).pipe(
+      map(response => response.data),
+      tap(() => {
+        this.findAllByAccount();
+      }),
+      catchError((error: {error: ApiResponse<ErrorMessage>}) => {
+        return throwError(() => error.error);
+      })
+    )
+  }
+  
+  updateCategoryHasPaymentType(hasPaymentType: CategoryHasPaymentType): Observable<CategoryHasPaymentType> {
+    return this.http.put<ApiResponse<CategoryHasPaymentType>>(`${this.apiUrl}/category-has-payment-type`, hasPaymentType).pipe(
+      map(response => response.data),
+      tap(() => {
+        this.findAllByAccount();
+      }),
+      catchError((error: {error: ApiResponse<ErrorMessage>}) => {
+        return throwError(() => error.error);
+      })
+    )
+  }
+
+  changeStateCategoryHasPaymentType(id: CategoryHasPaymentTypeId): Observable<CategoryHasPaymentType> {
+    return this.http.put<ApiResponse<CategoryHasPaymentType>>(`${this.apiUrl}/category-has-payment-type/state`, id).pipe(
+      map(response => response.data),
+      tap(() => {
+        this.findAllByAccount();
+      }),
+      catchError((error: {error: ApiResponse<ErrorMessage>}) => {
+        return throwError(() => error.error);
+      })
+    )
+  }
 }

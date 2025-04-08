@@ -70,8 +70,8 @@ export class ProductsComponent implements OnInit {
         this.productService.findByCategoryId(this.category() ?? new Category());
         return;
       }
-      if(this.paymentTypes().length === 0 && this.category) {
-        this.paymentTypeService.findAllByAccountId(this.category()?.accountId);
+      if(this.paymentTypes().length === 0) {
+        this.paymentTypeService.findAllActive();
         return;
       }
       this.isLoading = false;

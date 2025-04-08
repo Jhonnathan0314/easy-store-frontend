@@ -31,13 +31,12 @@ export class PaymentTypeService {
   validateRole() {
     effect(() => {
       if(this.role() === '') return;
-      if(this.role() === 'admin') this.findAllByAccountId();
+      if(this.role() === 'admin') this.findAllActive();
     }, {injector: this.injector})
   }
 
-  findAllByAccountId(accountId?: number) {
-    const accountIdStorage = this.sessionService.getUserId();
-    this.http.get<ApiResponse<PaymentType[]>>(`${this.apiUrl}/payment-type/account/${accountId ?? accountIdStorage}`).pipe(
+  findAllActive() {
+    this.http.get<ApiResponse<PaymentType[]>>(`${this.apiUrl}/payment-type/active`).pipe(
       map(response => response.data),
       tap(paymentTypes => {
         this.paymentTypes.update(() => paymentTypes);

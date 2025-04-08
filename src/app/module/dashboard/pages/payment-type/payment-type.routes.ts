@@ -4,6 +4,6 @@ import { PaymentTypeFormComponent } from "./payment-type-form/payment-type-form.
 
 export const routes: Routes = [
     { path: '', component: PaymentTypeAllComponent },
-    { path: 'form/:_id', component: PaymentTypeFormComponent },
+    { path: 'form/category/:_categoryId/payment-type/:_paymentTypeId', component: PaymentTypeFormComponent },
     { path: '**', redirectTo: '', pathMatch: 'full' }
 ]

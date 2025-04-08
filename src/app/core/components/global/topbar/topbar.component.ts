@@ -100,11 +100,6 @@ export class TopbarComponent {
             label: 'Gestionar',
             icon: 'pi pi-list',
             command: () => this.router.navigateByUrl('/dashboard/payment-type')
-          },
-          {
-            label: 'Crear',
-            icon: 'pi pi-plus',
-            command: () => this.router.navigateByUrl('/dashboard/payment-type/form/0')
           }
         ]
       },

@@ -8,4 +8,20 @@ export class Category {
     userId: number;
     accountId: number;
     image: S3File | null;
+    paymentTypes?: CategoryHasPaymentType[];
+}
+
+export class CategoryHasPaymentType {
+    id: CategoryHasPaymentTypeId;
+    phone: number;
+    email: string;
+    accountNumber: string;
+    accountType: string;
+    accountBank: string;
+    state: string;
+}
+
+export class CategoryHasPaymentTypeId {
+    categoryId: number;
+    paymentTypeId: number;
 }

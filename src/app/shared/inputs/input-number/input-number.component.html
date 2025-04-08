@@ -4,7 +4,7 @@
       [id]="'inputNumber'+componentId"
       size="large"
       [formControl]="controlValue"
-      mode="decimal"
+      [format]="decimalMask"
       [min]="0"
       currency="USD"
       [prefix]="prefix"

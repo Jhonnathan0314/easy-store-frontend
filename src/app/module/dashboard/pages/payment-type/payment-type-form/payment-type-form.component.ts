@@ -1,4 +1,4 @@
-import { Component, effect, EventEmitter, Injector, Output } from '@angular/core';
+import { Component, computed, effect, EventEmitter, Injector, Output, Signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PaymentType } from '@models/data/payment-type.model';
@@ -10,11 +10,16 @@ import { InputTextComponent } from "../../../../../shared/inputs/input-text/inpu
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { Category, CategoryHasPaymentType } from '@models/data/category.model';
+import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
+import { PrimeNGObject } from '@models/utils/primeng-object.model';
+import { InputSelectComponent } from "../../../../../shared/inputs/input-select/input-select.component";
+import { MessageModule } from 'primeng/message';
 
 @Component({
   selector: 'app-payment-type-form',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule, ToastModule, ButtonComponent, InputNumberComponent, InputTextComponent],
+  imports: [ReactiveFormsModule, RouterModule, ToastModule, MessageModule, ButtonComponent, InputNumberComponent, InputTextComponent, InputSelectComponent],
   templateUrl: './payment-type-form.component.html',
   styleUrls: ['../../../../../../../public/assets/css/layout.css'],
   providers: [MessageService]
@@ -24,14 +29,25 @@ export class PaymentTypeFormComponent {
   paymentTypeForm: FormGroup;
   formErrors: FormErrors;
 
+  categoryId: number = 0;
   paymentTypeId: number = 0;
-  paymentType: PaymentType | undefined = undefined;
 
-  buttonLabel: string = 'Crear';
-  title: string = 'Crear tipo de pago';
+  categoriesError: Signal<ErrorMessage | null> = computed(() => this.categoryService.categoriesError());
+  categories: Signal<Category[]> = computed(() => this.categoryService.categories());
+  mappedCategories: PrimeNGObject[] = [];
+
+  paymentTypesError: Signal<ErrorMessage | null> = computed(() => this.paymentTypeService.paymentTypesError());
+  paymentTypes: Signal<PaymentType[]> = computed(() => this.paymentTypeService.paymentTypes());
+  mappedPaymentTypes: PrimeNGObject[] = [];
+
+  categoryHasPaymentType: CategoryHasPaymentType = new CategoryHasPaymentType();
+
+  buttonLabel: string = 'Agregar';
+  title: string = 'Agregar tipo de pago';
 
   isLoading: boolean = true;
   isWorking: boolean = false;
+  showCategoryCreatedMessage: boolean = false;
 
   @Output() paymentTypeErrorEvent = new EventEmitter<FormErrors>();
 
@@ -41,38 +57,93 @@ export class PaymentTypeFormComponent {
     private formBuilder: FormBuilder, 
     private injector: Injector,
     private messageService: MessageService,
+    private categoryService: CategoryService,
     private paymentTypeService: PaymentTypeService
   ) { }
 
   ngOnInit(): void {
-    this.initializeForm();
+    this.validateCategories();
+    this.validatePaymentTypes();
     this.validateAction();
   }
 
-  initializeForm() {
-    this.paymentTypeForm = this.formBuilder.group({
-      id: [0],
-      name: ['', [Validators.required]]
-    });
+  validateCategories() {
+    effect(() => {
+      if(this.categories().length === 0) return;
+      this.mappedCategories = this.categories().map((category: Category) => {
+        return { name: category.name, value: `${category.id}` };
+      })
+      this.validateParams();
+    }, {injector: this.injector})
+  }
+
+  validatePaymentTypes() {
+    effect(() => {
+      if(this.paymentTypes().length === 0) return;
+      this.mappedPaymentTypes = this.paymentTypes().map((paymentType: PaymentType) => {
+        return { name: paymentType.name, value: `${paymentType.id}` };
+      })
+      this.validateParams();
+    }, {injector: this.injector})
+  }
+
+  validateParams() {
+    if(this.paymentTypeId !== 0 && this.categoryId !== 0) {
+      this.getCategoryHasPaymentType();
+      this.prepareUpdateForm();
+      this.isLoading = false;
+    } else if (this.categoryId !== 0) {
+      this.paymentTypeForm.patchValue({ categoryId: `${this.categoryId}` });
+      this.showCategoryCreatedMessage = true;
+    }
+  }
+
+  getCategoryHasPaymentType() {
+    const category = this.categories().find(category => category.id === this.categoryId) ?? new Category();
+
+    if(category == null || category == undefined) return;
+    if(category.paymentTypes == null || category.paymentTypes == undefined) return;
+    if(category.paymentTypes.length == 0) return;
+
+    this.categoryHasPaymentType = category.paymentTypes?.find(paymentType => paymentType.id.paymentTypeId === this.paymentTypeId) ?? new CategoryHasPaymentType();
   }
 
   validateAction() {
-    this.obtainIdFromPath();
-    if(this.paymentTypeId === 0) {
+    this.obtainIdsFromPath();
+    this.initializeForm();
+    if(this.paymentTypeId === 0 || this.categoryId === 0) {
       this.prepareCreateForm();
       return;
     }
     this.setUpdateTitles();
-    this.prepareUpdateForm();
   }
 
-  obtainIdFromPath() {
-    this.paymentTypeId = parseInt(this.activatedRoute.snapshot.params['_id']);
+  obtainIdsFromPath() {
+    this.categoryId = parseInt(this.activatedRoute.snapshot.params['_categoryId']) ?? 0;
+    this.paymentTypeId = parseInt(this.activatedRoute.snapshot.params['_paymentTypeId']) ?? 0;
+  }
+
+  initializeForm() {
+    this.paymentTypeForm = this.formBuilder.group({
+      category: [null, [Validators.required]],
+      paymentType: [null, [Validators.required]],
+      phone: null,
+      email: '',
+      accountNumber: '',
+      accountType: '',
+      accountBank: ''
+    });
   }
 
   prepareCreateForm() {
     this.paymentTypeForm.patchValue({
-      id: this.paymentTypeId
+      category: this.categoryId !== 0 ? `${this.categoryId}` : null,
+      paymentType: null,
+      phone: null,
+      email: '',
+      accountNumber: '',
+      accountType: '',
+      accountBank: ''
     })
     this.isLoading = false;
   }
@@ -83,15 +154,15 @@ export class PaymentTypeFormComponent {
   }
 
   prepareUpdateForm() {
-    effect(() => {
-      this.paymentType = this.paymentTypeService.getById(this.paymentTypeId)();
-      if(!this.paymentType) return;
-      this.paymentTypeForm.patchValue({
-        id: this.paymentTypeId,
-        name: this.paymentType.name
-      })
-      this.isLoading = false;
-    }, {injector: this.injector})
+    this.paymentTypeForm.patchValue({
+      category: `${this.categoryId}`,
+      paymentType: `${this.paymentTypeId}`,
+      phone: this.categoryHasPaymentType.phone,
+      email: this.categoryHasPaymentType.email,
+      accountNumber: this.categoryHasPaymentType.accountNumber,
+      accountType: this.categoryHasPaymentType.accountType,
+      accountBank: this.categoryHasPaymentType.accountBank
+    })
   }
 
   validateForm() {
@@ -99,20 +170,20 @@ export class PaymentTypeFormComponent {
       this.paymentTypeForm.markAllAsTouched();
       return;
     }
-    if(this.buttonLabel === 'Crear') {
-      this.createCategory();
+    if(this.buttonLabel === 'Agregar') {
+      this.create();
     }else {
-      this.updateCategory();
+      this.update();
     }
   }
 
-  createCategory() {
+  create() {
     this.isWorking = true;
-    this.paymentTypeService.create(this.getObject()).subscribe({
+    this.categoryService.createCategoryHasPaymentType(this.getObject()).subscribe({
       error: (error: ApiResponse<ErrorMessage>) => {
         if(error.error){
           if(error.error.code == 409) {
-            this.messageService.add({severity: 'error', summary: error.error.detail, detail: 'Ya existe un tipo de pago con el mismo nombre.'});
+            this.messageService.add({severity: 'error', summary: error.error.detail, detail: 'Ya existe el tipo de pago ingresado.'});
             return;
           }
         }
@@ -125,13 +196,14 @@ export class PaymentTypeFormComponent {
     })
   }
 
-  updateCategory() {
+  update() {
     this.isWorking = true;
-    this.paymentTypeService.update(this.getObject()).subscribe({
+    this.categoryService.updateCategoryHasPaymentType(this.getObject()).subscribe({
       error: (error: ApiResponse<ErrorMessage>) => {
         if(error.error){
           if(error.error.code == 406) {
             this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.error.detail});
+            this.isWorking = false;
           }
           return;
         }
@@ -144,11 +216,22 @@ export class PaymentTypeFormComponent {
     })
   }
 
-  getObject() {
-    return { ...this.paymentTypeForm.value };
+  getObject(): CategoryHasPaymentType {
+    return { 
+      id: {
+        categoryId: this.paymentTypeForm.value.category,
+        paymentTypeId: this.paymentTypeForm.value.paymentType
+      },
+      phone: this.paymentTypeForm.value.phone,
+      email: this.paymentTypeForm.value.email,
+      accountNumber: this.paymentTypeForm.value.accountNumber,
+      accountType: this.paymentTypeForm.value.accountType,
+      accountBank: this.paymentTypeForm.value.accountBank,
+      state: 'active'
+    };
   }
 
-  receiveValue(key: string, value: string) {
+  receiveValue(key: string, value: string | number) {
     this.paymentTypeForm.patchValue({[key]: value})
   }
 

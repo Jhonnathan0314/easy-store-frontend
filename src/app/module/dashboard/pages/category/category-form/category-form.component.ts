@@ -125,6 +125,10 @@ export class CategoryFormComponent implements OnInit {
   createCategory() {
     this.isWorking = true;
     this.categoryService.create(this.getCreateObject(), this.filesToUpload[0] ?? null).subscribe({
+      next: (category) => {
+        this.isWorking = false;
+        this.router.navigateByUrl(`/dashboard/payment-type/form/category/${category.id}/payment-type/0`);
+      },
       error: (error: ApiResponse<ErrorMessage>) => {
         if(error.error){
           if(error.error.code == 409) {
@@ -133,10 +137,6 @@ export class CategoryFormComponent implements OnInit {
           }
         }
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
-      },
-      complete: () => {
-        this.isWorking = false;
-        this.router.navigateByUrl('/dashboard/category');
       }
     })
   }

@@ -7,26 +7,88 @@
         (clickEvent)="goBack()"
       />
         <h1 class="w-full text-center">{{ title }}</h1>
-    
-        @if(paymentTypeForm.value.id != 0) {
-          <app-input-number
-            class="w-1/2"
-            [value]="paymentTypeForm.value.id"
-            label="Id"
-            [isDisabled]="true"
-            formControlName="name"
-            ngDefaultControl
-          ></app-input-number>
+        @if (showCategoryCreatedMessage) {
+          <p-message severity="info">Por favor, vincule al menos un medio de pago a la tienda que acabó de crear, para permitir su correcto funcionamiento.</p-message>
         }
+    
+        <app-input-select
+          class="w-1/2"
+          [options]="mappedCategories"
+          [selectedOption]="paymentTypeForm.value.category"
+          label="Tienda"
+          [showClear]="true"
+          [classes]="paymentTypeForm.controls['category'].status === 'INVALID' && paymentTypeForm.touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Tienda inválida"
+          (valueEvent)="receiveValue('category', $event)"
+          formControlName="category"
+          ngDefaultControl
+        />
+
+        <app-input-select
+          class="w-1/2"
+          [options]="mappedPaymentTypes"
+          [selectedOption]="paymentTypeForm.value.paymentType"
+          label="Tipo de pago"
+          [showClear]="true"
+          [classes]="paymentTypeForm.controls['paymentType'].status === 'INVALID' && paymentTypeForm.touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Tipo de pago inválido"
+          (valueEvent)="receiveValue('paymentType', $event)"
+          formControlName="paymentType"
+          ngDefaultControl
+        />
+        
+        <app-input-number
+          class="w-1/2"
+          [value]="paymentTypeForm.value.phone"
+          label="Celular"
+          [classes]="paymentTypeForm.controls['phone'].status === 'INVALID' && paymentTypeForm.touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Celular inválido"
+          (valueEvent)="receiveValue('phone', $event)"
+          formControlName="phone"
+          ngDefaultControl
+        />
         
         <app-input-text
           class="w-1/2"
-          [value]="paymentTypeForm.value.name"
-          label="Nombre"
-          [classes]="paymentTypeForm.controls['name'].status === 'INVALID' && paymentTypeForm.touched ? 'ng-invalid ng-dirty' : ''"
-          errorMessage="Nombre inválido"
-          (valueEvent)="receiveValue('name', $event)"
-          formControlName="name"
+          [value]="paymentTypeForm.value.email"
+          label="Correo electrónico"
+          [classes]="paymentTypeForm.controls['email'].status === 'INVALID' && paymentTypeForm.touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Correo electrónico inválido"
+          (valueEvent)="receiveValue('email', $event)"
+          formControlName="email"
+          ngDefaultControl
+        />
+        
+        <app-input-text
+          class="w-1/2"
+          [value]="paymentTypeForm.value.accountNumber"
+          label="Número de cuenta"
+          [classes]="paymentTypeForm.controls['accountNumber'].status === 'INVALID' && paymentTypeForm.touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Número de cuenta inválido"
+          (valueEvent)="receiveValue('accountNumber', $event)"
+          formControlName="accountNumber"
+          ngDefaultControl
+        />
+        
+        <app-input-text
+          class="w-1/2"
+          [value]="paymentTypeForm.value.accountType"
+          label="Tipo de cuenta"
+          [classes]="paymentTypeForm.controls['accountType'].status === 'INVALID' && paymentTypeForm.touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Tipo de cuenta inválido"
+          (valueEvent)="receiveValue('accountType', $event)"
+          formControlName="accountType"
+          ngDefaultControl
+        />
+        
+        <app-input-text
+          class="w-1/2"
+          [value]="paymentTypeForm.value.accountBank"
+          label="Banco"
+          [classes]="paymentTypeForm.controls['accountBank'].status === 'INVALID' && paymentTypeForm.touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Banco inválido"
+          (valueEvent)="receiveValue('accountBank', $event)"
+          formControlName="accountBank"
           ngDefaultControl
         />
     

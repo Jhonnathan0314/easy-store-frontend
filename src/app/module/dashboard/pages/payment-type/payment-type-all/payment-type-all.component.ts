@@ -1,36 +1,37 @@
 import { Component, computed, effect, Injector, OnInit, Signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { PaymentType } from '@models/data/payment-type.model';
-import { DataObject } from '@models/utils/object.data-view.model';
-import { Subscription } from 'rxjs';
-import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/payment-type.service';
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
-import { TableComponent } from "../../../../../shared/data/table/table.component";
 import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
 import { ErrorMessage } from '@models/data/general.model';
 import { MessageModule } from 'primeng/message';
+import { Category, CategoryHasPaymentTypeId } from '@models/data/category.model';
+import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
+import { PaymentTypeTableComponent } from "../payment-type-table/payment-type-table.component";
+import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/payment-type.service';
+import { PaymentType, TablePaymentType } from '@models/data/payment-type.model';
 
 @Component({
   selector: 'app-payment-type-all',
   standalone: true,
-  imports: [RouterModule, MessageModule, ButtonComponent, TableComponent, LoadingTableComponent],
+  imports: [RouterModule, MessageModule, ButtonComponent, LoadingTableComponent, PaymentTypeTableComponent],
   templateUrl: './payment-type-all.component.html'
 })
 export class PaymentTypeAllComponent implements OnInit {
 
+  categoriesError: Signal<ErrorMessage | null> = computed(() => this.categoryService.categoriesError());
+  categories: Signal<Category[]> = computed(() => this.categoryService.categories());
+
   paymentTypesError: Signal<ErrorMessage | null> = computed(() => this.paymentTypeService.paymentTypesError());
   paymentTypes: Signal<PaymentType[]> = computed(() => this.paymentTypeService.paymentTypes());
-  mappedPaymentTypes: DataObject[] = [];
 
   isLoading: boolean = true;
   isWorking: boolean = false;
   hasUnexpectedError: boolean = false;
 
-  paymentTypeSubscription: Subscription;
-
   constructor(
     private router: Router,
     private injector: Injector,
+    private categoryService: CategoryService,
     private paymentTypeService: PaymentTypeService
   ) { }
 
@@ -41,10 +42,6 @@ export class PaymentTypeAllComponent implements OnInit {
 
   extractMappedPaymentTypes() {
     effect(() => {
-      this.mappedPaymentTypes = this.paymentTypes().map((pay) => ({
-        id: pay.id,
-        name: pay.name
-      }))
       this.isLoading = false;
       if(this.isWorking) this.isWorking = false;
     }, {injector: this.injector})
@@ -52,19 +49,35 @@ export class PaymentTypeAllComponent implements OnInit {
 
   validatePaymentTypesError() {
     effect(() => {
-      if(this.paymentTypesError() == null) return;
-      if(this.paymentTypesError()?.code !== 404) this.hasUnexpectedError = true;
+      if(this.categoriesError() == null) return;
+      if(this.categoriesError()?.code !== 404) this.hasUnexpectedError = true;
       this.isLoading = false;
     }, {injector: this.injector})
   }
 
-  deleteById(paymentType: DataObject) {
-    this.isWorking = true;
-    this.paymentTypeService.deleteById(paymentType?.id ?? 0);
+  goAdd() {
+    this.router.navigateByUrl('/dashboard/payment-type/form/category/0/payment-type/0');
   }
 
-  goCreate() {
-    this.router.navigateByUrl('/dashboard/payment-type/form/0');
+  update(tablePaymentType: TablePaymentType) {
+    this.router.navigateByUrl(`/dashboard/payment-type/form/category/${tablePaymentType.category.id}/payment-type/${tablePaymentType.paymentType.id}`);
+  }
+
+  changeState(tablePaymentType: TablePaymentType) {
+    const id: CategoryHasPaymentTypeId = {
+      categoryId: tablePaymentType.category.id,
+      paymentTypeId: tablePaymentType.paymentType.id
+    }
+    this.isWorking = true;
+    this.categoryService.changeStateCategoryHasPaymentType(id).subscribe({
+      error: () => {
+        this.isWorking = false;
+        this.hasUnexpectedError = true;
+      },
+      complete: () => {
+        this.isWorking = false;
+      }
+    })
   }
 
   goBack() {
