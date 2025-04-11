@@ -1,5 +1,5 @@
 import { Component, computed, effect, Injector, OnInit, Signal } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
 import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
 import { ErrorMessage } from '@models/data/general.model';
@@ -30,6 +30,7 @@ export class PaymentTypeAllComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private injector: Injector,
     private categoryService: CategoryService,
     private paymentTypeService: PaymentTypeService
@@ -49,8 +50,8 @@ export class PaymentTypeAllComponent implements OnInit {
 
   validatePaymentTypesError() {
     effect(() => {
-      if(this.categoriesError() == null) return;
-      if(this.categoriesError()?.code !== 404) this.hasUnexpectedError = true;
+      if(this.categoriesError() == null || this.paymentTypesError() == null) return;
+      if(this.categoriesError()?.code !== 404 || this.paymentTypesError()?.code !== 404) this.hasUnexpectedError = true;
       this.isLoading = false;
     }, {injector: this.injector})
   }
@@ -81,7 +82,7 @@ export class PaymentTypeAllComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigateByUrl('/dashboard/home');
+    this.router.navigate(['../'], { relativeTo: this.activatedRoute });
   }
 
 }
