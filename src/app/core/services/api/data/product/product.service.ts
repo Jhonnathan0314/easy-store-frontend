@@ -61,6 +61,7 @@ export class ProductService {
   }
 
   private findAllFirstImage(accountId?: number): Observable<S3File[]> {
+    if (this.products().length === 0) return of([]);
     return this.fileProductService.findAllFirstImage(this.products(), accountId).pipe(
       tap(responses => {
         this.products.update(products => {
@@ -124,7 +125,7 @@ export class ProductService {
   }
 
   getById(id: number): Signal<Product | undefined> {
-    return computed(() => this.products().find(prod => prod.id = id));
+    return computed(() => this.products().find(prod => prod.id === id));
   }
   
   create(product: Product, files: S3File[]): Observable<Product> {
