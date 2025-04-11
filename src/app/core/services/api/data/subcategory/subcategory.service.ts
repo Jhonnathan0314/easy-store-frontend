@@ -63,8 +63,8 @@ export class SubcategoryService {
       }
     }).pipe(
       map(response => response.data),
-      tap(sucategoryCreated => {
-        this.subcategories.update(subcats => [...subcats, sucategoryCreated]);
+      tap(subcategoryCreated => {
+        this.subcategories.update(subcats => [...subcats, subcategoryCreated]);
       })
     )
   }

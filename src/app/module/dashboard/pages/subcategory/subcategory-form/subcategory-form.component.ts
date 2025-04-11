@@ -65,7 +65,7 @@ export class SubcategoryFormComponent implements OnInit {
   initializeForm() {
     this.subcategoryForm = this.formBuilder.group({
       id: [0],
-      name: ['', [Validators.required]],
+      name: ['', [Validators.required, Validators.minLength(3)]],
       categoryId: [null, [Validators.required]]
     });
   }
@@ -164,6 +164,7 @@ export class SubcategoryFormComponent implements OnInit {
         if(error.error) {
           if(error.error.code == 406) {
             this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.error.detail});
+            return;
           }
         }
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
@@ -185,6 +186,10 @@ export class SubcategoryFormComponent implements OnInit {
 
   goBack() {
     this.router.navigateByUrl('/dashboard/home');
+  }
+
+  isFormBlocked() {
+    return (!this.isLoading && this.categories().length == 0) || this.isLoading || this.hasUnexpectedError || this.isWorking;
   }
 
 }
