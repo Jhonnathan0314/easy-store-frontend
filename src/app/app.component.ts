@@ -1,7 +1,7 @@
 import { Component, computed, effect, Inject, Injector, OnInit, PLATFORM_ID, Signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { PrimeNG } from 'primeng/config';
-import { SessionService } from './core/services/session/session.service';
+import { SessionService } from './core/services/utils/session/session.service';
 import { SecurityService } from './core/services/api/security/security.service';
 import { isPlatformBrowser } from '@angular/common';
 
@@ -36,7 +36,6 @@ export class AppComponent implements OnInit {
 
     if (isPlatformBrowser(this.platformId)) {
       this.validateSecurity();
-      this.validateSession();
     }
   }
 

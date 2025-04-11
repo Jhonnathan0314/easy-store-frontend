@@ -5,7 +5,8 @@ import { LoginRequest, RegisterRequest, ResetPasswordRequest } from '../../../mo
 import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { AuthResponse } from '../../../models/data-types/security/security-response.model';
 import { ApiResponse, ErrorMessage } from 'src/app/core/models/data-types/data/general.model';
-import { SessionService } from '../../session/session.service';
+import { SessionService } from '../../utils/session/session.service';
+import { TokenService } from '../../utils/token/token.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,8 @@ export class SecurityService {
 
   constructor(
     private http: HttpClient,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private tokenService: TokenService
   ) {
     this.security.set(sessionService.isLogged() ? sessionService.getToken() : '');
     this.securityError.set(null);
@@ -74,7 +76,7 @@ export class SecurityService {
   }
 
   private validateTokenReceived(request: LoginRequest, token: string) {
-    const isTokenExpired = this.sessionService.isTokenExpired(token);
+    const isTokenExpired = this.tokenService.isTokenExpired(token);
     if(isTokenExpired) {
       this.securityError.update(() => {
         return {code: 401, title: 'Token inválido', detail: 'El token está expirado'} as ErrorMessage;

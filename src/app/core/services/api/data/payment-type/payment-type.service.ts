@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { computed, effect, Injectable, Injector, Signal, signal } from '@angular/core';
 import { PaymentType } from '@models/data/payment-type.model';
 import { catchError, map, Observable, tap, throwError } from 'rxjs';
-import { SessionService } from '../../../session/session.service';
+import { SessionService } from '../../../utils/session/session.service';
 import { environment } from 'src/environments/environment';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 

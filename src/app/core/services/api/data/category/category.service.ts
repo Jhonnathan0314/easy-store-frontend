@@ -4,7 +4,7 @@ import { catchError, forkJoin, map, Observable, of, tap, throwError } from 'rxjs
 import { Category, CategoryHasPaymentType, CategoryHasPaymentTypeId } from 'src/app/core/models/data-types/data/category.model';
 import { ApiResponse, ErrorMessage } from 'src/app/core/models/data-types/data/general.model';
 import { environment } from 'src/environments/environment';
-import { SessionService } from '../../../session/session.service';
+import { SessionService } from '../../../utils/session/session.service';
 import { FileService } from '../../utils/file/file.service';
 import { S3File } from '@models/utils/file.model';
 

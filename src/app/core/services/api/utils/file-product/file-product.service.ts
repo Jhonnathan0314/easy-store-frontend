@@ -5,7 +5,7 @@ import { concat, forkJoin, map, Observable, of } from 'rxjs';
 import { Product } from '@models/data/product.model';
 import { ApiResponse } from '@models/data/general.model';
 import { HttpClient } from '@angular/common/http';
-import { SessionService } from '../../../session/session.service';
+import { SessionService } from '../../../utils/session/session.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

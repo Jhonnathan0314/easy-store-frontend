@@ -4,7 +4,7 @@ import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { Product } from '@models/data/product.model';
 import { catchError, concat, concatMap, last, map, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { SessionService } from '../../../session/session.service';
+import { SessionService } from '../../../utils/session/session.service';
 import { S3File } from '@models/utils/file.model';
 import { FileProductService } from '../../utils/file-product/file-product.service';
 import { Category } from '@models/data/category.model';

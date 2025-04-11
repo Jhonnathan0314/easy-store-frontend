@@ -8,7 +8,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { ButtonComponent } from "../../../../shared/inputs/button/button.component";
 import { ErrorMessage } from '@models/data/general.model';
 import { MessageModule } from 'primeng/message';
-import { SessionService } from 'src/app/core/services/session/session.service';
+import { SessionService } from 'src/app/core/services/utils/session/session.service';
 
 @Component({
   selector: 'app-carousel-home',

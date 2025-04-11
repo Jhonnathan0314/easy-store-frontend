@@ -10,7 +10,7 @@ import { CategoryService } from 'src/app/core/services/api/data/category/categor
 import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/payment-type.service';
 import { ProductService } from 'src/app/core/services/api/data/product/product.service';
 import { PurchaseService } from 'src/app/core/services/api/data/purchase/purchase.service';
-import { SessionService } from 'src/app/core/services/session/session.service';
+import { SessionService } from 'src/app/core/services/utils/session/session.service';
 import { ProductDetailComponent } from "../product-detail/product-detail.component";
 
 @Component({

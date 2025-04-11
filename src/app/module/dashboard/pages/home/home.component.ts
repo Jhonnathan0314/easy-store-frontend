@@ -2,7 +2,7 @@ import { Component, computed, Signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CarouselHomeComponent } from '@component/core/global/carousel-home/carousel-home.component';
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
-import { SessionService } from 'src/app/core/services/session/session.service';
+import { SessionService } from 'src/app/core/services/utils/session/session.service';
 
 @Component({
   selector: 'app-home',

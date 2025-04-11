@@ -6,7 +6,7 @@ import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 import { Subscription } from 'rxjs';
 import { SecurityService } from 'src/app/core/services/api/security/security.service';
-import { SessionService } from 'src/app/core/services/session/session.service';
+import { SessionService } from 'src/app/core/services/utils/session/session.service';
 
 @Component({
   selector: 'app-menu-bar',

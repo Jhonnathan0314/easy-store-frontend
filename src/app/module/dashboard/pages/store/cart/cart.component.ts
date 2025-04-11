@@ -5,7 +5,7 @@ import { Purchase, PurchaseCart, PurchaseHasProduct } from '@models/data/purchas
 import { AccordionModule } from 'primeng/accordion';
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
 import { PurchaseService } from 'src/app/core/services/api/data/purchase/purchase.service';
-import { SessionService } from 'src/app/core/services/session/session.service';
+import { SessionService } from 'src/app/core/services/utils/session/session.service';
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
 import { Router, RouterModule } from '@angular/router';
 import { ProductService } from 'src/app/core/services/api/data/product/product.service';
@@ -158,8 +158,12 @@ export class CartComponent implements OnInit {
 
   buyNow(cart: PurchaseCart) {
     const productText = this.whatsappPipe.getProductsText(cart);
-    this.cartRedirect = this.staticDataService.getCartMessage(`${cart.id}`, productText);
+    this.cartRedirect = this.staticDataService.getCartMessage(`${cart.id}`, productText, this.getPhoneNumber(cart));
     window.open(this.cartRedirect, '_blank');
+  }
+
+  getPhoneNumber(cart: PurchaseCart) {
+    return `${cart.category?.paymentTypes?.find(paymentType => paymentType.phone)?.phone ?? '3125543042'}`;
   }
 
 }

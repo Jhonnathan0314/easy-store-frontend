@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SessionService } from '../../../session/session.service';
+import { SessionService } from '../../../utils/session/session.service';
 import { environment } from 'src/environments/environment';
 import { S3File } from '@models/utils/file.model';
 import { map, Observable } from 'rxjs';
