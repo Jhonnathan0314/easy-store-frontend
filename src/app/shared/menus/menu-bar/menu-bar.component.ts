@@ -1,4 +1,4 @@
-import { Component, computed, effect, Injector, Input, OnInit, Signal } from '@angular/core';
+import { Component, computed, Input, Signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
@@ -14,7 +14,7 @@ import { SessionService } from 'src/app/core/services/utils/session/session.serv
   imports: [RouterModule, FormsModule, MenubarModule, ButtonComponent],
   templateUrl: './menu-bar.component.html'
 })
-export class MenuBarComponent implements OnInit {
+export class MenuBarComponent {
 
   @Input() items: MenuItem[] = []; 
 
@@ -24,22 +24,9 @@ export class MenuBarComponent implements OnInit {
   adminModeSubscription: Subscription;
 
   constructor(
-    private injector: Injector,
     private sessionService: SessionService,
     private securityService: SecurityService
   ) {}
-
-  ngOnInit(): void {
-    this.validateRole();
-  }
-
-  validateRole() {
-    effect(() => {
-      if(this.role() === 'admin') return;
-      if(this.role() === 'ghost') return;
-      if(this.role() === 'client') return;
-    }, {injector: this.injector})
-  }
 
   goToLogin() {
     this.securityService.logout('login');
