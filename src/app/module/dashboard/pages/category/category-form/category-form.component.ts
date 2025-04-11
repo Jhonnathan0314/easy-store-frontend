@@ -130,13 +130,7 @@ export class CategoryFormComponent implements OnInit {
         this.router.navigateByUrl(`/dashboard/payment-type/form/category/${category.id}/payment-type/0`);
       },
       error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error){
-          if(error.error.code == 409) {
-            this.messageService.add({severity: 'error', summary: error.error.detail, detail: 'Ya existe una tienda con el mismo nombre.'});
-            return;
-          }
-        }
-        this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
+        this.handleCreateError(error);
       }
     })
   }
@@ -153,19 +147,21 @@ export class CategoryFormComponent implements OnInit {
     }
   }
 
+  handleCreateError(error: ApiResponse<ErrorMessage>) {
+    if(error.error){
+      if(error.error.code == 409) {
+        this.messageService.add({severity: 'error', summary: error.error.detail, detail: 'Ya existe una tienda con el mismo nombre.'});
+        return;
+      }
+    }
+    this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
+  }
+
   updateCategory() {
     this.isWorking = true;
     this.categoryService.update(this.getUpdateObject(), this.filesToUpload[0] ?? null).subscribe({
       error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error){
-          if(error.error.code == 406 && this.filesToUpload.length == 0) {
-            this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.error.detail});
-          }else if (this.filesToUpload.length > 0){
-            this.router.navigateByUrl('/dashboard/category');
-          }
-          return;
-        }
-        this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
+        this.handleUpdateError(error);
       },
       complete: () => {
         this.isWorking = false;
@@ -184,6 +180,18 @@ export class CategoryFormComponent implements OnInit {
       accountId: 0,
       image: this.category?.image ?? new S3File()
     }
+  }
+
+  handleUpdateError(error: ApiResponse<ErrorMessage>) {
+    if(error.error){
+      if(error.error.code == 406 && this.filesToUpload.length == 0) {
+        this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.error.detail});
+      }else if (this.filesToUpload.length > 0){
+        this.router.navigateByUrl('/dashboard/category');
+      }
+      return;
+    }
+    this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
   }
 
   uploadFiles(files: S3File[]) {

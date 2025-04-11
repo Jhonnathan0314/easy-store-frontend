@@ -1,6 +1,5 @@
 import { Component, computed, effect, Injector, OnInit, Signal } from '@angular/core';
 import { DataObject } from '@models/utils/object.data-view.model';
-import { Subscription } from 'rxjs';
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
 import { TableComponent } from "../../../../../shared/data/table/table.component";
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
@@ -26,8 +25,6 @@ export class CategoryAllComponent implements OnInit {
   isWorking: boolean = false;
   hasUnexpectedError: boolean = false;
   
-  categorySubscription: Subscription;
-
   constructor(
     private router: Router,
     private injector: Injector,
