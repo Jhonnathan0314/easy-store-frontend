@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
@@ -19,7 +19,7 @@ import { ResetPasswordRequest } from '@models/security/security-request.model';
   styleUrls: ['../../../../../public/assets/css/layout.css']
 
 })
-export class ForgotPasswordComponent implements OnInit {
+export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
   forgotPasswordForm: FormGroup;
   request: ResetPasswordRequest = new ResetPasswordRequest();
@@ -31,6 +31,8 @@ export class ForgotPasswordComponent implements OnInit {
   hasError: boolean = false;
   isWorking: boolean = false;
 
+  interval: NodeJS.Timeout;
+
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
@@ -40,6 +42,10 @@ export class ForgotPasswordComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+  }
+
+  ngOnDestroy(): void {
+    clearInterval(this.interval);
   }
 
   initForm() {
@@ -75,18 +81,18 @@ export class ForgotPasswordComponent implements OnInit {
   }
 
   sendEmailInterval() {
-    const interval = setInterval(() => {
+    this.interval = setInterval(() => {
       this.timer -= 1;
       if(this.timer === 0) {
         this.timer = 60;
         this.emailSent = false;
-        clearInterval(interval);
+        clearInterval(this.interval);
       }
     }, 1000);
   }
 
   validateForm() {
-    if(!this.forgotPasswordForm.valid) {
+    if(!this.forgotPasswordForm.valid || !this.arePasswordEquals()) {
       this.forgotPasswordForm.markAllAsTouched();
       return;
     }
@@ -106,6 +112,10 @@ export class ForgotPasswordComponent implements OnInit {
         this.isWorking = false;
       }
     })
+  }
+  
+  arePasswordEquals() {
+    return this.forgotPasswordForm.value.password == this.forgotPasswordForm.value.confirmPassword;
   }
 
   successMessage() {

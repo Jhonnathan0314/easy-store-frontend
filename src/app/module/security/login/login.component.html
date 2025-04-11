@@ -5,7 +5,7 @@
     <app-input-text
       [value]="loginForm.value.username"
       label="Correo electronico"
-      [classes]="loginForm.controls['username'].status === 'INVALID' && loginForm.touched ? 'ng-invalid ng-dirty' : ''"
+      [classes]="loginForm.controls['username'].invalid && loginForm.controls['username'].touched ? 'ng-invalid ng-dirty' : ''"
       errorMessage="Correo electrónico inválido"
       (valueEvent)="receiveValue('username', $event)"
       formControlName="username"
@@ -15,7 +15,7 @@
     <app-input-password
       [value]="loginForm.value.password"
       label="Contraseña"
-      [classes]="loginForm.controls['password'].status === 'INVALID' && loginForm.touched ? 'ng-invalid ng-dirty' : ''"
+      [classes]="loginForm.controls['password'].invalid && loginForm.controls['password'].touched ? 'ng-invalid ng-dirty' : ''"
       errorMessage="Contraseña inválida"
       [feedback]="false"
       [toggleMask]="true"

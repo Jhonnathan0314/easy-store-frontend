@@ -36,6 +36,7 @@ export class AppComponent implements OnInit {
 
     if (isPlatformBrowser(this.platformId)) {
       this.validateSecurity();
+      this.validateSession();
     }
   }
 
