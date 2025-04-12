@@ -69,6 +69,8 @@ export class DataViewComponent implements OnInit, OnChanges {
 
   selectedSortOption = this.sortOptions[0].value;
 
+  phoneNumber: string = '3125543042';
+
   ngOnInit(): void {
     if(!this.cart.products)
       this.cart.products = [];  
@@ -138,6 +140,10 @@ export class DataViewComponent implements OnInit, OnChanges {
 
   viewProduct(product: Product) {
     this.viewProductEvent.emit(product);
+  }
+
+  buyNow(product: Product) {
+    window.open(`https://wa.me/+573202778890?text=Hola!%20%0A%0AVi%20el%20producto%20${product.name}%2E%20%0A%0AQuiero%20realizar%20la%20compra%2E%20%28id%20${product.id}%29`)
   }
 
 }

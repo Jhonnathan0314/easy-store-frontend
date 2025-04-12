@@ -17,7 +17,6 @@ export class ProductDetailComponent {
 
   @Output() addToCartEvent = new EventEmitter<Product>();
   @Output() removeFromCartEvent = new EventEmitter<Product>();
-  @Output() buyNowEvent = new EventEmitter<Product>();
   @Output() goCartEvent = new EventEmitter<Product>();
   @Output() goBackCartEvent = new EventEmitter<void>();
 
@@ -68,7 +67,8 @@ export class ProductDetailComponent {
   }
 
   buyNow(product: Product | undefined) {
-    this.buyNowEvent.emit(product);
+    if(product == undefined) return;
+    window.open(`https://wa.me/+573202778890?text=Hola!%20%0A%0AVi%20el%20producto%20${product.name}%2E%20%0A%0AQuiero%20realizar%20la%20compra%2E%20%28id%20${product.id}%29`)
   }
 
   goBackStore() {
