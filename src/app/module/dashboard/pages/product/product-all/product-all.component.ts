@@ -1,28 +1,28 @@
 import { Component, computed, effect, Injector, OnInit, Signal } from '@angular/core';
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
-import { TableComponent } from "../../../../../shared/data/table/table.component";
 import { Product } from '@models/data/product.model';
 import { ProductService } from 'src/app/core/services/api/data/product/product.service';
 import { DataObject } from '@models/utils/object.data-view.model';
 import { Subcategory } from '@models/data/subcategory.model';
 import { Subscription } from 'rxjs';
 import { SubcategoryService } from 'src/app/core/services/api/data/subcategory/subcategory.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
 import { ErrorMessage } from '@models/data/general.model';
 import { MessageModule } from 'primeng/message';
+import { ProductTableComponent } from "../product-table/product-table.component";
 
 @Component({
   selector: 'app-product-all',
   standalone: true,
-  imports: [MessageModule, ButtonComponent, TableComponent, LoadingTableComponent],
+  imports: [MessageModule, ButtonComponent, LoadingTableComponent, ProductTableComponent],
   templateUrl: './product-all.component.html'
 })
 export class ProductAllComponent implements OnInit {
 
   productsError: Signal<ErrorMessage | null> = computed(() => this.productService.productsError());
   products: Signal<Product[]> = computed(() => this.productService.products());
-  mappedProducts: DataObject[] = [];
+  mappedProducts: Product[] = [];
   
   subcategoriesError: Signal<ErrorMessage | null> = computed(() => this.subcategoryService.subcategoriesError());
   subcategories: Signal<Subcategory[]> = computed(() => this.subcategoryService.subcategories());
@@ -36,6 +36,7 @@ export class ProductAllComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private injector: Injector,
     private productService: ProductService,
     private subcategoryService: SubcategoryService
@@ -52,21 +53,14 @@ export class ProductAllComponent implements OnInit {
       this.mappedProducts = this.products().map(prod => {
         const subcategory = this.subcategories().find(sub => sub.id == prod.subcategoryId) ?? new Subcategory();
         return {
-          id: prod.id,
-          name: prod.name,
-          price: prod.price,
-          quantity: prod.quantity,
-          qualification: prod.qualification,
-          description: prod.description,
-          imageName: prod.imageName,
-          imageObj: prod.imageNumber > 0 && prod.images && prod.images.length > 0 ? prod.images[0] : undefined,
-          subcategoryId: subcategory.id,
-          subcategoryName: subcategory.name,
+          ...prod,
+          subcategory: subcategory,
           categoryId: subcategory.categoryId
         }
       })
       this.isLoading = false;
       if(this.isWorking) this.isWorking = false;
+      console.log({products: this.products(), mapped: this.mappedProducts});
     }, {injector: this.injector})
   }
 
@@ -95,8 +89,12 @@ export class ProductAllComponent implements OnInit {
     this.router.navigateByUrl('/dashboard/product/form/0');
   }
 
+  goUpdate(product: Product) {
+    this.router.navigateByUrl(`/dashboard/product/form/${product.id}`);
+  }
+
   goBack() {
-    this.router.navigateByUrl('/dashboard/home');
+    this.router.navigate(['../'], { relativeTo: this.activatedRoute });
   }
 
 }

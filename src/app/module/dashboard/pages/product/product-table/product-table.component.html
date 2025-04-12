@@ -1,5 +1,5 @@
 <p-table
-    [value]="categories"
+    [value]="products"
     [paginator]="true"
     [rows]="20"
     paginatorPosition="both"
@@ -12,6 +12,10 @@
             <th class="w-auto" pSortableColumn="id">Id</th>
             <th class="w-auto" pSortableColumn="name">Nombre</th>
             <th class="w-auto" pSortableColumn="description">Descripción</th>
+            <th class="w-auto" pSortableColumn="price">Precio</th>
+            <th class="w-auto" pSortableColumn="quantity">Cantidad</th>
+            <th class="w-auto" pSortableColumn="qualification">Calificación</th>
+            <th class="w-auto" pSortableColumn="subcategory.name">Categoria</th>
             <th class="w-auto">Actualizar</th>
             <th class="w-auto">Eliminar</th>
         </tr>
@@ -41,6 +45,38 @@
                     ariaLabel="Buscar por descripción"
                 ></p-columnFilter>
             </th>
+            <th>
+                <p-columnFilter
+                    type="numeric"
+                    field="price"
+                    placeholder="Buscar por precio"
+                    ariaLabel="Buscar por precio"
+                ></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter
+                    type="numeric"
+                    field="quantity"
+                    placeholder="Buscar por cantidad"
+                    ariaLabel="Buscar por cantidad"
+                ></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter
+                    type="numeric"
+                    field="qualification"
+                    placeholder="Buscar por calificación"
+                    ariaLabel="Buscar por calificación"
+                ></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter
+                    type="text"
+                    field="subcategory.name"
+                    placeholder="Buscar por categoria"
+                    ariaLabel="Buscar por categoria"
+                ></p-columnFilter>
+            </th>
             <th></th>
             <th></th>
         </tr>
@@ -48,16 +84,20 @@
     <ng-template #body let-obj>
         <tr>
             <td>
-                @if (obj.image?.content) {
-                    <img [src]="'data:' + obj.image.extension + ';base64,' + obj.image.content" [alt]="obj.image.name" class="w-20" />
+                @if (obj.images.length > 0) {
+                    <img [src]="'data:' + obj.images[0].extension + ';base64,' + obj.images[0].content" [alt]="obj.images[0].name" class="w-20" />
                 } @else {
-                    <img src="/assets/img/store.png" alt="store.png" class="w-20" />
+                    <img src="/assets/img/product.png" alt="product.png" class="w-20" />
                 }
                 
             </td> 
             <td>{{ obj.id }}</td>
             <td>{{ obj.name }}</td>
             <td>{{ obj.description }}</td>
+            <td>{{ obj.price }}</td>
+            <td>{{ obj.quantity }}</td>
+            <td>{{ obj.qualification }}</td>
+            <td>{{ obj.subcategory.name }}</td>
             <td>
                 <app-button icon="pi pi-pencil" [rounded]="true" [disabled]="disableButtons" (clickEvent)="updateAction(obj)" />
             </td>
@@ -68,7 +108,7 @@
     </ng-template>
     <ng-template #emptymessage>
         <tr>
-            <td colspan="6">No se encontraron resultados.</td>
+            <td colspan="10">No se encontraron resultados.</td>
         </tr>
     </ng-template>
 </p-table>

@@ -1,4 +1,5 @@
 import { S3File } from "@models/utils/file.model";
+import { Subcategory } from "./subcategory.model";
 
 export class Product {
     id: number;
@@ -8,6 +9,7 @@ export class Product {
     qualification: number;
     description: string;
     subcategoryId: number;
+    subcategory?: Subcategory;
     imageName: string;
     imageNumber: number;
     imageLastNumber: number;

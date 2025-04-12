@@ -19,13 +19,11 @@
     } @else if(hasUnexpectedError) {
         <p-message severity="error">Ha ocurrido un error inesperado, por favor, intentelo de nuevo más tarde.</p-message>
     } @else {
-        <app-table
+        <app-product-table
             class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
-            [objects]="mappedProducts"
-            [updateButton]="true"
-            [deleteButton]="true"
+            [products]="mappedProducts"
             [disableButtons]="isWorking"
-            updateRedirectPath="product/form"
+            (updateEvent)="goUpdate($event)"
             (deleteEvent)="deleteById($event)"
         />
     }
