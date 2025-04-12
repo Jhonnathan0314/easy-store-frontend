@@ -22,8 +22,6 @@ export class PaymentTypeTableComponent implements OnChanges {
 
   tablePaymentTypes: TablePaymentType[] = [];
 
-  updateRedirectPath: string = 'payment-type/form';
-
   @Output() changeStateEvent: EventEmitter<TablePaymentType> = new EventEmitter<TablePaymentType>();
   @Output() updateEvent: EventEmitter<TablePaymentType> = new EventEmitter<TablePaymentType>();
 

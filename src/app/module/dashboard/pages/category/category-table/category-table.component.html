@@ -1,0 +1,76 @@
+<p-table
+    [value]="categories"
+    [paginator]="true"
+    [rows]="20"
+    paginatorPosition="both"
+    tableStyleClass="w-full"
+    [rowsPerPageOptions]="[5, 10, 20, 50, 100, 500]"
+>
+    <ng-template pTemplate="header">
+        <tr>
+            <th class="w-auto">Imagen</th>
+            <th class="w-auto" pSortableColumn="id">Id</th>
+            <th class="w-auto" pSortableColumn="name">Nombre</th>
+            <th class="w-auto" pSortableColumn="description">Descripción</th>
+            <th class="w-auto">Actualizar</th>
+            <th class="w-auto">Eliminar</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th>
+                <p-columnFilter
+                    type="numeric"
+                    field="id"
+                    placeholder="Buscar por id"
+                    ariaLabel="Buscar por id"
+                ></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter
+                    type="text"
+                    field="name"
+                    placeholder="Buscar por nombre"
+                    ariaLabel="Buscar por nombre"
+                ></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter
+                    type="text"
+                    field="description"
+                    placeholder="Buscar por descripción"
+                    ariaLabel="Buscar por descripción"
+                ></p-columnFilter>
+            </th>
+            <th></th>
+            <th></th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-obj>
+        <tr>
+            <td>
+                @if (obj.image?.content) {
+                    <img [src]="'data:' + obj.image.extension + ';base64,' + obj.image.content" [alt]="obj.image.name" class="w-20" />
+                } @else if( obj.image?.name == 'store.png') {
+                    <img src="/assets/img/store.png" alt="store.png" class="w-20" />
+                } @else if( obj.image?.name == 'product.png') {
+                    <img src="/assets/img/product.png" alt="product.png" class="w-20" />
+                }
+                
+            </td> 
+            <td>{{ obj.id }}</td>
+            <td>{{ obj.name }}</td>
+            <td>{{ obj.description }}</td>
+            <td>
+                <app-button icon="pi pi-pencil" [rounded]="true" [disabled]="disableButtons" (clickEvent)="updateAction(obj)" />
+            </td>
+            <td>
+                <app-button icon="pi pi-trash" [rounded]="true" severity="danger" [disabled]="disableButtons" [confirmClick]="true" (clickEvent)="deleteAction(obj)" />
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+        <tr>
+            <td colspan="6">No se encontraron resultados.</td>
+        </tr>
+    </ng-template>
+</p-table>
