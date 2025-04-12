@@ -18,12 +18,12 @@ export class CategoryTableComponent {
   @Output() deleteEvent: EventEmitter<Category> = new EventEmitter<Category>();
   @Output() updateEvent: EventEmitter<Category> = new EventEmitter<Category>();
 
-  updateAction(tablePaymentType: Category) {
-    this.updateEvent.emit(tablePaymentType);
+  updateAction(category: Category) {
+    this.updateEvent.emit(category);
   }
 
-  deleteAction(tablePaymentType: Category) {
-    this.deleteEvent.emit(tablePaymentType);
+  deleteAction(category: Category) {
+    this.deleteEvent.emit(category);
   }
 
 }

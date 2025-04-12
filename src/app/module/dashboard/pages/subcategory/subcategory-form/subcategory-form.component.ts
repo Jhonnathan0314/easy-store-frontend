@@ -185,7 +185,7 @@ export class SubcategoryFormComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigateByUrl('/dashboard/home');
+    this.router.navigate(['../'], { relativeTo: this.activatedRoute });
   }
 
   isFormBlocked() {
