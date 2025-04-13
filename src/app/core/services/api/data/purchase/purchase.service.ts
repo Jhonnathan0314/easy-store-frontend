@@ -166,7 +166,7 @@ export class PurchaseService {
           }
           return [...purchases];
         });
-        this.productService.findById(purchaseHasProduct.id.productId);
+        this.productService.findById(purchaseHasProduct.id.productId).subscribe();
       }),
       catchError((error) => {
         return throwError(() => error.error.error)

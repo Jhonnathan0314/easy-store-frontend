@@ -1,13 +1,13 @@
-@if (isLoading) {
+@if (isLoading()) {
   <app-loading-data-view />
-} @else if(products().length === 0 && !isLoading) {
+} @else if(products().length === 0 && !isLoading()) {
   Esta tienda no tiene productos por el momento 😢
 } @else {
   @if (viewDetail) {
     <app-product-detail 
       [cart]="cart" 
       [product]="selectedProduct" 
-      [disableButtons]="isWorking"
+      [disableButtons]="isWorking()"
       (addToCartEvent)="addToCart($event)"
       (removeFromCartEvent)="removeFromCart($event)"
       (goCartEvent)="goCart()"
@@ -18,7 +18,7 @@
       class="w-full"
       [objects]="products()"
       [cart]="cart"
-      [disableButtons]="isWorking"
+      [disableButtons]="isWorking()"
       (addToCartEvent)="addToCart($event)"
       (removeFromCartEvent)="removeFromCart($event)"
       (goCartEvent)="goCart()"

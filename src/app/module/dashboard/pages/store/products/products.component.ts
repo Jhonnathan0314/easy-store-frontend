@@ -12,6 +12,8 @@ import { ProductService } from 'src/app/core/services/api/data/product/product.s
 import { PurchaseService } from 'src/app/core/services/api/data/purchase/purchase.service';
 import { SessionService } from 'src/app/core/services/utils/session/session.service';
 import { ProductDetailComponent } from "../product-detail/product-detail.component";
+import { WorkingService } from 'src/app/core/services/utils/working/working.service';
+import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 
 @Component({
   selector: 'app-products',
@@ -39,13 +41,15 @@ export class ProductsComponent implements OnInit {
   idsFinded: number[] = [];
 
   viewDetail: boolean = false;
-  isLoading: boolean = true;
-  isWorking: boolean = false;
+  isLoading: Signal<boolean> = computed(() => this.loadingService.loading().length > 0);
+  isWorking: Signal<boolean> = computed(() => this.workingService.working().length > 0);
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private injector: Injector,
+    private workingService: WorkingService,
+    private loadingService: LoadingService,
     private productService: ProductService,
     private paymentTypeService: PaymentTypeService,
     private purchaseService: PurchaseService,
@@ -74,7 +78,6 @@ export class ProductsComponent implements OnInit {
         this.paymentTypeService.findAllActive();
         return;
       }
-      this.isLoading = false;
       if(this.purchases().length === 0) return;
       this.cart = this.purchases().find(cart => cart.categoryId == this.categoryId && cart.state == 'cart') ?? new Purchase();
     }, {injector: this.injector})
@@ -82,19 +85,14 @@ export class ProductsComponent implements OnInit {
 
   addToCart($event: Product) {
     if(!this.validatePurchase($event)) return;
-    this.isWorking = true;
     this.purchaseService.addPurchaseHasProduct(this.productToAdd).subscribe({
       error: (error) => {
         console.log("Ha ocurrido un error mientras agregaba producto al carrito", {error});
-      },
-      complete: () => {
-        this.isWorking = false;
       }
     })
   }
 
   removeFromCart($event: Product) {
-    this.isWorking = true;
     const hasProductId: PurchaseHasProductId = {
       productId: $event.id,
       purchaseId: this.cart.id
@@ -102,9 +100,6 @@ export class ProductsComponent implements OnInit {
     this.purchaseService.deletePurchaseHasProductById(hasProductId).subscribe({
       error: (error) => {
         console.log("Ha ocurrido un error mientras eliminaba producto del carrito", {error});
-      },
-      complete: () => {
-        this.isWorking = false;
       }
     })
 
@@ -132,14 +127,12 @@ export class ProductsComponent implements OnInit {
   }
 
   createPurchase(product: Product) {
-    this.isWorking = true;
     this.prepareNewPurchase();
     this.purchaseService.generate(this.purchase).subscribe({
       error: (error) => {
         console.log('Ha ocurrido un error al crear el carrito.', error);
       },
       complete: () => {
-        this.isWorking = false;
         this.addToCart(product);
       }
     })
@@ -156,7 +149,6 @@ export class ProductsComponent implements OnInit {
   }
 
   viewProduct(product: Product) {
-    this.isWorking = true;
     if(!this.productImagesFinded().includes(product.id)) {
       this.productService.findProductImages(product.id, this.category()?.accountId).subscribe({
         complete: () => {
@@ -171,7 +163,6 @@ export class ProductsComponent implements OnInit {
   showDetailProduct(id: number) {
     this.viewDetail = true;
     this.selectedProduct = this.products().find(prod => prod.id == id);
-    this.isWorking = false;
   }
 
   hideDetailProduct() {

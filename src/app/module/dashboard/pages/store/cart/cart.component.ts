@@ -17,6 +17,8 @@ import { ErrorMessage } from '@models/data/general.model';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { WhatsappPipe } from 'src/app/core/pipes/whatsapp/whatsapp.pipe';
+import { WorkingService } from 'src/app/core/services/utils/working/working.service';
+import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 
 @Component({
   selector: 'app-cart',
@@ -41,13 +43,15 @@ export class CartComponent implements OnInit {
 
   cartRedirect: string = "";
 
-  isLoading: boolean = true;
-  isWorking: boolean = false;
+  isLoading: Signal<boolean> = computed(() => this.loadingService.loading().length > 0);
+  isWorking: Signal<boolean> = computed(() => this.workingService.working().length > 0);
   hasUnexpectedError: boolean = false;
 
   constructor(
     private router: Router,
     private injector: Injector,
+    private workingService: WorkingService,
+    private loadingService: LoadingService,
     public whatsappPipe: WhatsappPipe,
     public staticDataService: StaticDataService,
     private sessionService: SessionService,
@@ -73,7 +77,6 @@ export class CartComponent implements OnInit {
     effect(() => {
       if(this.categoriesError() == null) return;
       if(this.categoriesError()?.code !== 404) this.hasUnexpectedError = true;
-      this.isLoading = false;
     }, {injector: this.injector})
   }
 
@@ -81,7 +84,6 @@ export class CartComponent implements OnInit {
     effect(() => {
       if(this.productsError() == null) return;
       if(this.productsError()?.code !== 404) this.hasUnexpectedError = true;
-      this.isLoading = false;
     }, {injector: this.injector})
   }
 
@@ -89,13 +91,11 @@ export class CartComponent implements OnInit {
     effect(() => {
       if(this.purchasesError() == null) return;
       if(this.purchasesError()?.code !== 404) this.hasUnexpectedError = true;
-      this.isLoading = false;
     }, {injector: this.injector})
   }
 
   extractCarts() {
     effect(() => {
-      this.isLoading = false;
       this.carts = this.purchases().filter((purchase) => purchase.state == 'cart' && purchase.userId == this.userId);
       this.savePurchases();
     }, {injector: this.injector})
@@ -112,42 +112,30 @@ export class CartComponent implements OnInit {
   }
 
   plusProductToCart(product: PurchaseHasProduct) {
-    this.isWorking = true;
     product.quantity += 1;
     this.purchaseService.updatePurchaseHasProduct(product).subscribe({
       error: (error: ErrorMessage) => {
         product.quantity -= 1;
         this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.detail});
-      },
-      complete: () => {
-        this.isWorking = false;
       }
     })
   }
 
   minusProductToCart(product: PurchaseHasProduct) {
-    this.isWorking = true;
     product.quantity -= 1;
     this.purchaseService.updatePurchaseHasProduct(product).subscribe({
       error: (error: ErrorMessage) => {
         if(error.code === 404) {
           product.quantity += 1;
         }
-      },
-      complete: () => {
-        this.isWorking = false;
       }
     })
   }
 
   deleteFromCart(product: PurchaseHasProduct) {
-    this.isWorking = true;
     this.purchaseService.deletePurchaseHasProductById(product.id).subscribe({
       error: (error) => {
         console.log('Ha ocurrio un error al eliminar el articulo del carrito.', error);
-      },
-      complete: () => {
-        this.isWorking = false;
       }
     })
   }

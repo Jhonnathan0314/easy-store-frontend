@@ -9,6 +9,7 @@ import { ButtonComponent } from "../../../../shared/inputs/button/button.compone
 import { ErrorMessage } from '@models/data/general.model';
 import { MessageModule } from 'primeng/message';
 import { SessionService } from 'src/app/core/services/utils/session/session.service';
+import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 
 @Component({
   selector: 'app-carousel-home',
@@ -28,12 +29,13 @@ export class CarouselHomeComponent implements OnInit {
 
   responsiveOptions: ResponsiveCarouselOptions[] = [];
 
-  isLoading: boolean = true;
+  isLoading: Signal<boolean> = computed(() => this.loadingService.loading().length > 0);
   hasUnexpectedError: boolean = false;
 
   constructor(
     private router: Router,
     private injector: Injector,
+    private loadingService: LoadingService,
     private sessionService: SessionService,
     private categoryService: CategoryService
   ) {}
@@ -56,7 +58,6 @@ export class CarouselHomeComponent implements OnInit {
         classes: ''
       }));
       this.defineResponsiveOptions();
-      this.isLoading = false;
     }, {injector: this.injector})
   }
 
@@ -64,7 +65,6 @@ export class CarouselHomeComponent implements OnInit {
     effect(() => {
       if(this.categoriesError() == null) return;
       if(this.categoriesError()?.code !== 404) this.hasUnexpectedError = true;
-      this.isLoading = false;
     }, {injector: this.injector})
   }
 
