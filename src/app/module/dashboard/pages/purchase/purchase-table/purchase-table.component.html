@@ -1,0 +1,99 @@
+<p-table
+    [value]="purchases"
+    [paginator]="true"
+    [rows]="20"
+    paginatorPosition="both"
+    tableStyleClass="w-full"
+    [rowsPerPageOptions]="[5, 10, 20, 50, 100, 500]"
+>
+    <ng-template pTemplate="header">
+        <tr>
+            <th style="width:auto">Id</th>
+            <th style="width:auto">Tienda</th>
+            <th style="width:auto">Usuario</th>
+            <th style="width:auto">Estado</th>
+            <th style="width:auto">Valor total</th>
+            <th style="width:auto">Fecha de creacion</th>
+            <th style="width:auto">Tipo de pago</th>
+            <th style="width:auto">Ver productos</th>
+        </tr>
+        <tr>
+            <th>
+                <p-columnFilter
+                    type="numeric"
+                    field="id"
+                    placeholder="Buscar por id"
+                    ariaLabel="Buscar por id"
+                ></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter
+                    type="text"
+                    field="category.name"
+                    placeholder="Buscar por tienda"
+                    ariaLabel="Buscar por tienda"
+                ></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter
+                    type="text"
+                    field="user.username"
+                    placeholder="Buscar por email"
+                    ariaLabel="Buscar por email"
+                ></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter
+                    type="text"
+                    field="state"
+                    placeholder="Buscar por estado"
+                    ariaLabel="Buscar por estado"
+                ></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter
+                    type="numeric"
+                    field="total"
+                    placeholder="Buscar por valor total"
+                    ariaLabel="Buscar por valor total"
+                ></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter
+                    type="text"
+                    field="creationDate"
+                    placeholder="Buscar por fecha de creación"
+                    ariaLabel="Buscar por fecha de creación"
+                ></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter
+                    type="text"
+                    field="paymentType.name"
+                    placeholder="Buscar por tipo de pago"
+                    ariaLabel="Buscar por tipo de pago"
+                ></p-columnFilter>
+            </th>
+            <th></th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-obj>
+        <tr>
+            <td>{{ obj.id }}</td>
+            <td>{{ obj.category.name }}</td>
+            <td>{{ obj.user.username }}</td>
+            <td>{{ obj.state }}</td>
+            <td>{{ obj.total }}</td>
+            <td>{{ obj.creationDate }}</td>
+            <td>{{ obj.paymentType.name }}</td>
+            <td>
+                <app-button icon="pi pi-eye" [rounded]="true" (clickEvent)="viewDetailAction(obj)" />
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+        <tr>
+            <td colspan="8">No se encontraron resultados.</td>
+        </tr>
+    </ng-template>
+</p-table>

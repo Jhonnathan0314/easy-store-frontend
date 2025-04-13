@@ -1,7 +1,7 @@
-import { PurchaseCart } from "@models/data/purchase.model";
+import { Purchase } from "@models/data/purchase.model";
 
 export class WhatsappPipe {
-    public getProductsText(cart: PurchaseCart): string {
+    public getProductsText(cart: Purchase): string {
         const products = cart.products;
         const textArray = products.map(product => {
             return `%2D%20${product.product?.name.replaceAll(' ', '%20')}%3A%20${product.quantity}%20unidad%2Fes%20%3D%3E%20Subtotal%3A%20${product.subtotal}%20%0A`;

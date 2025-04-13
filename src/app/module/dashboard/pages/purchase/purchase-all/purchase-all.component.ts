@@ -1,7 +1,6 @@
 import { Component, computed, effect, Injector, OnInit, Signal } from '@angular/core';
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
-import { TableComponent } from "../../../../../shared/data/table/table.component";
-import { Purchase, PurchaseHasProduct, PurchaseMap } from '@models/data/purchase.model';
+import { Purchase, PurchaseHasProduct } from '@models/data/purchase.model';
 import { DataObject } from '@models/utils/object.data-view.model';
 import { User } from '@models/security/user.model';
 import { PaymentType } from '@models/data/payment-type.model';
@@ -17,16 +16,18 @@ import { PurchaseReportComponent } from "../purchase-report/purchase-report.comp
 import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
 import { MessageModule } from 'primeng/message';
 import { ErrorMessage } from '@models/data/general.model';
+import { PurchaseTableComponent } from "../purchase-table/purchase-table.component";
+import { PurchaseDetailTableComponent } from "../purchase-detail-table/purchase-detail-table.component";
 
 @Component({
   selector: 'app-purchase-all',
   standalone: true,
-  imports: [MessageModule, ButtonComponent, TableComponent, LoadingTableComponent, PurchaseReportComponent],
+  imports: [MessageModule, ButtonComponent, LoadingTableComponent, PurchaseReportComponent, PurchaseTableComponent, PurchaseDetailTableComponent],
   templateUrl: './purchase-all.component.html'
 })
 export class PurchaseAllComponent implements OnInit {
   
-  mappedPurchases: DataObject[] = [];
+  mappedPurchases: Purchase[] = [];
   
   usersError: Signal<ErrorMessage | null> = computed(() => this.userService.usersError());
   users: Signal<User[]> = computed(() => this.userService.users());
@@ -43,7 +44,7 @@ export class PurchaseAllComponent implements OnInit {
   purchasesError: Signal<ErrorMessage | null> = computed(() => this.purchaseService.purchasesError());
   purchases: Signal<Purchase[]> = computed(() => this.purchaseService.purchases());
 
-  purchaseMap = new PurchaseMap();
+  purchaseMap = new Purchase();
   user = new User();
   paymentType = new PaymentType();
   category = new Category();
@@ -122,7 +123,7 @@ export class PurchaseAllComponent implements OnInit {
         this.extractObjectsByPurchase(purch);
         this.extractPurchaseHasObjects(purch);
         this.completePurchaseMap(purch);
-        return { purchase: this.purchaseMap };
+        return this.purchaseMap;
       })
       this.isLoading = false;
     }, {injector: this.injector})
@@ -157,13 +158,10 @@ export class PurchaseAllComponent implements OnInit {
 
   completePurchaseMap(purchase: Purchase) {
     this.purchaseMap = {
-      id: purchase.id,
+      ...purchase,
       user: this.user,
       paymentType: this.paymentType, 
       category: this.category,
-      total: purchase.total,
-      state: purchase.state,
-      creationDate: purchase.creationDate,
       products: this.hasProducts
     }
   }
@@ -172,10 +170,14 @@ export class PurchaseAllComponent implements OnInit {
     this.purchaseService.deleteById(purchase.purchase?.id ?? 0);
   }
 
-  viewDetail($event: number) {
+  viewDetail($event: Purchase) {
     this.isDetailSelected = true;
-    this.detailSelectedId = $event;
-    this.detailSelectedIndex = this.mappedPurchases.findIndex(map => map.purchase?.id === $event);
+    this.detailSelectedId = $event.id;
+    this.detailSelectedIndex = this.mappedPurchases.findIndex(map => map.id === $event.id);
+  }
+
+  hideDetail() {
+    this.isDetailSelected = false;
   }
 
   eventViewChart() {

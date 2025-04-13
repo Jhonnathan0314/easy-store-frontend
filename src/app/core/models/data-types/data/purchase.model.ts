@@ -6,8 +6,11 @@ import { Product } from "./product.model";
 export class Purchase {
     id: number;
     userId: number;
+    user?: User;
     paymentTypeId: number;
+    paymentType?: PaymentType;
     categoryId: number;
+    category?: Category;
     total: number;
     state: string;
     creationDate: string;
@@ -28,26 +31,11 @@ export class PurchaseHasProduct {
     subtotal: number;
 }
 
-export class PurchaseMap {
-    id: number;
-    user: User;
-    paymentType: PaymentType;
-    category: Category;
-    total: number;
-    state: string;
-    creationDate: string;
-    products: PurchaseHasProduct[];
-}
-
 export class PurchaseRq {
     userId: number;
     paymentTypeId: number;
     categoryId: number;
     state: string;
-}
-
-export class PurchaseCart extends Purchase {
-    category?: Category;
 }
 
 export class PurchaseHasProductRq {

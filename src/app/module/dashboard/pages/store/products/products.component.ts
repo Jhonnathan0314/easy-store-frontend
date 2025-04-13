@@ -5,7 +5,7 @@ import { LoadingDataViewComponent } from '@component/shared/skeleton/loading-dat
 import { Category } from '@models/data/category.model';
 import { PaymentType } from '@models/data/payment-type.model';
 import { Product } from '@models/data/product.model';
-import { Purchase, PurchaseCart, PurchaseHasProductId, PurchaseHasProductRq, PurchaseRq } from '@models/data/purchase.model';
+import { Purchase, PurchaseHasProductId, PurchaseHasProductRq, PurchaseRq } from '@models/data/purchase.model';
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
 import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/payment-type.service';
 import { ProductService } from 'src/app/core/services/api/data/product/product.service';
@@ -25,8 +25,8 @@ export class ProductsComponent implements OnInit {
   productImagesFinded: Signal<number[]> = computed(() => this.productService.productImagesFinded());
   productToAdd: PurchaseHasProductRq = new PurchaseHasProductRq();
 
-  purchases: Signal<PurchaseCart[]> = computed(() => this.purchaseService.purchases());
-  cart: PurchaseCart = new PurchaseCart();
+  purchases: Signal<Purchase[]> = computed(() => this.purchaseService.purchases());
+  cart: Purchase = new Purchase();
   purchase: PurchaseRq = new PurchaseRq();
 
   paymentTypes: Signal<PaymentType[]> = computed(() => this.paymentTypeService.paymentTypes());
@@ -76,7 +76,7 @@ export class ProductsComponent implements OnInit {
       }
       this.isLoading = false;
       if(this.purchases().length === 0) return;
-      this.cart = this.purchases().find(cart => cart.categoryId == this.categoryId && cart.state == 'cart') ?? new PurchaseCart();
+      this.cart = this.purchases().find(cart => cart.categoryId == this.categoryId && cart.state == 'cart') ?? new Purchase();
     }, {injector: this.injector})
   }
 

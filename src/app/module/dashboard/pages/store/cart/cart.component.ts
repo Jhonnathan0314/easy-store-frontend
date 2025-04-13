@@ -1,7 +1,7 @@
 import { StaticDataService } from './../../../../../core/services/utils/data/static-data/static-data.service';
 import { Component, computed, effect, Injector, OnInit, Signal } from '@angular/core';
 import { Category } from '@models/data/category.model';
-import { Purchase, PurchaseCart, PurchaseHasProduct } from '@models/data/purchase.model';
+import { Purchase, PurchaseHasProduct } from '@models/data/purchase.model';
 import { AccordionModule } from 'primeng/accordion';
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
 import { PurchaseService } from 'src/app/core/services/api/data/purchase/purchase.service';
@@ -29,7 +29,7 @@ export class CartComponent implements OnInit {
 
   purchasesError: Signal<ErrorMessage | null> = computed(() => this.purchaseService.purchasesError());
   purchases: Signal<Purchase[]> = computed(() => this.purchaseService.purchases());
-  carts: PurchaseCart[] =[];
+  carts: Purchase[] =[];
 
   categoriesError: Signal<ErrorMessage | null> = computed(() => this.categoryService.categoriesError());
   categories: Signal<Category[]> = computed(() => this.categoryService.categories());
@@ -156,13 +156,13 @@ export class CartComponent implements OnInit {
     this.router.navigateByUrl(`/dashboard/store/products/${categoryId}`)
   }
 
-  buyNow(cart: PurchaseCart) {
+  buyNow(cart: Purchase) {
     const productText = this.whatsappPipe.getProductsText(cart);
     this.cartRedirect = this.staticDataService.getCartMessage(`${cart.id}`, productText, this.getPhoneNumber(cart));
     window.open(this.cartRedirect, '_blank');
   }
 
-  getPhoneNumber(cart: PurchaseCart) {
+  getPhoneNumber(cart: Purchase) {
     return `${cart.category?.paymentTypes?.find(paymentType => paymentType.phone)?.phone ?? '3125543042'}`;
   }
 

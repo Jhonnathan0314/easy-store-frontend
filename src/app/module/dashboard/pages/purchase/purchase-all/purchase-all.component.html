@@ -36,26 +36,31 @@
         } @else if(hasUnexpectedError) {
             <p-message severity="error">Ha ocurrido un error inesperado, por favor, intentelo de nuevo más tarde.</p-message>
         } @else {
-            <app-table
+            <app-purchase-table
                 class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
-                [objects]="mappedPurchases"
-                (deleteEvent)="deleteById($event)"
-                (detailEvent)="viewDetail($event)"
+                [purchases]="mappedPurchases"
+                (viewDetailEvent)="viewDetail($event)"
             />
         }
         
         @if(isDetailSelected) {
-            <h1 class="w-full text-center font-bold">Compra con id {{ detailSelectedId }}</h1>
+            <div class="w-full flex justify-between items-center">
+                <app-button 
+                    label="Ocultar"
+                    [rounded]="true"
+                    icon="pi pi-eye-slash"
+                    (clickEvent)="hideDetail()"
+                />
+                <h1 class="w-full text-center font-bold">Compra con id {{ detailSelectedId }}</h1>
+            </div>
             @if (isLoading) {
                 <app-loading-table 
                     class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
                 />
             } @else {
-                <app-table
+                <app-purchase-detail-table
                     class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
-                    [purchaseHasProduct]="true"
-                    [purchaseHasProductIndex]="detailSelectedIndex"
-                    [objects]="mappedPurchases"
+                    [purchase]="mappedPurchases[detailSelectedIndex]"
                 />
             }
         }

@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Product } from '@models/data/product.model';
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
-import { PurchaseCart } from '@models/data/purchase.model';
 import { GalleriaModule } from 'primeng/galleria';
 import { FormsModule } from '@angular/forms';
 import { S3File } from '@models/utils/file.model';
+import { Purchase } from '@models/data/purchase.model';
 
 @Component({
   selector: 'app-product-detail',
@@ -20,7 +20,7 @@ export class ProductDetailComponent {
   @Output() goCartEvent = new EventEmitter<Product>();
   @Output() goBackCartEvent = new EventEmitter<void>();
 
-  @Input() cart: PurchaseCart = new PurchaseCart();
+  @Input() cart: Purchase = new Purchase();
   @Input() product: Product | undefined = undefined;
   @Input() disableButtons: boolean = false;
 

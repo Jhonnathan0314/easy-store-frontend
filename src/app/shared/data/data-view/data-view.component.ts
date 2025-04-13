@@ -5,12 +5,12 @@ import { ButtonComponent } from '@component/shared/inputs/button/button.componen
 import { InputSelectComponent } from '@component/shared/inputs/input-select/input-select.component';
 import { InputTextComponent } from '@component/shared/inputs/input-text/input-text.component';
 import { Product } from '@models/data/product.model';
-import { PurchaseCart } from '@models/data/purchase.model';
 import { PrimeNGObject } from '@models/utils/primeng-object.model';
 import { DataViewModule } from 'primeng/dataview';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { TagModule } from 'primeng/tag';
 import { DividerModule } from 'primeng/divider';
+import { Purchase } from '@models/data/purchase.model';
 
 @Component({
   selector: 'app-data-view',
@@ -26,7 +26,7 @@ export class DataViewComponent implements OnInit, OnChanges {
   @Output() goCartEvent = new EventEmitter<Product>();
   @Output() viewProductEvent = new EventEmitter<Product>();
   
-  @Input() cart: PurchaseCart = new PurchaseCart();
+  @Input() cart: Purchase = new Purchase();
   @Input() disableButtons: boolean = false;
 
   @Input() objects: Product[] = [];

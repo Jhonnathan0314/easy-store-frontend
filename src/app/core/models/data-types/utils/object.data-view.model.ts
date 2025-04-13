@@ -1,4 +1,4 @@
-import { PurchaseMap } from "@models/data/purchase.model";
+import { Purchase } from "@models/data/purchase.model";
 import { S3File } from "./file.model";
 
 export class DataObject {
@@ -16,7 +16,7 @@ export class DataObject {
     categoryId?: number;
     categoryName?: string;
 
-    purchase?: PurchaseMap;
+    purchase?: Purchase;
 }
 
 export class DataObjectValidation {
