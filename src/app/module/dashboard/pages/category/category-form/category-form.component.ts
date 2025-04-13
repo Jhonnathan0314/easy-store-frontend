@@ -1,4 +1,4 @@
-import { Component, effect, EventEmitter, Injector, OnInit, Output } from '@angular/core';
+import { Component, computed, effect, EventEmitter, Injector, OnInit, Output, Signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Category } from '@models/data/category.model';
@@ -13,6 +13,8 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { LoadingFormComponent } from "../../../../../shared/skeleton/loading-form/loading-form.component";
+import { WorkingService } from 'src/app/core/services/utils/working/working.service';
+import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 
 @Component({
   selector: 'app-category-form',
@@ -37,8 +39,8 @@ export class CategoryFormComponent implements OnInit {
   title: string = 'Crear tienda';
 
   viewInputFile: boolean = true;
-  isLoading: boolean = true;
-  isWorking: boolean = false;
+  isLoading: Signal<boolean> = computed(() => this.loadingService.loading().length > 0);
+  isWorking: Signal<boolean> = computed(() => this.workingService.working().length > 0);
 
   @Output() categoryErrorEvent = new EventEmitter<FormErrors>();
 
@@ -47,6 +49,8 @@ export class CategoryFormComponent implements OnInit {
     private router: Router, 
     private formBuilder: FormBuilder, 
     private injector: Injector,
+    private workingService: WorkingService,
+    private loadingService: LoadingService,
     private messageService: MessageService,
     private categoryService: CategoryService
   ) { }
@@ -82,7 +86,6 @@ export class CategoryFormComponent implements OnInit {
     this.categoryForm.patchValue({
       id: this.categoryId
     })
-    this.isLoading = false;
   }
 
   setUpdateTitles() {
@@ -102,7 +105,6 @@ export class CategoryFormComponent implements OnInit {
         name: this.category?.name,
         description: this.category?.description
       });
-      this.isLoading = false;
     }, {injector: this.injector})
   }
 
@@ -123,10 +125,8 @@ export class CategoryFormComponent implements OnInit {
   }
 
   createCategory() {
-    this.isWorking = true;
     this.categoryService.create(this.getCreateObject(), this.filesToUpload[0] ?? null).subscribe({
       next: (category) => {
-        this.isWorking = false;
         this.router.navigateByUrl(`/dashboard/payment-type/form/category/${category.id}/payment-type/0`);
       },
       error: (error: ApiResponse<ErrorMessage>) => {
@@ -158,13 +158,11 @@ export class CategoryFormComponent implements OnInit {
   }
 
   updateCategory() {
-    this.isWorking = true;
     this.categoryService.update(this.getUpdateObject(), this.filesToUpload[0] ?? null).subscribe({
       error: (error: ApiResponse<ErrorMessage>) => {
         this.handleUpdateError(error);
       },
       complete: () => {
-        this.isWorking = false;
         this.router.navigateByUrl('/dashboard/category');
       }
     })

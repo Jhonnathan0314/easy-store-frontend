@@ -1,12 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, effect, Injectable, Injector, Signal, signal } from '@angular/core';
-import { catchError, forkJoin, map, Observable, of, tap, throwError } from 'rxjs';
+import { catchError, finalize, forkJoin, map, Observable, of, tap, throwError } from 'rxjs';
 import { Category, CategoryHasPaymentType, CategoryHasPaymentTypeId } from 'src/app/core/models/data-types/data/category.model';
 import { ApiResponse, ErrorMessage } from 'src/app/core/models/data-types/data/general.model';
 import { environment } from 'src/environments/environment';
 import { SessionService } from '../../../utils/session/session.service';
 import { FileService } from '../../utils/file/file.service';
 import { S3File } from '@models/utils/file.model';
+import { WorkingService } from '../../../utils/working/working.service';
+import { LoadingService } from '../../../utils/loading/loading.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +25,8 @@ export class CategoryService {
   constructor(
     private http: HttpClient, 
     private injector: Injector,
+    private workingService: WorkingService,
+    private loadingService: LoadingService,
     private sessionService: SessionService,
     private fileService: FileService
   ) {
@@ -39,10 +43,11 @@ export class CategoryService {
       }else if (this.role() === 'client' || this.role() === 'ghost') {
         this.findAll();
       }
-    }, {injector: this.injector})
+    }, {injector: this.injector, allowSignalWrites: true})
   }
 
   private findAllByAccount() {
+    this.loadingService.push('cateogry findAllByAccount');
     const accountId = this.sessionService.getAccountId();
     this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/category/account/${accountId}`).pipe(
       map(response => response.data),
@@ -54,11 +59,13 @@ export class CategoryService {
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
         this.categoriesError.update(() => error.error.error);
         return throwError(() => error);
-      })
+      }),
+      finalize(() => this.loadingService.drop('cateogry findAllByAccount'))
     ).subscribe();
   }
 
   private findAll() {
+    this.loadingService.push('cateogry findAll');
     this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/category`).pipe(
       map(response => response.data),
       tap(categories => {
@@ -69,14 +76,18 @@ export class CategoryService {
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
         this.categoriesError.update(() => error.error.error);
         return throwError(() => error);
-      })
+      }),
+      finalize(() => this.loadingService.drop('cateogry findAll'))
     ).subscribe();
   }
 
   private findImages() {
+    this.workingService.push('category findImages');
     const requests = this.getRequestObject();
   
-    forkJoin(requests).subscribe({
+    forkJoin(requests).pipe(
+      finalize(() => this.workingService.drop('category findImages'))
+    ).subscribe({
       next: (responses) => {
         this.categories.update(categories => {
           return categories.map((cat, i) => ({
@@ -110,6 +121,8 @@ export class CategoryService {
   }
 
   create(category: Category, file: S3File | null): Observable<Category> {
+    this.workingService.push('category create');
+
     const userId = this.sessionService.getUserId();
     const accountId = this.sessionService.getAccountId();
     category.userId = userId;
@@ -142,18 +155,23 @@ export class CategoryService {
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
         return throwError(() => error.error);
-      })
+      }),
+      finalize(() => this.workingService.drop('category create'))
     )
   }
 
   update(category: Category, file: S3File | null): Observable<Category> {
+    this.workingService.push('category update');
+
     const userId = this.sessionService.getUserId();
     const accountId = this.sessionService.getAccountId();
     category.userId = userId;
     category.accountId = accountId;
+
     if(file != null && category.imageName == 'store.png') {
       category.imageName = `${category.id}.png`;
     }
+
     return this.http.put<ApiResponse<Category>>(`${this.apiUrl}/category`, category, {
       headers: {
         'Update-By': `${userId}`
@@ -192,12 +210,16 @@ export class CategoryService {
           ));
         }
         return throwError(() => error.error);
-      })
+      }),
+      finalize(() => this.workingService.drop('category update'))
     )
   }
 
   private uploadFile(file: S3File) {
-    this.fileService.putFile(file).subscribe({
+    this.workingService.push('category uploadFile');
+    this.fileService.putFile(file).pipe(
+      finalize(() => this.workingService.drop('category uploadFile'))
+    ).subscribe({
       error: (error) => {
         console.log("Ha ocurrido un error al cargar el archivo ", {name: file.name, error});
       }
@@ -205,6 +227,7 @@ export class CategoryService {
   }
 
   deleteById(id: number) {
+    this.workingService.push('category deleteById');
     this.http.delete<ApiResponse<object>>(`${this.apiUrl}/category/delete/${id}`)
     .pipe(
       tap(() => {
@@ -231,12 +254,16 @@ export class CategoryService {
           console.error("Id no encontrado para eliminar categoria.", error);
         }
         return throwError(() => error);
-      })
+      }),
+      finalize(() => this.workingService.drop('category deleteById'))
     ).subscribe()
   }
 
   private deleteFile(file: S3File) {
-    this.fileService.deleteFile(file).subscribe({
+    this.workingService.push('category deleteFile');
+    this.fileService.deleteFile(file).pipe(
+      finalize(() => this.workingService.drop('category deleteFile'))
+    ).subscribe({
       error: (error) => {
         console.log("Ha ocurrido un error al eliminar el archivo ", {name: file.name, error});
       }
