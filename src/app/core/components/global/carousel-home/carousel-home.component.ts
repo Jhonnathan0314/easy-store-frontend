@@ -11,6 +11,7 @@ import { MessageModule } from 'primeng/message';
 import { SessionService } from 'src/app/core/services/utils/session/session.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 import { environment } from 'src/environments/environment';
+import { SessionData } from '@models/security/security-data.model';
 
 @Component({
   selector: 'app-carousel-home',
@@ -21,7 +22,7 @@ import { environment } from 'src/environments/environment';
 })
 export class CarouselHomeComponent implements OnInit {
 
-  role: Signal<string> = computed(() => this.sessionService.role());
+  session: Signal<SessionData | null> = computed(() => this.sessionService.session());
 
   categories: Signal<Category[]> = computed(() => this.categoryService.categories());
   categoriesError: Signal<ErrorMessage | null> = computed(() => this.categoryService.categoriesError())

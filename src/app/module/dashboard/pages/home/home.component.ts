@@ -2,6 +2,7 @@ import { Component, computed, Signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CarouselHomeComponent } from '@component/core/global/carousel-home/carousel-home.component';
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
+import { SessionData } from '@models/security/security-data.model';
 import { SessionService } from 'src/app/core/services/utils/session/session.service';
 
 @Component({
@@ -13,7 +14,7 @@ import { SessionService } from 'src/app/core/services/utils/session/session.serv
 })
 export class HomeComponent {
 
-  role: Signal<string> = computed(() => this.sessionService.role());
+  session: Signal<SessionData | null> = computed(() => this.sessionService.session());
 
   constructor(
     private router: Router,

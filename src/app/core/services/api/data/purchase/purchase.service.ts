@@ -8,6 +8,7 @@ import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { ProductService } from '../product/product.service';
 import { WorkingService } from '../../../utils/working/working.service';
 import { LoadingService } from '../../../utils/loading/loading.service';
+import { SessionData } from '@models/security/security-data.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class PurchaseService {
   purchases = signal<Purchase[]>([]);
   purchasesError = signal<ErrorMessage | null>(null)
   
-  role: Signal<string> = computed(() => this.sessionService.role());
+  session: Signal<SessionData | null> = computed(() => this.sessionService.session());
 
   constructor(
     private http: HttpClient, 
@@ -36,7 +37,7 @@ export class PurchaseService {
   
   validateRole() {
     effect(() => {
-      if(this.role() === '') return;
+      if(!this.session() || this.session()?.role === '') return;
       this.findAllByUser();
     }, {injector: this.injector, allowSignalWrites: true})
   }

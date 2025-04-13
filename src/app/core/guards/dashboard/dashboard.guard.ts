@@ -13,7 +13,7 @@ export class DashboardGuard {
   ){ }
 
   canActivate() { 
-    const isAdmin = this.sessionService.role() === 'admin';
+    const isAdmin = this.sessionService.session() && this.sessionService.session()?.role === 'admin';
     if(!isAdmin) this.router.navigateByUrl('/dashboard/home');
     return isAdmin;
   }

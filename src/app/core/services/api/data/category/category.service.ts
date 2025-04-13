@@ -9,6 +9,7 @@ import { FileService } from '../../utils/file/file.service';
 import { S3File } from '@models/utils/file.model';
 import { WorkingService } from '../../../utils/working/working.service';
 import { LoadingService } from '../../../utils/loading/loading.service';
+import { SessionData } from '@models/security/security-data.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class CategoryService {
   categories = signal<Category[]>([]);
   categoriesError = signal<ErrorMessage | null>(null);
 
-  role: Signal<string> = computed(() => this.sessionService.role());
+  session: Signal<SessionData | null> = computed(() => this.sessionService.session());
   
   constructor(
     private http: HttpClient, 
@@ -37,10 +38,10 @@ export class CategoryService {
 
   validateRole() {
     effect(() => {
-      if (this.role() === '') return;
-      if (this.role() === 'admin') {
+      if(!this.session() || this.session()?.role === '') return;
+      if (this.session()?.role === 'admin') {
         this.findAllByAccount();
-      }else if (this.role() === 'client' || this.role() === 'ghost') {
+      }else if (this.session()?.role === 'client' || this.session()?.role === 'ghost') {
         this.findAll();
       }
     }, {injector: this.injector, allowSignalWrites: true})

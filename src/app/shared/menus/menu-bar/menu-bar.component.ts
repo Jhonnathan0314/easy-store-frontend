@@ -2,6 +2,7 @@ import { Component, computed, Input, Signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
+import { SessionData } from '@models/security/security-data.model';
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 import { Subscription } from 'rxjs';
@@ -19,7 +20,7 @@ export class MenuBarComponent {
 
   @Input() items: MenuItem[] = []; 
 
-  role: Signal<string> = computed(() => this.sessionService.role());
+  session: Signal<SessionData | null> = computed(() => this.sessionService.session());
 
   isAdminSubscription: Subscription;
   adminModeSubscription: Subscription;

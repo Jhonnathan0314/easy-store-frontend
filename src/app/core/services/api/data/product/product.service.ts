@@ -10,6 +10,7 @@ import { FileProductService } from '../../utils/file-product/file-product.servic
 import { Category } from '@models/data/category.model';
 import { WorkingService } from '../../../utils/working/working.service';
 import { LoadingService } from '../../../utils/loading/loading.service';
+import { SessionData } from '@models/security/security-data.model';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,7 @@ export class ProductService {
 
   accountId = this.sessionService.getAccountId();
 
-  role: Signal<string> = computed(() => this.sessionService.role());
+  session: Signal<SessionData | null> = computed(() => this.sessionService.session());
 
   constructor(
     private http: HttpClient,
@@ -42,8 +43,8 @@ export class ProductService {
   
   validateRole() {
     effect(() => {
-      if(this.role() === '') return;
-      if(this.role() === 'admin') this.findByAccount();
+      if(!this.session() || this.session()?.role === '') return;
+      if(this.session()?.role === 'admin') this.findByAccount();
       this.accountId = this.sessionService.getAccountId();
     }, {injector: this.injector, allowSignalWrites: true})
   }

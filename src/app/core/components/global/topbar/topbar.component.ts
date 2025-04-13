@@ -1,6 +1,7 @@
 import { Component, computed, effect, Injector, Signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuBarComponent } from '@component/shared/menus/menu-bar/menu-bar.component';
+import { SessionData } from '@models/security/security-data.model';
 import { MenuItem } from 'primeng/api';
 import { SessionService } from 'src/app/core/services/utils/session/session.service';
 import { ThemeService } from 'src/app/core/services/utils/theme/theme.service';
@@ -13,7 +14,7 @@ import { ThemeService } from 'src/app/core/services/utils/theme/theme.service';
 })
 export class TopbarComponent {
 
-  role: Signal<string> = computed(() => this.sessionService.role());
+  session: Signal<SessionData | null> = computed(() => this.sessionService.session());
 
   items: MenuItem[] = [];
 
@@ -31,11 +32,11 @@ export class TopbarComponent {
   configMenuItems() {
     this.mode = this.themeService.getMode() === 'claro' ? 'oscuro' : 'claro';
     effect(() => {
-      if(this.role() === 'admin') {
+      if(this.session()?.role === 'admin') {
         this.buildItemsObjectAdmin();
-      } else if(this.role() === 'client') {
+      } else if(this.session()?.role === 'client') {
         this.buildItemsObjectClient();
-      } else if(this.role() === 'ghost') {
+      } else if(this.session()?.role === 'ghost') {
         this.buildItemsObjectGhost();
       }
     }, {injector: this.injector})

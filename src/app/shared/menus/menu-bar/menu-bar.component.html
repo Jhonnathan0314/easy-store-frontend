@@ -1,30 +1,32 @@
 <p-menubar [model]="items">
     <ng-template pTemplate="end">
-        <div class="flex items-center gap-4">
-            @if (role() === 'ghost') {
-                <app-button 
-                    label="Iniciar sesión"
-                    icon="pi "
-                    (clickEvent)="goToLogin()"
-                />
-                <app-button 
-                    label="Crear cuenta"
-                    icon="pi "
-                    (clickEvent)="goToRegister()"
-                />
-            } @else if (role() === 'admin' || role() === 'client') {
-                <app-button 
-                    label="Cerrar sesión"
-                    icon="pi "
-                    (clickEvent)="logout()"
-                />
-            }
-            @if (role() !== '') {
-                <a [routerLink]="['/dashboard/home']" class="flex justify-center items-center gap-2 font-semibold md:text-xl lg:text-2xl">
-                    <img [src]="'/assets/img/' + CATEGORY_IMAGE_NAME" [alt]="CATEGORY_IMAGE_NAME" class="h-8 lg:h-10" />
-                    <p>Easy store</p>
-                </a>
-            }
-        </div>
+        @if (session()) {
+            <div class="flex items-center gap-4">
+                @if (session()?.role === 'ghost') {
+                    <app-button 
+                        label="Iniciar sesión"
+                        icon="pi "
+                        (clickEvent)="goToLogin()"
+                    />
+                    <app-button 
+                        label="Crear cuenta"
+                        icon="pi "
+                        (clickEvent)="goToRegister()"
+                    />
+                } @else if (session()?.role === 'admin' || session()?.role === 'client') {
+                    <app-button 
+                        label="Cerrar sesión"
+                        icon="pi "
+                        (clickEvent)="logout()"
+                    />
+                }
+                @if (session()?.role !== '') {
+                    <a [routerLink]="['/dashboard/home']" class="flex justify-center items-center gap-2 font-semibold md:text-xl lg:text-2xl">
+                        <img [src]="'/assets/img/' + CATEGORY_IMAGE_NAME" [alt]="CATEGORY_IMAGE_NAME" class="h-8 lg:h-10" />
+                        <p>Easy store</p>
+                    </a>
+                }
+            </div>
+        }
     </ng-template>
 </p-menubar>

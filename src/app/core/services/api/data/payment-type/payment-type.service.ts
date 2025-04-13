@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { WorkingService } from '../../../utils/working/working.service';
 import { LoadingService } from '../../../utils/loading/loading.service';
+import { SessionData } from '@models/security/security-data.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class PaymentTypeService {
   paymentTypes = signal<PaymentType[]>([]);
   paymentTypesError = signal<ErrorMessage | null>(null);
   
-  role: Signal<string> = computed(() => this.sessionService.role());
+  session: Signal<SessionData | null> = computed(() => this.sessionService.session());
 
   constructor(
     private http: HttpClient, 
@@ -34,8 +35,8 @@ export class PaymentTypeService {
   
   validateRole() {
     effect(() => {
-      if(this.role() === '') return;
-      if(this.role() === 'admin') this.findAllActive();
+      if(!this.session() || this.session()?.role === '') return;
+      if(this.session()?.role === 'admin') this.findAllActive();
     }, {injector: this.injector, allowSignalWrites: true})
   }
 
