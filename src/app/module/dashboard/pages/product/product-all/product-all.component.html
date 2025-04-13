@@ -10,7 +10,7 @@
         icon="pi pi-plus"
         (clickEvent)="goCreate()"
     />
-    @if (isLoading) {
+    @if (isLoading()) {
         <app-loading-table 
             class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
         />
@@ -22,7 +22,7 @@
         <app-product-table
             class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
             [products]="mappedProducts"
-            [disableButtons]="isWorking"
+            [disableButtons]="isWorking()"
             (updateEvent)="goUpdate($event)"
             (deleteEvent)="deleteById($event)"
         />

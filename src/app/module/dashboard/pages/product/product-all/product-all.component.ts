@@ -11,6 +11,8 @@ import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/
 import { ErrorMessage } from '@models/data/general.model';
 import { MessageModule } from 'primeng/message';
 import { ProductTableComponent } from "../product-table/product-table.component";
+import { WorkingService } from 'src/app/core/services/utils/working/working.service';
+import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 
 @Component({
   selector: 'app-product-all',
@@ -27,8 +29,8 @@ export class ProductAllComponent implements OnInit {
   subcategoriesError: Signal<ErrorMessage | null> = computed(() => this.subcategoryService.subcategoriesError());
   subcategories: Signal<Subcategory[]> = computed(() => this.subcategoryService.subcategories());
 
-  isLoading: boolean = true;
-  isWorking: boolean = false;
+  isLoading: Signal<boolean> = computed(() => this.loadingService.loading().length > 0);
+  isWorking: Signal<boolean> = computed(() => this.workingService.working().length > 0);
   hasUnexpectedError: boolean = false;
 
   productSubscription: Subscription;
@@ -38,6 +40,8 @@ export class ProductAllComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private injector: Injector,
+    private workingService: WorkingService,
+    private loadingService: LoadingService,
     private productService: ProductService,
     private subcategoryService: SubcategoryService
   ) { }
@@ -58,9 +62,6 @@ export class ProductAllComponent implements OnInit {
           categoryId: subcategory.categoryId
         }
       })
-      this.isLoading = false;
-      if(this.isWorking) this.isWorking = false;
-      console.log({products: this.products(), mapped: this.mappedProducts});
     }, {injector: this.injector})
   }
 
@@ -68,7 +69,6 @@ export class ProductAllComponent implements OnInit {
     effect(() => {
       if(this.productsError() == null) return;
       if(this.productsError()?.code !== 404) this.hasUnexpectedError = true;
-      this.isLoading = false;
     }, {injector: this.injector})
   }
 
@@ -76,12 +76,10 @@ export class ProductAllComponent implements OnInit {
     effect(() => {
       if(this.subcategoriesError() == null) return;
       if(this.subcategoriesError()?.code !== 404) this.hasUnexpectedError = true;
-      this.isLoading = false;
     }, {injector: this.injector})
   }
 
   deleteById(product: DataObject) {
-    this.isWorking = true;
     this.productService.deleteById(product?.id ?? 0);
   }
 

@@ -8,8 +8,8 @@
       />
         <h1 class="w-full text-center">{{ title }}</h1>
     
-        @if (isLoading) {
-          <app-loading-form />
+        @if (isLoading()) {
+          <app-loading-form class="w-full" />
         } @else {
           @if(productForm.value.id != 0) {
             <app-input-number
@@ -103,7 +103,7 @@
             <app-button
               label="Actualizar imagen"
               icon="pi pi-image"
-              [disabled]="isWorking"
+              [disabled]="isWorking()"
               (clickEvent)="setViewInputFile(true)"
             />
           }
@@ -116,7 +116,7 @@
       
           <app-button
             [label]="buttonLabel"
-            [disabled]="(!isLoading && subcategories().length == 0) || isLoading || isWorking"
+            [disabled]="(!isLoading() && subcategories().length == 0) || isLoading() || isWorking()"
             (clickEvent)="validateForm()"
           />
         }

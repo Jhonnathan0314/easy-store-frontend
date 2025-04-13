@@ -47,7 +47,7 @@ export class CategoryService {
   }
 
   private findAllByAccount() {
-    this.loadingService.push('cateogry findAllByAccount');
+    this.loadingService.push('category findAllByAccount');
     const accountId = this.sessionService.getAccountId();
     this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/category/account/${accountId}`).pipe(
       map(response => response.data),
@@ -60,12 +60,12 @@ export class CategoryService {
         this.categoriesError.update(() => error.error.error);
         return throwError(() => error);
       }),
-      finalize(() => this.loadingService.drop('cateogry findAllByAccount'))
+      finalize(() => this.loadingService.drop('category findAllByAccount'))
     ).subscribe();
   }
 
   private findAll() {
-    this.loadingService.push('cateogry findAll');
+    this.loadingService.push('category findAll');
     this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/category`).pipe(
       map(response => response.data),
       tap(categories => {
@@ -77,7 +77,7 @@ export class CategoryService {
         this.categoriesError.update(() => error.error.error);
         return throwError(() => error);
       }),
-      finalize(() => this.loadingService.drop('cateogry findAll'))
+      finalize(() => this.loadingService.drop('category findAll'))
     ).subscribe();
   }
 

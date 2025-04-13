@@ -19,6 +19,8 @@ import { ToastModule } from 'primeng/toast';
 import { LoadingFormComponent } from "../../../../../shared/skeleton/loading-form/loading-form.component";
 import { ErrorMessage } from '@models/data/general.model';
 import { MessageModule } from 'primeng/message';
+import { WorkingService } from 'src/app/core/services/utils/working/working.service';
+import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 
 @Component({
   selector: 'app-product-form',
@@ -49,8 +51,8 @@ export class ProductFormComponent implements OnInit {
   title: string = 'Crear producto';
 
   viewInputFile: boolean = true;
-  isLoading: boolean = true;
-  isWorking: boolean = false;
+  isLoading: Signal<boolean> = computed(() => this.loadingService.loading().length > 0);
+  isWorking: Signal<boolean> = computed(() => this.workingService.working().length > 0);
   hasUnexpectedError: boolean = false;
 
   subcategorySubscription: Subscription;
@@ -62,6 +64,8 @@ export class ProductFormComponent implements OnInit {
     private router: Router, 
     private formBuilder: FormBuilder, 
     private injector: Injector,
+    private workingService: WorkingService,
+    private loadingService: LoadingService,
     private messageService: MessageService,
     private productService: ProductService,
     private subcategoryService: SubcategoryService
@@ -89,7 +93,6 @@ export class ProductFormComponent implements OnInit {
     effect(() => {
       if(this.subcategoriesError() == null) return;
       if(this.subcategoriesError()?.code !== 404) this.hasUnexpectedError = true;
-      this.isLoading = false;
     }, {injector: this.injector})
   }
 
@@ -112,7 +115,6 @@ export class ProductFormComponent implements OnInit {
     effect(() => {
       if(this.subcategories().length === 0) return;
       this.mappedSubcategories = this.subcategories().map(sub => ({ value: `${sub.id}`, name: sub.name }));
-      this.isLoading = this.buttonLabel === 'Guardar' && !this.product();
     }, {injector: this.injector})
   }
 
@@ -142,7 +144,6 @@ export class ProductFormComponent implements OnInit {
         qualification: this.product()?.qualification,
         subcategoryId: `${this.product()?.subcategoryId}`
       })
-      this.isLoading = this.mappedSubcategories.length === 0;
     }, {injector: this.injector})
   }
 
@@ -159,7 +160,6 @@ export class ProductFormComponent implements OnInit {
   }
 
   createProduct() {
-    this.isWorking = true;
     this.productService.create(this.getObject(), this.filesToUpload).subscribe({
       next: (product) => {
         this.productService.findProductImages(product.id).subscribe();
@@ -168,23 +168,18 @@ export class ProductFormComponent implements OnInit {
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
       },
       complete: () => {
-        this.isWorking = false;
         this.router.navigateByUrl('/dashboard/product');
       }
     })
   }
 
   updateProduct() {
-    this.isWorking = true;
     this.productService.update(this.getObject(), this.filesToUpload, this.filesToDelete).subscribe({
-      next: () => {
-      },
       error: (error) => {
         this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.error.detail});
       },
       complete: () => {
         this.productService.findProductImages(this.productId).subscribe();
-        this.isWorking = false;
         this.router.navigateByUrl('/dashboard/product');
       }
     })
@@ -212,17 +207,14 @@ export class ProductFormComponent implements OnInit {
   }
 
   setViewInputFile(value: boolean) {
-    this.isWorking = true;
     if(!this.productImagesFinded().includes(this.productId)) {
       this.productService.findProductImages(this.productId).subscribe({
         complete: () => {
           this.viewInputFile = value;
-          this.isWorking = false;
         }
       });
     }else {
       this.viewInputFile = value;
-      this.isWorking = false;
     }
   }
 
