@@ -182,13 +182,7 @@ export class PaymentTypeFormComponent {
   create() {
     this.categoryService.createCategoryHasPaymentType(this.getObject()).subscribe({
       error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error){
-          if(error.error.code == 409) {
-            this.messageService.add({severity: 'error', summary: error.error.detail, detail: 'Ya existe el tipo de pago ingresado.'});
-            return;
-          }
-        }
-        this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
+        this.handleCreateError(error);
       },
       complete: () => {
         this.router.navigateByUrl('/dashboard/payment-type');
@@ -199,13 +193,7 @@ export class PaymentTypeFormComponent {
   update() {
     this.categoryService.updateCategoryHasPaymentType(this.getObject()).subscribe({
       error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error){
-          if(error.error.code == 406) {
-            this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.error.detail});
-          }
-          return;
-        }
-        this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
+        this.handleUpdateError(error);
       },
       complete: () => {
         this.router.navigateByUrl('/dashboard/payment-type');
@@ -226,6 +214,26 @@ export class PaymentTypeFormComponent {
       accountBank: this.paymentTypeForm.value.accountBank,
       state: 'active'
     };
+  }
+
+  handleCreateError(error: ApiResponse<ErrorMessage>) {
+    if(error.error){
+      if(error.error.code == 409) {
+        this.messageService.add({severity: 'error', summary: error.error.detail, detail: 'Ya existe el tipo de pago ingresado.'});
+        return;
+      }
+    }
+    this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
+  }
+  
+  handleUpdateError(error: ApiResponse<ErrorMessage>) {
+    if(error.error){
+      if(error.error.code == 406) {
+        this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.error.detail});
+      }
+      return;
+    }
+    this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
   }
 
   receiveValue(key: string, value: string | number) {

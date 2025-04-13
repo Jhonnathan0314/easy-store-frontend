@@ -155,13 +155,7 @@ export class SubcategoryFormComponent implements OnInit {
   updateSubcategory() {
     this.subcategoryService.update(this.getObject()).subscribe({
       error: (error: ApiResponse<ErrorMessage>) => {
-        if(error.error) {
-          if(error.error.code == 406) {
-            this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.error.detail});
-            return;
-          }
-        }
-        this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
+        this.handleUpdateError(error);
       },
       complete: () => {
         this.router.navigateByUrl('/dashboard/subcategory');
@@ -175,6 +169,16 @@ export class SubcategoryFormComponent implements OnInit {
       name: this.subcategoryForm.value.name,
       categoryId: this.subcategoryForm.value.categoryId
     }
+  }
+
+  handleUpdateError(error: ApiResponse<ErrorMessage>) {
+    if(error.error) {
+      if(error.error.code == 406) {
+        this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.error.detail});
+        return;
+      }
+    }
+    this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
   }
 
   goBack() {

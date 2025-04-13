@@ -17,7 +17,7 @@ import { S3File } from '@models/utils/file.model';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { LoadingFormComponent } from "../../../../../shared/skeleton/loading-form/loading-form.component";
-import { ErrorMessage } from '@models/data/general.model';
+import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { MessageModule } from 'primeng/message';
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
@@ -177,7 +177,7 @@ export class ProductFormComponent implements OnInit {
   updateProduct() {
     this.productService.update(this.getObject(), this.filesToUpload, this.filesToDelete).subscribe({
       error: (error) => {
-        this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.error.detail});
+        this.handleUpdateError(error);
       },
       complete: () => {
         this.productService.findProductImages(this.productId).subscribe();
@@ -193,6 +193,16 @@ export class ProductFormComponent implements OnInit {
       imageLastNumber: this.product()?.imageLastNumber ?? 0,
       imageName: this.product()?.imageName ?? environment.DEFAULT_IMAGE_PRODUCT_NAME
     };
+  }
+
+  handleUpdateError(error: ApiResponse<ErrorMessage>) {
+    if(error.error) {
+      if(error.error.code == 406) {
+        this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.error.detail});
+        return;
+      }
+    }
+    this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
   }
 
   deleteFile(file: S3File) {
