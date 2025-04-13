@@ -60,7 +60,7 @@
     <app-button 
       [confirmClick]="true" 
       label="Crear cuenta" 
-      [disabled]="isWorking"
+      [disabled]="working()"
       (clickEvent)="validateForm()" 
     />
 

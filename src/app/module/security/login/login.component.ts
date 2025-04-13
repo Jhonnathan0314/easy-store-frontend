@@ -16,6 +16,7 @@ import { ThemeService } from 'src/app/core/services/utils/theme/theme.service';
 import { ButtonIconPosition } from '@enums/primeng.enum';
 import { MessageModule } from 'primeng/message';
 import { ErrorMessage } from '@models/data/general.model';
+import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 
 @Component({
   selector: 'app-login',
@@ -34,12 +35,13 @@ export class LoginComponent {
   securityError: Signal<ErrorMessage | null> = computed(() => this.securityService.securityError());
 
   loginError: boolean = false;
-  isWorking: boolean = false;
+  working: Signal<boolean> = computed(() => this.workingService.working());
   
   constructor(
     private formBuilder: FormBuilder,
     private injector: Injector,
     public themeService: ThemeService,
+    private workingService: WorkingService,
     private securityService: SecurityService
   ) {}
 
@@ -62,7 +64,7 @@ export class LoginComponent {
         return;
       }
       this.loginError = true;
-      this.isWorking = false;
+      this.workingService.setWorking(false);
     }, {injector: this.injector})
   }
 
@@ -77,7 +79,7 @@ export class LoginComponent {
   }
 
   login() {
-    this.isWorking = true;
+    this.workingService.setWorking(true);
     this.securityService.login(this.loginRequest);
   }
 

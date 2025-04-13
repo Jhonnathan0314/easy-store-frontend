@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, computed, OnDestroy, OnInit, Signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
@@ -10,6 +10,7 @@ import { InputOtpModule } from 'primeng/inputotp';
 import { SecurityService } from 'src/app/core/services/api/security/security.service';
 import { EmailService } from 'src/app/core/services/api/utils/email/email.service';
 import { ResetPasswordRequest } from '@models/security/security-request.model';
+import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -29,7 +30,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   invalidUsername: boolean = false;
   emailSent: boolean = false;
   hasError: boolean = false;
-  isWorking: boolean = false;
+  working: Signal<boolean> = computed(() => this.workingService.working());
 
   interval: NodeJS.Timeout;
 
@@ -37,7 +38,8 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private router: Router,
     private emailService: EmailService,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private workingService: WorkingService
   ) {}
 
   ngOnInit(): void {
@@ -67,15 +69,15 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
   sendEmail() {
     this.emailSent = true;
-    this.isWorking = true;
+    this.workingService.setWorking(true);
     this.emailService.sendOtpPassword(this.forgotPasswordForm.value.username).subscribe({
       next: () => {
         this.sendEmailInterval();
-        this.isWorking = false;
+        this.workingService.setWorking(false);
       },
       error: () => {
         this.emailSent = false;
-        this.isWorking = false;
+        this.workingService.setWorking(false);
       }
     });
   }
@@ -101,15 +103,15 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   }
 
   changePassword() {
-    this.isWorking = true;
+    this.workingService.setWorking(true);
     this.securityService.resetPassword(this.request).subscribe({
       next: () => {
         this.successMessage();
-        this.isWorking = false;
+        this.workingService.setWorking(false);
       },
       error: () => {
         this.hasError = true;
-        this.isWorking = false;
+        this.workingService.setWorking(false);
       }
     })
   }

@@ -8,6 +8,7 @@ import { ErrorMessage } from '@models/data/general.model';
 import { RegisterRequest, LoginRequest } from '@models/security/security-request.model';
 import { MessageModule } from 'primeng/message';
 import { SecurityService } from 'src/app/core/services/api/security/security.service';
+import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 
 @Component({
   selector: 'app-register',
@@ -24,7 +25,7 @@ export class RegisterComponent {
   
   securityError: Signal<ErrorMessage | null> = computed(() => this.securityService.securityError());
 
-  isWorking: boolean = false;
+  working: Signal<boolean> = computed(() => this.workingService.working());
   registerError: boolean = false;
 
   @Output() registerErrorEvent = new EventEmitter();
@@ -32,7 +33,8 @@ export class RegisterComponent {
   constructor(
     private formBuilder: FormBuilder, 
     private injector: Injector,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private workingService: WorkingService
   ) {}
 
   ngOnInit(): void {
@@ -57,7 +59,7 @@ export class RegisterComponent {
         return;
       }
       this.registerError = true;
-      this.isWorking = false;
+      this.workingService.setWorking(false);
     }, {injector: this.injector})
   }
 
@@ -87,7 +89,7 @@ export class RegisterComponent {
   }
 
   register(){
-    this.isWorking = true;
+    this.workingService.setWorking(true);
     this.securityService.register(this.registerRequest);
   }
 

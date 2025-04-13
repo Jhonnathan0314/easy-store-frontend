@@ -7,6 +7,7 @@ import { AuthResponse } from '../../../models/data-types/security/security-respo
 import { ApiResponse, ErrorMessage } from 'src/app/core/models/data-types/data/general.model';
 import { SessionService } from '../../utils/session/session.service';
 import { TokenService } from '../../utils/token/token.service';
+import { WorkingService } from '../../utils/working/working.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,7 @@ export class SecurityService {
 
   constructor(
     private http: HttpClient,
+    private workingService: WorkingService,
     private sessionService: SessionService,
     private tokenService: TokenService
   ) {
@@ -32,9 +34,11 @@ export class SecurityService {
       map(response => response.data.token),
       tap(token => {
         this.validateTokenReceived(loginRequest, token);
+        this.workingService.setWorking(false);
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
         this.securityError.update(() => error.error.error)
+        this.workingService.setWorking(false);
         return throwError(() => error.error.error);
       })
     ).subscribe();
