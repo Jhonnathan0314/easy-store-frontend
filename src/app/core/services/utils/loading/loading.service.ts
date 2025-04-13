@@ -5,15 +5,18 @@ import { Injectable, signal } from '@angular/core';
 })
 export class LoadingService {
 
-  loading = signal<boolean>(false);
+  loading = signal<string[]>([]);
 
   constructor() {
-    this.loading.set(false);
+    this.loading.set([]);
   }
 
-  setLoading(loading: boolean) {
-    if(loading == this.loading()) return;
-    this.loading.update(() => loading);
+  push(value: string) {
+    this.loading.update(loading => [...loading, value]);
+  }
+
+  drop(value: string) {
+    this.loading.update(loading => loading.filter(load => load !== value));
   }
 
 }

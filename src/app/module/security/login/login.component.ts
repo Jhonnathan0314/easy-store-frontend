@@ -35,7 +35,7 @@ export class LoginComponent {
   securityError: Signal<ErrorMessage | null> = computed(() => this.securityService.securityError());
 
   loginError: boolean = false;
-  working: Signal<boolean> = computed(() => this.workingService.working());
+  working: Signal<boolean> = computed(() => this.workingService.working().length > 0);
   
   constructor(
     private formBuilder: FormBuilder,
@@ -64,7 +64,6 @@ export class LoginComponent {
         return;
       }
       this.loginError = true;
-      this.workingService.setWorking(false);
     }, {injector: this.injector})
   }
 
@@ -79,7 +78,6 @@ export class LoginComponent {
   }
 
   login() {
-    this.workingService.setWorking(true);
     this.securityService.login(this.loginRequest);
   }
 

@@ -25,7 +25,7 @@ export class RegisterComponent {
   
   securityError: Signal<ErrorMessage | null> = computed(() => this.securityService.securityError());
 
-  working: Signal<boolean> = computed(() => this.workingService.working());
+  working: Signal<boolean> = computed(() => this.workingService.working().length > 0);
   registerError: boolean = false;
 
   @Output() registerErrorEvent = new EventEmitter();
@@ -59,7 +59,6 @@ export class RegisterComponent {
         return;
       }
       this.registerError = true;
-      this.workingService.setWorking(false);
     }, {injector: this.injector})
   }
 
@@ -89,7 +88,6 @@ export class RegisterComponent {
   }
 
   register(){
-    this.workingService.setWorking(true);
     this.securityService.register(this.registerRequest);
   }
 

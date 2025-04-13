@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { LoginRequest, RegisterRequest, ResetPasswordRequest } from '../../../models/data-types/security/security-request.model';
-import { catchError, map, Observable, tap, throwError } from 'rxjs';
+import { catchError, finalize, map, Observable, tap, throwError } from 'rxjs';
 import { AuthResponse } from '../../../models/data-types/security/security-response.model';
 import { ApiResponse, ErrorMessage } from 'src/app/core/models/data-types/data/general.model';
 import { SessionService } from '../../utils/session/session.service';
@@ -30,17 +30,17 @@ export class SecurityService {
   }
 
   login(loginRequest: LoginRequest) {
+    this.workingService.push('login');
     this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/auth/login`, loginRequest).pipe(
       map(response => response.data.token),
       tap(token => {
         this.validateTokenReceived(loginRequest, token);
-        this.workingService.setWorking(false);
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
         this.securityError.update(() => error.error.error)
-        this.workingService.setWorking(false);
         return throwError(() => error.error.error);
-      })
+      }),
+      finalize(() => this.workingService.drop('login'))
     ).subscribe();
   }
 
@@ -58,6 +58,7 @@ export class SecurityService {
   }
 
   register(registerRequest: RegisterRequest) {
+    this.workingService.push('register');
     this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/auth/register`, registerRequest).pipe(
       map(response => response.data.token),
       tap(token => {
@@ -66,12 +67,16 @@ export class SecurityService {
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
         this.securityError.update(() => error.error.error)
         return throwError(() => error.error.error);
-      })
+      }),
+      finalize(() => this.workingService.drop('register'))
     ).subscribe();
   }
 
   resetPassword(request: ResetPasswordRequest): Observable<ApiResponse<AuthResponse>> {
-    return this.http.put<ApiResponse<AuthResponse>>(`${this.apiUrl}/auth/reset-password`, request);
+    this.workingService.push('resetPassword');
+    return this.http.put<ApiResponse<AuthResponse>>(`${this.apiUrl}/auth/reset-password`, request).pipe(
+      finalize(() => this.workingService.drop('resetPassword'))
+    );
   }
 
   logout(action: 'login' | 'register' | 'logout' | '') {

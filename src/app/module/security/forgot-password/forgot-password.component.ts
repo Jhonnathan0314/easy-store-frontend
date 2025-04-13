@@ -30,7 +30,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   invalidUsername: boolean = false;
   emailSent: boolean = false;
   hasError: boolean = false;
-  working: Signal<boolean> = computed(() => this.workingService.working());
+  working: Signal<boolean> = computed(() => this.workingService.working().length > 0);
 
   interval: NodeJS.Timeout;
 
@@ -69,15 +69,12 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
   sendEmail() {
     this.emailSent = true;
-    this.workingService.setWorking(true);
     this.emailService.sendOtpPassword(this.forgotPasswordForm.value.username).subscribe({
       next: () => {
         this.sendEmailInterval();
-        this.workingService.setWorking(false);
       },
       error: () => {
         this.emailSent = false;
-        this.workingService.setWorking(false);
       }
     });
   }
@@ -103,15 +100,12 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   }
 
   changePassword() {
-    this.workingService.setWorking(true);
     this.securityService.resetPassword(this.request).subscribe({
       next: () => {
         this.successMessage();
-        this.workingService.setWorking(false);
       },
       error: () => {
         this.hasError = true;
-        this.workingService.setWorking(false);
       }
     })
   }
