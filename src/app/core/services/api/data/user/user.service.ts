@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, Injectable, Signal, signal } from '@angular/core';
 import { User } from '@models/security/user.model';
-import { catchError, map, Observable, tap, throwError } from 'rxjs';
+import { catchError, finalize, map, tap, throwError } from 'rxjs';
 import { SessionService } from '../../../utils/session/session.service';
 import { environment } from 'src/environments/environment';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
+import { LoadingService } from '../../../utils/loading/loading.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,13 +19,17 @@ export class UserService {
   
   constructor(
     private http: HttpClient, 
+    private loadingService: LoadingService,
     private sessionService: SessionService
   ) {
-    this.findAll();
+    this.findAllByAccount();
   }
 
-  private findAll() {
+  private findAllByAccount() {
+    this.loadingService.push('user findAllByAccount');
+
     const accountId = this.sessionService.getUserId();
+
     this.http.get<ApiResponse<User[]>>(`${this.apiUrl}/user/account/${accountId}`).pipe(
       map(response => response.data),
       tap(users => {
@@ -33,7 +38,8 @@ export class UserService {
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
         this.usersError.set(error.error.error);
         return throwError(() => error);
-      })
+      }),
+      finalize(() => this.loadingService.drop('user findAllByAccount'))
     ).subscribe()
   }
 
@@ -41,32 +47,4 @@ export class UserService {
     return computed(() => this.users().find(user => user.id === id));
   }
 
-  create(user: User): Observable<User> {
-    return this.http.post<ApiResponse<User>>(`${this.apiUrl}/user`, user).pipe(
-      map(response => response.data),
-      tap(userCreated => {
-        this.users.update(users => [...users, userCreated])
-      })
-    )
-  }
-
-  update(user: User): Observable<User> {
-    return this.http.put<ApiResponse<User>>(`${this.apiUrl}/user`, user).pipe(
-      map(response => response.data),
-      tap(userUpdated => {
-        this.users.update(users => users.map(us => us.id === user.id 
-          ? userUpdated 
-          : us
-        ));
-      })
-    )
-  }
-
-  deleteById(id: number) {
-    this.http.delete<ApiResponse<object>>(`${this.apiUrl}/user/delete/${id}`).pipe(
-      tap(() => {
-        this.users.update(users => users.filter(user => user.id != id));
-      })
-    ).subscribe()
-  }
 }
