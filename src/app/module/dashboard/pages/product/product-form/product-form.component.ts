@@ -21,6 +21,7 @@ import { ErrorMessage } from '@models/data/general.model';
 import { MessageModule } from 'primeng/message';
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-product-form',
@@ -132,7 +133,7 @@ export class ProductFormComponent implements OnInit {
   prepareUpdateForm() {
     effect(() => {
       if(!this.product()) return;
-      if(this.product()?.imageName != 'store.png' && !this.productImagesFinded().includes(this.productId)) {
+      if(this.product()?.imageName != environment.DEFAULT_IMAGE_CATEGORY_NAME && !this.productImagesFinded().includes(this.productId)) {
         this.viewInputFile = false;
       }
       this.productForm.patchValue({
@@ -190,7 +191,7 @@ export class ProductFormComponent implements OnInit {
       ...this.productForm.value,
       imageNumber: this.product()?.imageNumber ?? 0,
       imageLastNumber: this.product()?.imageLastNumber ?? 0,
-      imageName: this.product()?.imageName ?? 'product.png'
+      imageName: this.product()?.imageName ?? environment.DEFAULT_IMAGE_PRODUCT_NAME
     };
   }
 

@@ -3,6 +3,7 @@ import { Component, Inject } from '@angular/core';
 import { SplitButtonComponent } from '@component/shared/menus/split-button/split-button.component';
 import { MenuItem } from 'primeng/api';
 import { ThemeService } from 'src/app/core/services/utils/theme/theme.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-security-topbar',
@@ -15,6 +16,8 @@ export class SecurityTopbarComponent {
   items: MenuItem[] = [];
 
   mode: string = ''
+
+  CATEGORY_IMAGE_NAME: string = environment.DEFAULT_IMAGE_CATEGORY_NAME;
 
   constructor(public themeService: ThemeService, @Inject(DOCUMENT) private document: Document) {
     this.configMenuItems();

@@ -11,6 +11,7 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { TagModule } from 'primeng/tag';
 import { DividerModule } from 'primeng/divider';
 import { Purchase } from '@models/data/purchase.model';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-data-view',
@@ -71,6 +72,8 @@ export class DataViewComponent implements OnInit, OnChanges {
 
   phoneNumber: string = '3125543042';
 
+  PRODUCT_IMAGE_NAME: string = environment.DEFAULT_IMAGE_PRODUCT_NAME;
+
   ngOnInit(): void {
     if(!this.cart.products)
       this.cart.products = [];  
@@ -122,7 +125,8 @@ export class DataViewComponent implements OnInit, OnChanges {
     }
   }
 
-  cartHasProduct(product: Product) {
+  cartHasProduct(product: Product): boolean {
+    if(!this.cart.products) return false;
     return this.cart.products.find(p => p.id.productId == product.id) != undefined;
   }
 

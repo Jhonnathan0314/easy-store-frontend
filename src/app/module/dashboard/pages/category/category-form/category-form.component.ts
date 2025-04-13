@@ -15,6 +15,7 @@ import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { LoadingFormComponent } from "../../../../../shared/skeleton/loading-form/loading-form.component";
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-category-form',
@@ -97,7 +98,7 @@ export class CategoryFormComponent implements OnInit {
     effect(() => {
       this.category = this.categoryService.getById(this.categoryId)();
       if(!this.category) return;
-      if(this.category?.imageName != 'store.png') {
+      if(this.category?.imageName != environment.DEFAULT_IMAGE_CATEGORY_NAME) {
         this.viewInputFile = false;
       }
       this.categoryForm.patchValue({
@@ -140,7 +141,7 @@ export class CategoryFormComponent implements OnInit {
       id: this.categoryId,
       name: this.categoryForm.value.name,
       description: this.categoryForm.value.description,
-      imageName: 'store.png',
+      imageName: environment.DEFAULT_IMAGE_CATEGORY_NAME,
       userId: 0,
       accountId: 0,
       image: new S3File()
@@ -173,7 +174,7 @@ export class CategoryFormComponent implements OnInit {
       id: this.categoryId,
       name: this.categoryForm.value.name,
       description: this.categoryForm.value.description,
-      imageName: this.category?.imageName ?? 'store.png',
+      imageName: this.category?.imageName ?? environment.DEFAULT_IMAGE_CATEGORY_NAME,
       userId: 0,
       accountId: 0,
       image: this.category?.image ?? new S3File()

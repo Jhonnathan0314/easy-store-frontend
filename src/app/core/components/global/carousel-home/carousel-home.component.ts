@@ -10,6 +10,7 @@ import { ErrorMessage } from '@models/data/general.model';
 import { MessageModule } from 'primeng/message';
 import { SessionService } from 'src/app/core/services/utils/session/session.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-carousel-home',
@@ -50,7 +51,7 @@ export class CarouselHomeComponent implements OnInit {
       if(this.categories().length == 0) return;
       this.items = this.categories().map(category => ({
         title: category.name,
-        img: category.imageName != 'store.png' && category.image ? `data:${category.image?.extension};base64,${category.image?.content}` : '/assets/img/store.png',
+        img: category.imageName != environment.DEFAULT_IMAGE_CATEGORY_NAME && category.image ? `data:${category.image?.extension};base64,${category.image?.content}` : '/assets/img/' + environment.DEFAULT_IMAGE_CATEGORY_NAME,
         body: category.description,
         value: category.id,
         route: `store/products/${category.id}`,

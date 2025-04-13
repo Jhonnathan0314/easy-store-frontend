@@ -7,6 +7,7 @@ import { MenubarModule } from 'primeng/menubar';
 import { Subscription } from 'rxjs';
 import { SecurityService } from 'src/app/core/services/api/security/security.service';
 import { SessionService } from 'src/app/core/services/utils/session/session.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-menu-bar',
@@ -22,6 +23,8 @@ export class MenuBarComponent {
 
   isAdminSubscription: Subscription;
   adminModeSubscription: Subscription;
+
+  CATEGORY_IMAGE_NAME: string = environment.DEFAULT_IMAGE_CATEGORY_NAME;
 
   constructor(
     private sessionService: SessionService,

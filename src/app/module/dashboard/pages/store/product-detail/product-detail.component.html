@@ -10,14 +10,14 @@
             <ng-template pTemplate="item" let-image>
                 <img 
                     [src]="image.name ? 'data:' + image.extension + ';base64,' + image.content : image.src"
-                    [alt]="image.name ? image.name : 'product.png'"
+                    [alt]="image.name ? image.name : PRODUCT_IMAGE_NAME"
                     class="w-full max-w-80 py-8"
                 />
             </ng-template>
             <ng-template pTemplate="thumbnail" let-image>
                 <img 
-                    [src]="image.name ? 'data:' + image.extension + ';base64,' + image.content : '/assets/img/product.png'"
-                    [alt]="image.name ? image.name : 'product.png'"
+                    [src]="image.name ? 'data:' + image.extension + ';base64,' + image.content : '/assets/img/' + PRODUCT_IMAGE_NAME"
+                    [alt]="image.name ? image.name : PRODUCT_IMAGE_NAME"
                     class="w-16"
                 />
             </ng-template>

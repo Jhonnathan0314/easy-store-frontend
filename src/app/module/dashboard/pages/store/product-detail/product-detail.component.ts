@@ -5,6 +5,7 @@ import { GalleriaModule } from 'primeng/galleria';
 import { FormsModule } from '@angular/forms';
 import { S3File } from '@models/utils/file.model';
 import { Purchase } from '@models/data/purchase.model';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-product-detail',
@@ -24,9 +25,11 @@ export class ProductDetailComponent {
   @Input() product: Product | undefined = undefined;
   @Input() disableButtons: boolean = false;
 
+  PRODUCT_IMAGE_NAME: string = environment.DEFAULT_IMAGE_PRODUCT_NAME;
+
   defaultImages: {src: string}[] = [
     {
-      src: '/assets/img/product.png'
+      src: `/assets/img/${this.PRODUCT_IMAGE_NAME}`
     }
   ]
 
@@ -51,6 +54,7 @@ export class ProductDetailComponent {
   }
 
   cartHasProduct(product: Product | undefined) {
+    if(!this.cart.products) return false;
     return this.cart.products.find(p => p.id.productId == product?.id) != undefined;
   }
 

@@ -72,15 +72,13 @@ export class ProductsComponent implements OnInit {
       if(!this.category()) return;
       if(!isAdmin && this.products().length == 0) {
         this.productService.findByCategoryId(this.category() ?? new Category());
-        return;
       }
       if(this.paymentTypes().length === 0) {
         this.paymentTypeService.findAllActive();
-        return;
       }
       if(this.purchases().length === 0) return;
       this.cart = this.purchases().find(cart => cart.categoryId == this.categoryId && cart.state == 'cart') ?? new Purchase();
-    }, {injector: this.injector})
+    }, {injector: this.injector, allowSignalWrites: true})
   }
 
   addToCart($event: Product) {

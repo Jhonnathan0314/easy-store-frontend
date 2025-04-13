@@ -28,8 +28,8 @@
                         <div class="md:w-40 relative">
                             <img
                                 class="block xl:block mx-auto rounded w-full"
-                                [src]="item && item.images && item.images.length ? 'data:' + item.images[0].extension + ';base64,' + item.images[0].content : '/assets/img/product.png'"
-                                [alt]="item && item.images && item.images.length ? item.images[0].name : '/assets/img/product.png'"
+                                [src]="item && item.images && item.images.length ? 'data:' + item.images[0].extension + ';base64,' + item.images[0].content : '/assets/img/' + PRODUCT_IMAGE_NAME"
+                                [alt]="item && item.images && item.images.length ? item.images[0].name : '/assets/img/' + PRODUCT_IMAGE_NAME"
                             />
                             <p-tag
                                 [value]="item.quantity + ' disponibles'"
@@ -109,8 +109,8 @@
                                     <div class="relative m-auto h-60">
                                         <img
                                             class="rounded max-h-60"
-                                            [src]="item && item.images && item.images.length ? 'data:' + item.images[0].extension + ';base64,' + item.images[0].content : '/assets/img/product.png'"
-                                            [alt]="item && item.images && item.images.length ? item.images[0].name : '/assets/img/product.png'"
+                                            [src]="item && item.images && item.images.length ? 'data:' + item.images[0].extension + ';base64,' + item.images[0].content : '/assets/img/' + PRODUCT_IMAGE_NAME"
+                                            [alt]="item && item.images && item.images.length ? item.images[0].name : '/assets/img/' + PRODUCT_IMAGE_NAME"
                                             
                                         />
                                         <p-tag

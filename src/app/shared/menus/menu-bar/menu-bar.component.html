@@ -21,7 +21,7 @@
             }
             @if (role() !== '') {
                 <a [routerLink]="['/dashboard/home']" class="flex justify-center items-center gap-2 font-semibold md:text-xl lg:text-2xl">
-                    <img src="/assets/img/store.png" alt="store.png" class="h-8 lg:h-10" />
+                    <img [src]="'/assets/img/' + CATEGORY_IMAGE_NAME" [alt]="CATEGORY_IMAGE_NAME" class="h-8 lg:h-10" />
                     <p>Easy store</p>
                 </a>
             }

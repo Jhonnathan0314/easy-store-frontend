@@ -19,6 +19,7 @@ import { MessageService } from 'primeng/api';
 import { WhatsappPipe } from 'src/app/core/pipes/whatsapp/whatsapp.pipe';
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-cart',
@@ -46,6 +47,8 @@ export class CartComponent implements OnInit {
   isLoading: Signal<boolean> = computed(() => this.loadingService.loading().length > 0);
   isWorking: Signal<boolean> = computed(() => this.workingService.working().length > 0);
   hasUnexpectedError: boolean = false;
+
+  PRODUCT_IMAGE_NAME: string = environment.DEFAULT_IMAGE_PRODUCT_NAME;
 
   constructor(
     private router: Router,

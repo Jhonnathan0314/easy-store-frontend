@@ -104,7 +104,7 @@ export class CategoryService {
 
   private getRequestObject() {
     return this.categories().map(category => {
-      if (category.imageName !== 'store.png') {
+      if (category.imageName !== environment.DEFAULT_IMAGE_CATEGORY_NAME) {
         const file: S3File = new S3File();
         file.context = "category";
         file.name = category.imageName;
@@ -168,7 +168,7 @@ export class CategoryService {
     category.userId = userId;
     category.accountId = accountId;
 
-    if(file != null && category.imageName == 'store.png') {
+    if(file != null && category.imageName == environment.DEFAULT_IMAGE_CATEGORY_NAME) {
       category.imageName = `${category.id}.png`;
     }
 

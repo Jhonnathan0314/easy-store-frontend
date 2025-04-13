@@ -24,7 +24,7 @@ export class FileProductService {
   ) { }
 
   findAllFirstImage(products: Product[], accountId?: number): Observable<S3File[]> {
-    const validProducts = products.filter(p => p.imageNumber > 0 && p.imageName && p.imageName !== 'product.png');
+    const validProducts = products.filter(p => p.imageNumber > 0 && p.imageName && p.imageName !== environment.DEFAULT_IMAGE_PRODUCT_NAME);
 
     if (validProducts.length === 0) return of([]);
 
@@ -48,7 +48,7 @@ export class FileProductService {
   }
 
   private getImagesRequest(product: Product, accountId?: number): Observable<S3File>[] {
-    if (product.imageNumber == 0 || !product.imageName || product.imageName == 'product.png') return [];
+    if (product.imageNumber == 0 || !product.imageName || product.imageName == environment.DEFAULT_IMAGE_PRODUCT_NAME) return [];
 
     return product.imageName.split(",").map(imageName => {
       return this.fileService.getFile({ name: imageName, context: "product", accountId: accountId ?? this.accountId } as S3File);
