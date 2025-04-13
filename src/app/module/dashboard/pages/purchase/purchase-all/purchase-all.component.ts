@@ -18,6 +18,7 @@ import { MessageModule } from 'primeng/message';
 import { ErrorMessage } from '@models/data/general.model';
 import { PurchaseTableComponent } from "../purchase-table/purchase-table.component";
 import { PurchaseDetailTableComponent } from "../purchase-detail-table/purchase-detail-table.component";
+import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 
 @Component({
   selector: 'app-purchase-all',
@@ -58,12 +59,13 @@ export class PurchaseAllComponent implements OnInit {
 
   viewChart: boolean = false;
 
-  isLoading: boolean = true;
+  isLoading: Signal<boolean> = computed(() => this.loadingService.loading().length > 0);
   hasUnexpectedError: boolean = false;
 
   constructor(
     private router: Router,
     private injector: Injector,
+    private loadingService: LoadingService,
     private userService: UserService,
     private paymentTypeService: PaymentTypeService,
     private categoryService: CategoryService,
@@ -112,7 +114,6 @@ export class PurchaseAllComponent implements OnInit {
     effect(() => {
       if(this.purchasesError() == null) return;
       if(this.purchasesError()?.code !== 404) this.hasUnexpectedError = true;
-      this.isLoading = false;
     }, {injector: this.injector})
   }
 
@@ -125,7 +126,6 @@ export class PurchaseAllComponent implements OnInit {
         this.completePurchaseMap(purch);
         return this.purchaseMap;
       })
-      this.isLoading = false;
     }, {injector: this.injector})
   }
 

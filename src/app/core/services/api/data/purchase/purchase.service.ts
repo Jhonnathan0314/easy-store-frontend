@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, effect, Injectable, Injector, Signal, signal } from '@angular/core';
 import { Purchase, PurchaseHasProduct, PurchaseHasProductId, PurchaseHasProductRq, PurchaseRq } from '@models/data/purchase.model';
-import { catchError, map, Observable, tap, throwError } from 'rxjs';
+import { catchError, finalize, map, Observable, tap, throwError } from 'rxjs';
 import { SessionService } from '../../../utils/session/session.service';
 import { environment } from 'src/environments/environment';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { ProductService } from '../product/product.service';
+import { WorkingService } from '../../../utils/working/working.service';
+import { LoadingService } from '../../../utils/loading/loading.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +24,8 @@ export class PurchaseService {
   constructor(
     private http: HttpClient, 
     private injector: Injector,
+    private workingService: WorkingService,
+    private loadingService: LoadingService,
     private sessionService: SessionService,
     private productService: ProductService
   ) {
@@ -34,11 +38,14 @@ export class PurchaseService {
     effect(() => {
       if(this.role() === '') return;
       this.findAllByUser();
-    }, {injector: this.injector})
+    }, {injector: this.injector, allowSignalWrites: true})
   }
   
   private findAllByUser() {
+    this.loadingService.push('purchase findAllByUser');
+
     const userId = this.sessionService.getUserId();
+
     this.http.get<ApiResponse<Purchase[]>>(`${this.apiUrl}/purchase/user/${userId}`).pipe(
       map(response => response.data),
       tap(purchases => {
@@ -49,26 +56,34 @@ export class PurchaseService {
         this.purchasesError.update(() => error.error.error);
         this.purchases.update(() => []);
         return throwError(() => error.error);
-      })
+      }),
+      finalize(() => this.loadingService.drop('purchase findAllByUser'))
     ).subscribe()
   }
 
   generate(purchase: PurchaseRq): Observable<Purchase> {
+    this.workingService.push('purchase generate');
+
     const userId = this.sessionService.getUserId();
     purchase.userId = userId;
+
     return this.http.post<ApiResponse<Purchase>>(`${this.apiUrl}/purchase`, purchase, {
       headers: { 'Create-By': `${userId}` }
     }).pipe(
       map(response => response.data),
       tap(purchaseCreated => {
         this.purchases.update(() => [...this.purchases(), purchaseCreated])
-      })
+      }),
+      finalize(() => this.workingService.drop('purchase generate'))
     )
   }
 
   update(purchase: Purchase): Observable<Purchase> {
+    this.workingService.push('purchase update');
+
     const userId = this.sessionService.getUserId();
     purchase.userId = userId;
+
     return this.http.put<ApiResponse<Purchase>>(`${this.apiUrl}/purchase`, purchase, {
       headers: { 'Update-By': `${userId}` }
     }).pipe(
@@ -78,11 +93,14 @@ export class PurchaseService {
           ? purchaseUpdated 
           : pur
         ));
-      })
+      }),
+      finalize(() => this.workingService.drop('purchase update'))
     )
   }
 
   deleteById(id: number) {
+    this.workingService.push('purchase deleteById');
+
     this.http.delete<ApiResponse<object>>(`${this.apiUrl}/purchase/delete/${id}`).pipe(
       tap(() => {
         this.purchases.update(pur => pur.filter(pur => pur.id != id));
@@ -94,13 +112,15 @@ export class PurchaseService {
           };
           this.purchasesError.update(() => error)
         }
-      })
+      }),
+      finalize(() => this.workingService.drop('purchase deleteById'))
     ).subscribe()
   }
 
   addPurchaseHasProduct(purchaseHasProduct: PurchaseHasProductRq): Observable<PurchaseHasProduct> {
-    return this.http.post<ApiResponse<PurchaseHasProduct>>(`${this.apiUrl}/purchase-has-product`, purchaseHasProduct)
-    .pipe(
+    this.workingService.push('purchase-has-product add');
+
+    return this.http.post<ApiResponse<PurchaseHasProduct>>(`${this.apiUrl}/purchase-has-product`, purchaseHasProduct).pipe(
       map(response => response.data),
       tap(hasProduct => {
         this.purchases.update(purchases => {
@@ -120,13 +140,15 @@ export class PurchaseService {
           }
           return [...purchases];
         });
-      })
+      }),
+      finalize(() => this.workingService.drop('purchase-has-product add'))
     );
   }
 
   updatePurchaseHasProduct(purchaseHasProduct: PurchaseHasProductRq): Observable<PurchaseHasProduct> {
-    return this.http.put<ApiResponse<PurchaseHasProduct>>(`${this.apiUrl}/purchase-has-product`, purchaseHasProduct)
-    .pipe(
+    this.workingService.push('purchase-has-product update');
+
+    return this.http.put<ApiResponse<PurchaseHasProduct>>(`${this.apiUrl}/purchase-has-product`, purchaseHasProduct).pipe(
       map(response => response.data),
       tap(hasProduct => {
         this.purchases.update(purchases => {
@@ -148,13 +170,15 @@ export class PurchaseService {
       }),
       catchError((error) => {
         return throwError(() => error.error.error)
-      })
+      }),
+      finalize(() => this.workingService.drop('purchase-has-product update'))
     );
   }
 
   deletePurchaseHasProductById(id: PurchaseHasProductId): Observable<ApiResponse<object>> {
-    return this.http.delete<ApiResponse<object>>(`${this.apiUrl}/purchase-has-product/purchase/${id.purchaseId}/product/${id.productId}`)
-    .pipe(
+    this.workingService.push('purchase-has-product delete');
+
+    return this.http.delete<ApiResponse<object>>(`${this.apiUrl}/purchase-has-product/purchase/${id.purchaseId}/product/${id.productId}`).pipe(
       tap(() => {
         this.purchases.update(purchases => {
           const purchaseIndex = purchases.findIndex(p => p.id === id.purchaseId);
@@ -166,7 +190,8 @@ export class PurchaseService {
           }
           return [...purchases];
         });
-      })
+      }),
+      finalize(() => this.workingService.drop('purchase-has-product delete'))
     );
   }
 

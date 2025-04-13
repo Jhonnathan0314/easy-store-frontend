@@ -27,11 +27,11 @@
         <app-purchase-report class="w-full" [purchases]="mappedPurchases" [categories]="categories()" />
     } @else {
         <h1 class="w-full text-center font-bold">Gestion de compras</h1>
-        @if (isLoading) {
+        @if (isLoading()) {
             <app-loading-table 
                 class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
             />
-        } @else if(!isLoading && mappedPurchases.length == 0) {
+        } @else if(!isLoading() && mappedPurchases.length == 0) {
             <p-message severity="warn">No se encontraron compras en tus tiendas. 😢</p-message>
         } @else if(hasUnexpectedError) {
             <p-message severity="error">Ha ocurrido un error inesperado, por favor, intentelo de nuevo más tarde.</p-message>
@@ -53,7 +53,7 @@
                 />
                 <h1 class="w-full text-center font-bold">Compra con id {{ detailSelectedId }}</h1>
             </div>
-            @if (isLoading) {
+            @if (isLoading()) {
                 <app-loading-table 
                     class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
                 />
