@@ -9,6 +9,7 @@ import { RegisterRequest, LoginRequest } from '@models/security/security-request
 import { MessageModule } from 'primeng/message';
 import { SecurityService } from 'src/app/core/services/api/security/security.service';
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-register',
@@ -68,16 +69,12 @@ export class RegisterComponent {
       return;
     }
 
-    const role = {
-      id: 1,
-      name: 'client'
-    }
     this.registerRequest = {
       name: this.registerForm.value.name,
       lastName: this.registerForm.value.lastName,
       username: this.registerForm.value.username,
       password: this.registerForm.value.password,
-      role: role
+      role: environment.DEFAULT_ROLE
     };
 
     this.register();
