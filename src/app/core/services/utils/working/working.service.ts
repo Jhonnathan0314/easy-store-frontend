@@ -13,12 +13,12 @@ export class WorkingService {
 
   push(value: string) {
     this.working.update(working => [...working, value]);
-    console.log("Push working: ", {value, working: this.working()});
+    console.log("Push working: ", {value});
   }
 
   drop(value: string) {
     this.working.update(working => working.filter(work => work !== value));
-    console.log("Drop working: ", {value, working: this.working()});
+    console.log("Drop working: ", {value});
   }
 
 }

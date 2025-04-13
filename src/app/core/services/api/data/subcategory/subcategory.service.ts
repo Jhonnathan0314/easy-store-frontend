@@ -1,10 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, effect, Injectable, Injector, Signal, signal } from '@angular/core';
 import { Subcategory } from '@models/data/subcategory.model';
-import { catchError, map, Observable, tap, throwError } from 'rxjs';
+import { catchError, finalize, map, Observable, tap, throwError } from 'rxjs';
 import { SessionService } from '../../../utils/session/session.service';
 import { environment } from 'src/environments/environment';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
+import { WorkingService } from '../../../utils/working/working.service';
+import { LoadingService } from '../../../utils/loading/loading.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +23,8 @@ export class SubcategoryService {
   constructor(
     private http: HttpClient, 
     private injector: Injector,
+    private workingService: WorkingService,
+    private loadingService: LoadingService,
     private sessionService: SessionService
   ) {
     this.subcategories.set([]);
@@ -32,10 +36,11 @@ export class SubcategoryService {
     effect(() => {
       if(this.role() === '') return;
       this.findAllByAccountId();
-    }, {injector: this.injector})
+    }, {injector: this.injector, allowSignalWrites: true})
   }
 
   private findAllByAccountId() {
+    this.loadingService.push('subcategory findAllByAccountId');
     const accountId = this.sessionService.getAccountId();
     this.http.get<ApiResponse<Subcategory[]>>(`${this.apiUrl}/subcategory/account/${accountId}`).pipe(
       map(response => response.data),
@@ -47,7 +52,8 @@ export class SubcategoryService {
         this.subcategoriesError.update(() => error.error.error);
         this.subcategories.update(() => []);
         return throwError(() => error);
-      })
+      }),
+      finalize(() => this.loadingService.drop('subcategory findAllByAccountId'))
     ).subscribe()
   }
 
@@ -56,7 +62,10 @@ export class SubcategoryService {
   }
 
   create(subcategory: Subcategory): Observable<Subcategory> {
+    this.workingService.push('subcategory create');
+
     const userId = this.sessionService.getUserId();
+
     return this.http.post<ApiResponse<Subcategory>>(`${this.apiUrl}/subcategory`, subcategory, {
       headers: {
         'Create-By': `${userId}`
@@ -65,12 +74,16 @@ export class SubcategoryService {
       map(response => response.data),
       tap(subcategoryCreated => {
         this.subcategories.update(subcats => [...subcats, subcategoryCreated]);
-      })
+      }),
+      finalize(() => this.workingService.drop('subcategory create'))
     )
   }
 
   update(subcategory: Subcategory): Observable<Subcategory> {
+    this.workingService.push('subcategory update');
+
     const userId = this.sessionService.getUserId();
+
     return this.http.put<ApiResponse<Subcategory>>(`${this.apiUrl}/subcategory`, subcategory, {
       headers: {
         'Update-By': `${userId}`
@@ -82,11 +95,13 @@ export class SubcategoryService {
           ? subcategoryUpdated 
           : subcat
         ));
-      })
+      }),
+      finalize(() => this.workingService.drop('subcategory update'))
     )
   }
 
   deleteById(id: number) {
+    this.workingService.push('subcategory deleteById');
     this.http.delete<ApiResponse<object>>(`${this.apiUrl}/subcategory/delete/${id}`).pipe(
       tap(() => {
         this.subcategories.update(subcats => subcats.filter(subcat => subcat.id != id));
@@ -98,7 +113,8 @@ export class SubcategoryService {
           };
           this.subcategoriesError.update(() => error)
         }
-      })
+      }),
+      finalize(() => this.workingService.drop('subcategory deleteById'))
     ).subscribe()
   }
   

@@ -8,7 +8,7 @@
       />
         <h1 class="w-full text-center">{{ title }}</h1>
     
-        @if (isLoading) {
+        @if (isLoading()) {
           <app-loading-form class="w-full" />
         } @else {
           @if(subcategoryForm.value.id != 0) {

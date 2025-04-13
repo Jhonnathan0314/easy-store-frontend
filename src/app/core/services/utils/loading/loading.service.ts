@@ -13,10 +13,12 @@ export class LoadingService {
 
   push(value: string) {
     this.loading.update(loading => [...loading, value]);
+    console.log("Push loading: ", {value});
   }
 
   drop(value: string) {
     this.loading.update(loading => loading.filter(load => load !== value));
+    console.log("Drop loading: ", {value});
   }
 
 }

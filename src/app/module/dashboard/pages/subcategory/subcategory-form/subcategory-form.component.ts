@@ -16,6 +16,8 @@ import { MessageService } from 'primeng/api';
 import { PrimeNGObject } from '@models/utils/primeng-object.model';
 import { LoadingFormComponent } from "../../../../../shared/skeleton/loading-form/loading-form.component";
 import { MessageModule } from 'primeng/message';
+import { WorkingService } from 'src/app/core/services/utils/working/working.service';
+import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 
 @Component({
   selector: 'app-subcategory-form',
@@ -40,8 +42,8 @@ export class SubcategoryFormComponent implements OnInit {
   buttonLabel: string = 'Crear';
   title: string = 'Crear categoria';
 
-  isLoading: boolean = true;
-  isWorking: boolean = false;
+  isLoading: Signal<boolean> = computed(() => this.loadingService.loading().length > 0);
+  isWorking: Signal<boolean> = computed(() => this.workingService.working().length > 0);
   hasUnexpectedError: boolean = false;
 
   @Output() subcategoryErrorEvent = new EventEmitter<FormErrors>();
@@ -51,6 +53,8 @@ export class SubcategoryFormComponent implements OnInit {
     private router: Router, 
     private formBuilder: FormBuilder, 
     private injector: Injector,
+    private workingService: WorkingService,
+    private loadingService: LoadingService,
     private messageService: MessageService,
     private subcategoryService: SubcategoryService,
     private categoryService: CategoryService
@@ -74,7 +78,6 @@ export class SubcategoryFormComponent implements OnInit {
     effect(() => {
       if(this.categoriesError() == null) return;
       if(this.categoriesError()?.code !== 404) this.hasUnexpectedError = true;
-      this.isLoading = false;
     }, {injector: this.injector})
   }
 
@@ -97,7 +100,6 @@ export class SubcategoryFormComponent implements OnInit {
     effect(() => {
       if(this.categories().length == 0) return;
       this.mappedCategories = this.categories().map(cat => ({ value: `${cat.id}`, name: cat.name }))
-      this.isLoading = this.buttonLabel === 'Guardar' && !this.subcategory();
     }, {injector: this.injector})
   }
 
@@ -120,7 +122,6 @@ export class SubcategoryFormComponent implements OnInit {
         name: this.subcategory()?.name,
         categoryId: `${this.subcategory()?.categoryId}`
       })
-      this.isLoading = this.mappedCategories.length === 0;
     }, {injector: this.injector})
   }
 
@@ -141,25 +142,18 @@ export class SubcategoryFormComponent implements OnInit {
   }
 
   createSubcategory() {
-    this.isWorking = true;
     this.subcategoryService.create(this.getObject()).subscribe({
-      next: () => {
-      },
       error: () => {
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
       },
       complete: () => {
-        this.isWorking = false;
         this.router.navigateByUrl('/dashboard/subcategory');
       }
     })
   }
 
   updateSubcategory() {
-    this.isWorking = true;
     this.subcategoryService.update(this.getObject()).subscribe({
-      next: () => {
-      },
       error: (error: ApiResponse<ErrorMessage>) => {
         if(error.error) {
           if(error.error.code == 406) {
@@ -170,7 +164,6 @@ export class SubcategoryFormComponent implements OnInit {
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
       },
       complete: () => {
-        this.isWorking = false;
         this.router.navigateByUrl('/dashboard/subcategory');
       }
     })
@@ -189,7 +182,7 @@ export class SubcategoryFormComponent implements OnInit {
   }
 
   isFormBlocked() {
-    return (!this.isLoading && this.categories().length == 0) || this.isLoading || this.hasUnexpectedError || this.isWorking;
+    return (!this.isLoading() && this.categories().length == 0) || this.isLoading() || this.hasUnexpectedError || this.isWorking();
   }
 
 }
