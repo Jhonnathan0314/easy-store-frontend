@@ -270,40 +270,64 @@ export class CategoryService {
     })
   }
 
+  findById(id: number) {
+    this.workingService.push(`category findById ${id}`);
+    this.http.get<ApiResponse<Category>>(`${this.apiUrl}/category/${id}`).pipe(
+      map(response => response.data),
+      tap(category => {
+        this.categories.update(categories => {
+          const index = categories.findIndex(prod => prod.id === id);
+          if (index === -1) {
+            return [...categories, { ...category, images: [] }];
+          } else {
+            return categories.map(cat => cat.id === id ? { ...category, image: cat.image } : cat);
+          }
+        });
+      }),
+      finalize(() => this.workingService.drop(`category findById ${id}`))
+    ).subscribe();
+  }
+
   // CATEGORY HAS PAYMENT TYPE
   createCategoryHasPaymentType(hasPaymentType: CategoryHasPaymentType): Observable<CategoryHasPaymentType> {
+    this.workingService.push('category-has-payment-type create');
     return this.http.post<ApiResponse<CategoryHasPaymentType>>(`${this.apiUrl}/category-has-payment-type`, hasPaymentType).pipe(
       map(response => response.data),
       tap(() => {
-        this.findAllByAccount();
+        this.findById(hasPaymentType.id.categoryId);
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
         return throwError(() => error.error);
-      })
+      }),
+      finalize(() => this.workingService.drop('category-has-payment-type create'))
     )
   }
   
   updateCategoryHasPaymentType(hasPaymentType: CategoryHasPaymentType): Observable<CategoryHasPaymentType> {
+    this.workingService.push('category-has-payment-type update');
     return this.http.put<ApiResponse<CategoryHasPaymentType>>(`${this.apiUrl}/category-has-payment-type`, hasPaymentType).pipe(
       map(response => response.data),
       tap(() => {
-        this.findAllByAccount();
+        this.findById(hasPaymentType.id.categoryId);
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
         return throwError(() => error.error);
-      })
+      }),
+      finalize(() => this.workingService.drop('category-has-payment-type update'))
     )
   }
 
   changeStateCategoryHasPaymentType(id: CategoryHasPaymentTypeId): Observable<CategoryHasPaymentType> {
+    this.workingService.push('category-has-payment-type changeState');
     return this.http.put<ApiResponse<CategoryHasPaymentType>>(`${this.apiUrl}/category-has-payment-type/state`, id).pipe(
       map(response => response.data),
       tap(() => {
-        this.findAllByAccount();
+        this.findById(id.categoryId);
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
         return throwError(() => error.error);
-      })
+      }),
+      finalize(() => this.workingService.drop('category-has-payment-type changeState'))
     )
   }
 }

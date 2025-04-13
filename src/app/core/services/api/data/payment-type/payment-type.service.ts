@@ -1,10 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, effect, Injectable, Injector, Signal, signal } from '@angular/core';
 import { PaymentType } from '@models/data/payment-type.model';
-import { catchError, map, Observable, tap, throwError } from 'rxjs';
+import { catchError, finalize, map, Observable, tap, throwError } from 'rxjs';
 import { SessionService } from '../../../utils/session/session.service';
 import { environment } from 'src/environments/environment';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
+import { WorkingService } from '../../../utils/working/working.service';
+import { LoadingService } from '../../../utils/loading/loading.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +23,8 @@ export class PaymentTypeService {
   constructor(
     private http: HttpClient, 
     private injector: Injector,
+    private workingService: WorkingService,
+    private loadingService: LoadingService,
     private sessionService: SessionService
   ) {
     this.paymentTypes.set([]);
@@ -32,10 +36,12 @@ export class PaymentTypeService {
     effect(() => {
       if(this.role() === '') return;
       if(this.role() === 'admin') this.findAllActive();
-    }, {injector: this.injector})
+    }, {injector: this.injector, allowSignalWrites: true})
   }
 
   findAllActive() {
+    this.loadingService.push('payment-type findAllActive');
+
     this.http.get<ApiResponse<PaymentType[]>>(`${this.apiUrl}/payment-type/active`).pipe(
       map(response => response.data),
       tap(paymentTypes => {
@@ -46,7 +52,8 @@ export class PaymentTypeService {
         this.paymentTypesError.update(() => error.error.error);
         this.paymentTypes.update(() => []);
         return throwError(() => error)
-      })
+      }),
+      finalize(() => this.loadingService.drop('payment-type findAllActive'))
     ).subscribe()
   }
 
@@ -55,8 +62,11 @@ export class PaymentTypeService {
   }
 
   create(paymentType: PaymentType): Observable<PaymentType> {
+    this.workingService.push('payment-type create');
+
     const userId = this.sessionService.getUserId();
     paymentType.accountId = this.sessionService.getAccountId();
+
     return this.http.post<ApiResponse<PaymentType>>(`${this.apiUrl}/payment-type`, paymentType, {
       headers: {
         'Create-By': `${userId}`
@@ -66,13 +76,17 @@ export class PaymentTypeService {
       tap(paymentTypeCreated => {
         this.paymentTypes.update(payments => [...payments, paymentTypeCreated]);
       }),
-      catchError((error) => throwError(() => error.error))
+      catchError((error) => throwError(() => error.error)),
+      finalize(() => this.workingService.drop('payment-type create'))
     )
   }
 
   update(paymentType: PaymentType): Observable<PaymentType> {
+    this.workingService.push('payment-type update');
+
     const userId = this.sessionService.getUserId();
     paymentType.accountId = this.sessionService.getAccountId();
+
     return this.http.put<ApiResponse<PaymentType>>(`${this.apiUrl}/payment-type`, paymentType, {
       headers: {
         'Update-By': `${userId}`
@@ -85,11 +99,14 @@ export class PaymentTypeService {
           : type
         ));
       }),
-      catchError((error) => throwError(() => error.error))
+      catchError((error) => throwError(() => error.error)),
+      finalize(() => this.workingService.drop('payment-type update'))
     )
   }
 
   deleteById(id: number) {
+    this.workingService.push('payment-type deleteById');
+
     this.http.delete<ApiResponse<object>>(`${this.apiUrl}/payment-type/delete/${id}`).pipe(
       tap(() => {
         this.paymentTypes.update(types => types.filter(type => type.id != id));
@@ -102,7 +119,8 @@ export class PaymentTypeService {
           this.paymentTypesError.update(() => error)
         }
       }),
-      catchError((error) => throwError(() => error.error))
+      catchError((error) => throwError(() => error.error)),
+      finalize(() => this.workingService.drop('payment-type deleteById'))
     ).subscribe()
   }
 

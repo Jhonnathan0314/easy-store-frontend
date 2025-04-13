@@ -94,7 +94,7 @@
     
         <app-button
           [label]="buttonLabel"
-          [disabled]="isWorking"
+          [disabled]="isWorking()"
           (clickEvent)="validateForm()"
         />
     </form>

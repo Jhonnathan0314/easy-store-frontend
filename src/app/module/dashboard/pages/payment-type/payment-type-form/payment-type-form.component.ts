@@ -15,6 +15,8 @@ import { CategoryService } from 'src/app/core/services/api/data/category/categor
 import { PrimeNGObject } from '@models/utils/primeng-object.model';
 import { InputSelectComponent } from "../../../../../shared/inputs/input-select/input-select.component";
 import { MessageModule } from 'primeng/message';
+import { WorkingService } from 'src/app/core/services/utils/working/working.service';
+import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 
 @Component({
   selector: 'app-payment-type-form',
@@ -45,8 +47,8 @@ export class PaymentTypeFormComponent {
   buttonLabel: string = 'Agregar';
   title: string = 'Agregar tipo de pago';
 
-  isLoading: boolean = true;
-  isWorking: boolean = false;
+  isLoading: Signal<boolean> = computed(() => this.loadingService.loading().length > 0);
+  isWorking: Signal<boolean> = computed(() => this.workingService.working().length > 0);
   showCategoryCreatedMessage: boolean = false;
 
   @Output() paymentTypeErrorEvent = new EventEmitter<FormErrors>();
@@ -56,6 +58,8 @@ export class PaymentTypeFormComponent {
     private router: Router, 
     private formBuilder: FormBuilder, 
     private injector: Injector,
+    private workingService: WorkingService,
+    private loadingService: LoadingService,
     private messageService: MessageService,
     private categoryService: CategoryService,
     private paymentTypeService: PaymentTypeService
@@ -91,7 +95,6 @@ export class PaymentTypeFormComponent {
     if(this.paymentTypeId !== 0 && this.categoryId !== 0) {
       this.getCategoryHasPaymentType();
       this.prepareUpdateForm();
-      this.isLoading = false;
     } else if (this.categoryId !== 0) {
       this.paymentTypeForm.patchValue({ categoryId: `${this.categoryId}` });
       this.showCategoryCreatedMessage = true;
@@ -145,7 +148,6 @@ export class PaymentTypeFormComponent {
       accountType: '',
       accountBank: ''
     })
-    this.isLoading = false;
   }
 
   setUpdateTitles() {
@@ -178,7 +180,6 @@ export class PaymentTypeFormComponent {
   }
 
   create() {
-    this.isWorking = true;
     this.categoryService.createCategoryHasPaymentType(this.getObject()).subscribe({
       error: (error: ApiResponse<ErrorMessage>) => {
         if(error.error){
@@ -190,27 +191,23 @@ export class PaymentTypeFormComponent {
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
       },
       complete: () => {
-        this.isWorking = false;
         this.router.navigateByUrl('/dashboard/payment-type');
       }
     })
   }
 
   update() {
-    this.isWorking = true;
     this.categoryService.updateCategoryHasPaymentType(this.getObject()).subscribe({
       error: (error: ApiResponse<ErrorMessage>) => {
         if(error.error){
           if(error.error.code == 406) {
             this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.error.detail});
-            this.isWorking = false;
           }
           return;
         }
         this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
       },
       complete: () => {
-        this.isWorking = false;
         this.router.navigateByUrl('/dashboard/payment-type');
       }
     })

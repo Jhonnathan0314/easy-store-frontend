@@ -9,6 +9,8 @@ import { CategoryService } from 'src/app/core/services/api/data/category/categor
 import { PaymentTypeTableComponent } from "../payment-type-table/payment-type-table.component";
 import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/payment-type.service';
 import { PaymentType, TablePaymentType } from '@models/data/payment-type.model';
+import { WorkingService } from 'src/app/core/services/utils/working/working.service';
+import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 
 @Component({
   selector: 'app-payment-type-all',
@@ -24,14 +26,16 @@ export class PaymentTypeAllComponent implements OnInit {
   paymentTypesError: Signal<ErrorMessage | null> = computed(() => this.paymentTypeService.paymentTypesError());
   paymentTypes: Signal<PaymentType[]> = computed(() => this.paymentTypeService.paymentTypes());
 
-  isLoading: boolean = true;
-  isWorking: boolean = false;
+  isLoading: Signal<boolean> = computed(() => this.loadingService.loading().length > 0);
+  isWorking: Signal<boolean> = computed(() => this.workingService.working().length > 0);
   hasUnexpectedError: boolean = false;
 
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private injector: Injector,
+    private workingService: WorkingService,
+    private loadingService: LoadingService,
     private categoryService: CategoryService,
     private paymentTypeService: PaymentTypeService
   ) { }
@@ -43,8 +47,6 @@ export class PaymentTypeAllComponent implements OnInit {
 
   extractMappedPaymentTypes() {
     effect(() => {
-      this.isLoading = false;
-      if(this.isWorking) this.isWorking = false;
     }, {injector: this.injector})
   }
 
@@ -52,7 +54,6 @@ export class PaymentTypeAllComponent implements OnInit {
     effect(() => {
       if(this.categoriesError() == null || this.paymentTypesError() == null) return;
       if(this.categoriesError()?.code !== 404 || this.paymentTypesError()?.code !== 404) this.hasUnexpectedError = true;
-      this.isLoading = false;
     }, {injector: this.injector})
   }
 
@@ -69,14 +70,9 @@ export class PaymentTypeAllComponent implements OnInit {
       categoryId: tablePaymentType.category.id,
       paymentTypeId: tablePaymentType.paymentType.id
     }
-    this.isWorking = true;
     this.categoryService.changeStateCategoryHasPaymentType(id).subscribe({
       error: () => {
-        this.isWorking = false;
         this.hasUnexpectedError = true;
-      },
-      complete: () => {
-        this.isWorking = false;
       }
     })
   }
