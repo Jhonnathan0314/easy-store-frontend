@@ -23,6 +23,7 @@ import { WorkingService } from 'src/app/core/services/utils/working/working.serv
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 import { environment } from 'src/environments/environment';
 import { convertListToDataObjects } from 'src/app/core/utils/mapper/primeng-mapper.util';
+import { REGEX_TEXT_DEFAULT } from 'src/app/core/utils/constants/regex.contants';
 
 @Component({
   selector: 'app-product-form',
@@ -82,8 +83,8 @@ export class ProductFormComponent implements OnInit {
   initializeForm() {
     this.productForm = this.formBuilder.group({
       id: [0],
-      name: ['', [Validators.required, Validators.minLength(3)]],
-      description: ['', [Validators.required]],
+      name: ['', [Validators.required, Validators.pattern(REGEX_TEXT_DEFAULT)]],
+      description: ['', [Validators.required, Validators.pattern(REGEX_TEXT_DEFAULT)]],
       price: [null, [Validators.required, Validators.min(0)]],
       quantity: [null, [Validators.required, Validators.min(0)]],
       qualification: [null, [Validators.required, Validators.min(0), Validators.max(5)]],

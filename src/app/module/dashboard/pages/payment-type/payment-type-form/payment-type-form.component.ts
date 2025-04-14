@@ -18,6 +18,7 @@ import { MessageModule } from 'primeng/message';
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 import { convertListToDataObjects } from 'src/app/core/utils/mapper/primeng-mapper.util';
+import { REGEX_TEXT_DEFAULT } from 'src/app/core/utils/constants/regex.contants';
 
 @Component({
   selector: 'app-payment-type-form',
@@ -125,8 +126,8 @@ export class PaymentTypeFormComponent {
 
   initializeForm() {
     this.paymentTypeForm = this.formBuilder.group({
-      category: [null, [Validators.required]],
-      paymentType: [null, [Validators.required]],
+      category: [null, [Validators.required, Validators.pattern(REGEX_TEXT_DEFAULT)]],
+      paymentType: [null, [Validators.required, Validators.pattern(REGEX_TEXT_DEFAULT)]],
       phone: null,
       email: '',
       accountNumber: '',

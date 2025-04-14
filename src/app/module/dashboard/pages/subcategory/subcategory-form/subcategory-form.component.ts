@@ -19,6 +19,7 @@ import { MessageModule } from 'primeng/message';
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 import { convertListToDataObjects } from 'src/app/core/utils/mapper/primeng-mapper.util';
+import { REGEX_TEXT_DEFAULT } from 'src/app/core/utils/constants/regex.contants';
 
 @Component({
   selector: 'app-subcategory-form',
@@ -70,7 +71,7 @@ export class SubcategoryFormComponent implements OnInit {
   initializeForm() {
     this.subcategoryForm = this.formBuilder.group({
       id: [0],
-      name: ['', [Validators.required, Validators.minLength(3)]],
+      name: ['', [Validators.required, Validators.pattern(REGEX_TEXT_DEFAULT)]],
       categoryId: [null, [Validators.required]]
     });
   }

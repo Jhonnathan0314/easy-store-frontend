@@ -16,6 +16,7 @@ import { LoadingFormComponent } from "../../../../../shared/skeleton/loading-for
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 import { environment } from 'src/environments/environment';
+import { REGEX_TEXT_DEFAULT } from 'src/app/core/utils/constants/regex.contants';
 
 @Component({
   selector: 'app-category-form',
@@ -64,8 +65,8 @@ export class CategoryFormComponent implements OnInit {
   initializeForm() {
     this.categoryForm = this.formBuilder.group({
       id: [0],
-      name: ['', [Validators.required]],
-      description: ['', [Validators.required]]
+      name: ['', [Validators.required, Validators.pattern(REGEX_TEXT_DEFAULT)]],
+      description: ['', [Validators.required, Validators.pattern(REGEX_TEXT_DEFAULT)]]
     });
   }
 
