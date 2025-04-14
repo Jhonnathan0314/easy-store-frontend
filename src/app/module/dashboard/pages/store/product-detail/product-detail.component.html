@@ -9,14 +9,14 @@
         <p-galleria [value]="product?.images?.length == 0 ? defaultImages : product?.images " [responsiveOptions]="responsiveOptions" [showItemNavigators]="true" [circular]="true" class="w-full md:w-1/3" [numVisible]="5">
             <ng-template pTemplate="item" let-image>
                 <img 
-                    [src]="image.name ? 'data:' + image.extension + ';base64,' + image.content : image.src"
+                    [src]="image.name ? (image | image) : image.src"
                     [alt]="image.name ? image.name : PRODUCT_IMAGE_NAME"
                     class="w-full max-w-80 py-8"
                 />
             </ng-template>
             <ng-template pTemplate="thumbnail" let-image>
                 <img 
-                    [src]="image.name ? 'data:' + image.extension + ';base64,' + image.content : '/assets/img/' + PRODUCT_IMAGE_NAME"
+                    [src]="image.name ? (image | image) : '/assets/img/' + PRODUCT_IMAGE_NAME"
                     [alt]="image.name ? image.name : PRODUCT_IMAGE_NAME"
                     class="w-16"
                 />

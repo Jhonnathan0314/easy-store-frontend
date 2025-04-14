@@ -2,12 +2,13 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
 import { Product } from '@models/data/product.model';
 import { TableModule } from 'primeng/table';
+import { ImagePipe } from 'src/app/core/pipes/image/image.pipe';
 import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-product-table',
   standalone: true,
-  imports: [TableModule, ButtonComponent],
+  imports: [ImagePipe, TableModule, ButtonComponent],
   templateUrl: './product-table.component.html'
 })
 export class ProductTableComponent {

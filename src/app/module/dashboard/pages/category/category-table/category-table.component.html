@@ -49,11 +49,10 @@
         <tr>
             <td>
                 @if (obj.image?.content) {
-                    <img [src]="'data:' + obj.image.extension + ';base64,' + obj.image.content" [alt]="obj.image.name" class="w-20" />
+                    <img [src]="obj.image | image" [alt]="obj.image.name" class="w-20" />
                 } @else {
                     <img [src]="'/assets/img/' + CATEGORY_IMAGE_NAME" [alt]="CATEGORY_IMAGE_NAME" class="w-20" />
-                }
-                
+                }                
             </td> 
             <td>{{ obj.id }}</td>
             <td>{{ obj.name }}</td>

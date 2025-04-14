@@ -7,11 +7,12 @@ import { S3File } from '@models/utils/file.model';
 import { Purchase } from '@models/data/purchase.model';
 import { environment } from 'src/environments/environment';
 import { cartHasProduct } from 'src/app/core/utils/validation/cart-validation.util';
+import { ImagePipe } from 'src/app/core/pipes/image/image.pipe';
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [FormsModule, GalleriaModule, ButtonComponent],
+  imports: [FormsModule, ImagePipe, GalleriaModule, ButtonComponent],
   templateUrl: './product-detail.component.html',
   styleUrls: ['../../../../../../../public/assets/css/layout.css']
 })

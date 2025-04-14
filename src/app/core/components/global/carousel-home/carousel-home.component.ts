@@ -12,13 +12,15 @@ import { SessionService } from 'src/app/core/services/utils/session/session.serv
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 import { environment } from 'src/environments/environment';
 import { SessionData } from '@models/security/security-data.model';
+import { ImagePipe } from 'src/app/core/pipes/image/image.pipe';
 
 @Component({
   selector: 'app-carousel-home',
   standalone: true,
   imports: [CarouselModule, SkeletonModule, MessageModule, RouterModule, ButtonComponent],
   templateUrl: './carousel-home.component.html',
-  styleUrls: ['../../../../../../public/assets/css/layout.css']
+  styleUrls: ['../../../../../../public/assets/css/layout.css'],
+  providers: [ImagePipe]
 })
 export class CarouselHomeComponent implements OnInit {
 
@@ -39,7 +41,8 @@ export class CarouselHomeComponent implements OnInit {
     private injector: Injector,
     private loadingService: LoadingService,
     private sessionService: SessionService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private imagePipe: ImagePipe
   ) {}
 
   ngOnInit(): void {
@@ -52,7 +55,7 @@ export class CarouselHomeComponent implements OnInit {
       if(this.categories().length == 0) return;
       this.items = this.categories().map(category => ({
         title: category.name,
-        img: category.imageName != environment.DEFAULT_IMAGE_CATEGORY_NAME && category.image ? `data:${category.image?.extension};base64,${category.image?.content}` : '/assets/img/' + environment.DEFAULT_IMAGE_CATEGORY_NAME,
+        img: category.imageName != environment.DEFAULT_IMAGE_CATEGORY_NAME && category.image ? this.imagePipe.transform(category.image) : '/assets/img/' + environment.DEFAULT_IMAGE_CATEGORY_NAME,
         body: category.description,
         value: category.id,
         route: `store/products/${category.id}`,

@@ -3,11 +3,12 @@ import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core
 import { S3File } from '@models/utils/file.model';
 import { FileSelectEvent, FileUpload } from 'primeng/fileupload';
 import { ButtonComponent } from '../button/button.component';
+import { ImagePipe } from 'src/app/core/pipes/image/image.pipe';
 
 @Component({
   selector: 'app-input-file',
   standalone: true,
-  imports: [FileUpload, ButtonComponent, CommonModule],
+  imports: [ImagePipe, FileUpload, ButtonComponent, CommonModule],
   templateUrl: './input-file.component.html'
 })
 export class InputFileComponent implements OnChanges {

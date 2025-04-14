@@ -38,7 +38,7 @@
                             <div class="w-full p-4 flex flex-col md:flex-row justify-center md:justify-between items-center gap-8">
                                 <img
                                     class="rounded w-full"
-                                    [src]="product.product && product.product.images && product.product.images.length ? 'data:' + product.product.images[0].extension + ';base64,' + product.product.images[0].content : '/assets/img/' + PRODUCT_IMAGE_NAME"
+                                    [src]="product.product && product.product.images && product.product.images.length ? (product.product.images[0] | image) : '/assets/img/' + PRODUCT_IMAGE_NAME"
                                     [alt]="product.product && product.product.images && product.product.images.length ? product.product.images[0].name : '/assets/img/' + PRODUCT_IMAGE_NAME"
                                     style="max-width: 100px"
                                 />

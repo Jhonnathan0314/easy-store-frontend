@@ -85,7 +85,7 @@
         <tr>
             <td>
                 @if (obj.images.length > 0) {
-                    <img [src]="'data:' + obj.images[0].extension + ';base64,' + obj.images[0].content" [alt]="obj.images[0].name" class="w-20" />
+                    <img [src]="obj.images[0] | image" class="w-20" />
                 } @else {
                     <img [src]="'/assets/img/' + PRODUCT_IMAGE_NAME" [alt]="PRODUCT_IMAGE_NAME" class="w-20" />
                 }

@@ -13,11 +13,12 @@ import { DividerModule } from 'primeng/divider';
 import { Purchase } from '@models/data/purchase.model';
 import { environment } from 'src/environments/environment';
 import { cartHasProduct } from 'src/app/core/utils/validation/cart-validation.util';
+import { ImagePipe } from 'src/app/core/pipes/image/image.pipe';
 
 @Component({
   selector: 'app-data-view',
   standalone: true,
-  imports: [CommonModule, FormsModule, DataViewModule, DividerModule, SelectButtonModule, TagModule, ButtonComponent, InputTextComponent, InputSelectComponent],
+  imports: [CommonModule, FormsModule, ImagePipe, DataViewModule, DividerModule, SelectButtonModule, TagModule, ButtonComponent, InputTextComponent, InputSelectComponent],
   templateUrl: './data-view.component.html',
   styleUrls: ['../../../../../public/assets/css/layout.css']
 })

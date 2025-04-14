@@ -21,11 +21,12 @@ import { LoadingService } from 'src/app/core/services/utils/loading/loading.serv
 import { environment } from 'src/environments/environment';
 import { SessionData } from '@models/security/security-data.model';
 import { getProductsText } from 'src/app/core/utils/mapper/whatsapp-mapper.util';
+import { ImagePipe } from 'src/app/core/pipes/image/image.pipe';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [RouterModule, AccordionModule, DividerModule, SkeletonModule, MessageModule, ToastModule, ButtonComponent],
+  imports: [RouterModule, ImagePipe, AccordionModule, DividerModule, SkeletonModule, MessageModule, ToastModule, ButtonComponent],
   templateUrl: './cart.component.html',
   providers: [MessageService]
 })
