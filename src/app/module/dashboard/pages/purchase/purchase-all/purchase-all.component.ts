@@ -6,7 +6,7 @@ import { User } from '@models/security/user.model';
 import { PaymentType } from '@models/data/payment-type.model';
 import { Category } from '@models/data/category.model';
 import { Product } from '@models/data/product.model';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/payment-type.service';
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
 import { ProductService } from 'src/app/core/services/api/data/product/product.service';
@@ -64,6 +64,7 @@ export class PurchaseAllComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private injector: Injector,
     private loadingService: LoadingService,
     private userService: UserService,
@@ -185,7 +186,7 @@ export class PurchaseAllComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigateByUrl('/dashboard/home');
+    this.router.navigate(['../'], { relativeTo: this.activatedRoute });
   }
 
 }

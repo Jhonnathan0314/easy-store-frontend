@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Category } from '@models/data/category.model';
 import { DataObject } from '@models/utils/object.data-view.model';
 import { ChartModule } from 'primeng/chart';
@@ -22,7 +22,10 @@ export class PurchaseReportComponent implements OnInit {
   valueLabels: string[] = ['2024-11', '2024-12', '2025-01', '2025-02']
   numLabels: string[] = []
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router, 
+    private activatedRoute: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
     this.graphicData();
@@ -88,6 +91,6 @@ export class PurchaseReportComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigateByUrl('/dashboard/home');
+    this.router.navigate(['../'], { relativeTo: this.activatedRoute });
   }
 }
