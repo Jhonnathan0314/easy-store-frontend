@@ -225,8 +225,7 @@ export class CategoryService {
 
   deleteById(id: number) {
     this.workingService.push('category deleteById');
-    this.http.delete<ApiResponse<object>>(`${this.apiUrl}/category/delete/${id}`)
-    .pipe(
+    return this.http.delete<ApiResponse<object>>(`${this.apiUrl}/category/delete/${id}`).pipe(
       tap(() => {
         const category = this.categories().find(cat => cat.id === id);
         const image = category?.image;
@@ -250,10 +249,10 @@ export class CategoryService {
         if (error.error.error.code === 404) {
           console.error("Id no encontrado para eliminar categoria.", error);
         }
-        return throwError(() => error);
+        return throwError(() => error.error);
       }),
       finalize(() => this.workingService.drop('category deleteById'))
-    ).subscribe()
+    )
   }
 
   private deleteFile(file: S3File) {

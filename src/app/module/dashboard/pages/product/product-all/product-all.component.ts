@@ -8,17 +8,20 @@ import { Subscription } from 'rxjs';
 import { SubcategoryService } from 'src/app/core/services/api/data/subcategory/subcategory.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
-import { ErrorMessage } from '@models/data/general.model';
+import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { MessageModule } from 'primeng/message';
 import { ProductTableComponent } from "../product-table/product-table.component";
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-product-all',
   standalone: true,
-  imports: [MessageModule, ButtonComponent, LoadingTableComponent, ProductTableComponent],
-  templateUrl: './product-all.component.html'
+  imports: [MessageModule, ToastModule, ButtonComponent, LoadingTableComponent, ProductTableComponent],
+  templateUrl: './product-all.component.html',
+  providers: [MessageService]
 })
 export class ProductAllComponent implements OnInit {
 
@@ -43,7 +46,8 @@ export class ProductAllComponent implements OnInit {
     private workingService: WorkingService,
     private loadingService: LoadingService,
     private productService: ProductService,
-    private subcategoryService: SubcategoryService
+    private subcategoryService: SubcategoryService,
+    private messageService: MessageService
   ) { }
 
   ngOnInit(): void {
@@ -80,7 +84,17 @@ export class ProductAllComponent implements OnInit {
   }
 
   deleteById(product: DataObject) {
-    this.productService.deleteById(product?.id ?? 0);
+    this.productService.deleteById(product?.id ?? 0).subscribe({
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error) {
+          if(error.error.code == 401) {
+            this.messageService.add({severity: 'warn', summary: 'Advertencia', detail: 'No se puede eliminar debido a que se encuentra asociada a otros datos.'});
+           return; 
+          }
+        }
+        this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
+      }
+    });;
   }
 
   goCreate() {

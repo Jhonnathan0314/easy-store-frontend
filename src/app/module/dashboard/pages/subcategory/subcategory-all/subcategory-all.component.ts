@@ -7,17 +7,20 @@ import { ButtonComponent } from "../../../../../shared/inputs/button/button.comp
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
 import { Category } from '@models/data/category.model';
 import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
-import { ErrorMessage } from '@models/data/general.model';
+import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { MessageModule } from 'primeng/message';
 import { SubcategoryTableComponent } from "../subcategory-table/subcategory-table.component";
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-subcategory-all',
   standalone: true,
-  imports: [MessageModule, ButtonComponent, LoadingTableComponent, SubcategoryTableComponent],
-  templateUrl: './subcategory-all.component.html'
+  imports: [MessageModule, ToastModule, ButtonComponent, LoadingTableComponent, SubcategoryTableComponent],
+  templateUrl: './subcategory-all.component.html',
+  providers: [MessageService]
 })
 export class SubcategoryAllComponent implements OnInit {
 
@@ -38,7 +41,8 @@ export class SubcategoryAllComponent implements OnInit {
     private workingService: WorkingService,
     private loadingService: LoadingService,
     private subcategoryService: SubcategoryService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private messageService: MessageService
   ) { }
 
   ngOnInit(): void {
@@ -68,7 +72,17 @@ export class SubcategoryAllComponent implements OnInit {
   }
 
   deleteById(subcategory: DataObject) {
-    this.subcategoryService.deleteById(subcategory?.id ?? 0);
+    this.subcategoryService.deleteById(subcategory?.id ?? 0).subscribe({
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error) {
+          if(error.error.code == 401) {
+            this.messageService.add({severity: 'warn', summary: 'Advertencia', detail: 'No se puede eliminar debido a que se encuentra asociada a otros datos.'});
+           return; 
+          }
+        }
+        this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
+      }
+    });
   }
 
   goCreate() {

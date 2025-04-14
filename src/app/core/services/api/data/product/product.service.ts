@@ -209,11 +209,11 @@ export class ProductService {
   
   deleteById(id: number) {
     const product = this.products().find(prod => prod.id === id);
-    if (!product) return;
+    if (!product) return of();
     
     this.workingService.push('product deleteById');
 
-    this.fileProductService.deleteFiles(product.images, id).pipe(
+    return this.fileProductService.deleteFiles(product.images, id).pipe(
       last(),
       concatMap(() => this.http.delete<ApiResponse<object>>(`${this.apiUrl}/product/delete/${id}`)),
       tap(() => {
@@ -227,11 +227,14 @@ export class ProductService {
           this.productsError.update(() => error)
         }
       }),
-      catchError(() => {
-        return of(null);
+      catchError((error: {error: ApiResponse<ErrorMessage>}) => {
+        if (error.error.error.code === 404) {
+          console.error("Id no encontrado para eliminar producto.", error);
+        }
+        return throwError(() => error.error);
       }),
       finalize(() => this.workingService.drop('product deleteById'))
-    ).subscribe();
+    );
   }
 
 }

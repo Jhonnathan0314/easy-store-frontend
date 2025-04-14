@@ -103,7 +103,7 @@ export class SubcategoryService {
 
   deleteById(id: number) {
     this.workingService.push('subcategory deleteById');
-    this.http.delete<ApiResponse<object>>(`${this.apiUrl}/subcategory/delete/${id}`).pipe(
+    return this.http.delete<ApiResponse<object>>(`${this.apiUrl}/subcategory/delete/${id}`).pipe(
       tap(() => {
         this.subcategories.update(subcats => subcats.filter(subcat => subcat.id != id));
         if(this.subcategories().length == 0) {
@@ -115,8 +115,14 @@ export class SubcategoryService {
           this.subcategoriesError.update(() => error)
         }
       }),
+      catchError((error: {error: ApiResponse<ErrorMessage>}) => {
+        if (error.error.error.code === 404) {
+          console.error("Id no encontrado para eliminar subcategoria.", error);
+        }
+        return throwError(() => error.error);
+      }),
       finalize(() => this.workingService.drop('subcategory deleteById'))
-    ).subscribe()
+    )
   }
   
 }
