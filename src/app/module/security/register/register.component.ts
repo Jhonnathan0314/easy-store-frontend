@@ -9,6 +9,7 @@ import { RegisterRequest, LoginRequest } from '@models/security/security-request
 import { MessageModule } from 'primeng/message';
 import { SecurityService } from 'src/app/core/services/api/security/security.service';
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
+import { REGEX_EMAIL, REGEX_PASSWORD } from 'src/app/core/utils/constants/regex.contants';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -47,9 +48,9 @@ export class RegisterComponent {
     this.registerForm = this.formBuilder.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
-      username: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(5)]],
-      confirmPassword: ['', [Validators.required, Validators.minLength(5)]]
+      username: ['', [Validators.required, Validators.pattern(REGEX_EMAIL)]],
+      password: ['', [Validators.required, Validators.pattern(REGEX_PASSWORD)]],
+      confirmPassword: ['', [Validators.required, Validators.pattern(REGEX_PASSWORD)]]
     });
   }
   

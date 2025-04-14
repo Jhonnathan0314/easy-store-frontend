@@ -17,6 +17,7 @@ import { ButtonIconPosition } from '@enums/primeng.enum';
 import { MessageModule } from 'primeng/message';
 import { ErrorMessage } from '@models/data/general.model';
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
+import { REGEX_EMAIL } from 'src/app/core/utils/constants/regex.contants';
 
 @Component({
   selector: 'app-login',
@@ -52,8 +53,8 @@ export class LoginComponent {
 
   initializeForm() {
     this.loginForm = this.formBuilder.group({
-      username: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(5)]]
+      username: ['', [Validators.required, Validators.pattern(REGEX_EMAIL)]],
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 

@@ -11,6 +11,7 @@ import { SecurityService } from 'src/app/core/services/api/security/security.ser
 import { EmailService } from 'src/app/core/services/api/utils/email/email.service';
 import { ResetPasswordRequest } from '@models/security/security-request.model';
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
+import { REGEX_EMAIL, REGEX_PASSWORD } from 'src/app/core/utils/constants/regex.contants';
 
 @Component({
   selector: 'app-forgot-password',
@@ -52,9 +53,9 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
   initForm() {
     this.forgotPasswordForm = this.formBuilder.group({
-      username: [null, [Validators.required, Validators.email]],
-      password: [null, [Validators.required, Validators.minLength(6)]],
-      confirmPassword: [null, [Validators.required, Validators.minLength(6)]],
+      username: [null, [Validators.required, Validators.pattern(REGEX_EMAIL)]],
+      password: [null, [Validators.required, Validators.pattern(REGEX_PASSWORD)]],
+      confirmPassword: [null, [Validators.required, Validators.pattern(REGEX_PASSWORD)]],
       code: [null, [Validators.required, Validators.minLength(4), Validators.maxLength(4)]]
     })
   }
