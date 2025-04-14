@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { S3File } from '@models/utils/file.model';
 import { Purchase } from '@models/data/purchase.model';
 import { environment } from 'src/environments/environment';
+import { cartHasProduct } from 'src/app/core/utils/validation/cart-validation.util';
 
 @Component({
   selector: 'app-product-detail',
@@ -54,8 +55,7 @@ export class ProductDetailComponent {
   }
 
   cartHasProduct(product: Product | undefined) {
-    if(!this.cart.products) return false;
-    return this.cart.products.find(p => p.id.productId == product?.id) != undefined;
+    return cartHasProduct(this.cart, product!);
   }
 
   addToCart(product: Product | undefined) {

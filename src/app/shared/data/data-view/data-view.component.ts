@@ -12,6 +12,7 @@ import { TagModule } from 'primeng/tag';
 import { DividerModule } from 'primeng/divider';
 import { Purchase } from '@models/data/purchase.model';
 import { environment } from 'src/environments/environment';
+import { cartHasProduct } from 'src/app/core/utils/validation/cart-validation.util';
 
 @Component({
   selector: 'app-data-view',
@@ -126,8 +127,7 @@ export class DataViewComponent implements OnInit, OnChanges {
   }
 
   cartHasProduct(product: Product): boolean {
-    if(!this.cart.products) return false;
-    return this.cart.products.find(p => p.id.productId == product.id) != undefined;
+    return cartHasProduct(this.cart, product);
   }
 
   addToCart(product: Product) {
