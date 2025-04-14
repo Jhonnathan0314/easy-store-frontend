@@ -45,7 +45,7 @@ export class PurchaseService {
   private findAllByUser() {
     this.loadingService.push('purchase findAllByUser');
 
-    const userId = this.sessionService.getUserId();
+    const userId = this.session()?.userId ?? -1;
 
     this.http.get<ApiResponse<Purchase[]>>(`${this.apiUrl}/purchase/user/${userId}`).pipe(
       map(response => response.data),
@@ -65,11 +65,10 @@ export class PurchaseService {
   generate(purchase: PurchaseRq): Observable<Purchase> {
     this.workingService.push('purchase generate');
 
-    const userId = this.sessionService.getUserId();
-    purchase.userId = userId;
+    purchase.userId = this.session()?.userId ?? -1;
 
     return this.http.post<ApiResponse<Purchase>>(`${this.apiUrl}/purchase`, purchase, {
-      headers: { 'Create-By': `${userId}` }
+      headers: { 'Create-By': `${purchase.userId}` }
     }).pipe(
       map(response => response.data),
       tap(purchaseCreated => {
@@ -82,11 +81,10 @@ export class PurchaseService {
   update(purchase: Purchase): Observable<Purchase> {
     this.workingService.push('purchase update');
 
-    const userId = this.sessionService.getUserId();
-    purchase.userId = userId;
+    purchase.userId = this.session()?.userId ?? -1;
 
     return this.http.put<ApiResponse<Purchase>>(`${this.apiUrl}/purchase`, purchase, {
-      headers: { 'Update-By': `${userId}` }
+      headers: { 'Update-By': `${purchase.userId}` }
     }).pipe(
       map(response => response.data),
       tap(purchaseUpdated => {

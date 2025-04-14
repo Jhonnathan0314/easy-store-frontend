@@ -41,13 +41,7 @@ export class PaymentTypeAllComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.extractMappedPaymentTypes();
     this.validatePaymentTypesError();
-  }
-
-  extractMappedPaymentTypes() {
-    effect(() => {
-    }, {injector: this.injector})
   }
 
   validatePaymentTypesError() {

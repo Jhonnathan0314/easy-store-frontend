@@ -23,9 +23,9 @@ export class ProductService {
   productImagesFinded = signal<number[]>([]);
   productsError = signal<ErrorMessage | null>(null);
 
-  accountId = this.sessionService.getAccountId();
-
   session: Signal<SessionData | null> = computed(() => this.sessionService.session());
+
+  accountId = this.session()?.userId ?? -1;
 
   constructor(
     private http: HttpClient,
@@ -45,7 +45,6 @@ export class ProductService {
     effect(() => {
       if(!this.session() || this.session()?.role === '') return;
       if(this.session()?.role === 'admin') this.findByAccount();
-      this.accountId = this.sessionService.getAccountId();
     }, {injector: this.injector, allowSignalWrites: true})
   }
 
@@ -146,7 +145,7 @@ export class ProductService {
   create(product: Product, files: S3File[]): Observable<Product> {
     this.workingService.push('product create');
 
-    const userId = this.sessionService.getUserId();
+    const userId = this.session()?.userId ?? -1;
 
     return this.http.post<ApiResponse<Product>>(`${this.apiUrl}/product`, product, {
       headers: { 'Create-By': `${userId}` }
@@ -171,7 +170,7 @@ export class ProductService {
   update(product: Product, filesToUpload: S3File[], filesToDelete: S3File[]): Observable<Product> {
     this.workingService.push('product update');
 
-    const userId = this.sessionService.getUserId();
+    const userId = this.session()?.userId ?? -1;
     
     return this.http.put<ApiResponse<Product>>(`${this.apiUrl}/product`, product, {
       headers: { 'Update-By': `${userId}` }

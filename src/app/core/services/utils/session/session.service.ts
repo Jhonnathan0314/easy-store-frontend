@@ -59,14 +59,14 @@ export class SessionService {
     }
   }
 
-  getUsername() { return this.getSessionData()?.username ?? ''; }
+  private getUsername() { return this.getSessionData()?.username ?? ''; }
 
-  getUserId() { return this.getSessionData()?.userId ?? -1; }
+  private getUserId() { return this.getSessionData()?.userId ?? -1; }
 
-  getAccountId() { return this.getSessionData()?.accountId ?? -1; }
+  private getAccountId() { return this.getSessionData()?.accountId ?? -1; }
 
-  getRole() { return this.getSessionData()?.role ?? ''; }
+  private getRole() { return this.getSessionData()?.role ?? ''; }
   
-  getToken() { return this.getSessionData()?.token ?? ''; }
+  private getToken() { return this.getSessionData()?.token ?? ''; }
 
 }

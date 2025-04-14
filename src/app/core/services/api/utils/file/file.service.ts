@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { computed, Injectable, Signal } from '@angular/core';
 import { SessionService } from '../../../utils/session/session.service';
 import { environment } from 'src/environments/environment';
 import { S3File } from '@models/utils/file.model';
 import { map, Observable } from 'rxjs';
 import { ApiResponse } from '@models/data/general.model';
+import { SessionData } from '@models/security/security-data.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class FileService {
 
   apiUrl: string = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
 
-  accountId: number;
+  session: Signal<SessionData | null> = computed(() => this.sessionService.session());
 
   constructor(
     private http: HttpClient, 
@@ -28,7 +29,7 @@ export class FileService {
   }
 
   putFile(file: S3File): Observable<boolean> {
-    file.accountId = this.sessionService.getAccountId();
+    file.accountId = this.session()?.accountId ?? -1;
     return this.http.post<ApiResponse<boolean>>(`${this.apiUrl}/s3/put`, file)
       .pipe(
         map(response => response.data)
@@ -36,7 +37,7 @@ export class FileService {
   }
 
   deleteFile(file: S3File): Observable<boolean> {
-    file.accountId = this.sessionService.getAccountId();
+    file.accountId = this.session()?.accountId ?? -1;
     return this.http.delete<ApiResponse<boolean>>(`${this.apiUrl}/s3/delete/accountId/${file.accountId}/context/${file.context}/objectName/${file.name}`)
       .pipe(
         map(response => response.data)

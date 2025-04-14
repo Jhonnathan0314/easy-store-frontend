@@ -20,6 +20,7 @@ import { WhatsappPipe } from 'src/app/core/pipes/whatsapp/whatsapp.pipe';
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 import { environment } from 'src/environments/environment';
+import { SessionData } from '@models/security/security-data.model';
 
 @Component({
   selector: 'app-cart',
@@ -48,6 +49,8 @@ export class CartComponent implements OnInit {
   isWorking: Signal<boolean> = computed(() => this.workingService.working().length > 0);
   hasUnexpectedError: boolean = false;
 
+  session: Signal<SessionData | null> = computed(() => this.sessionService.session());
+
   PRODUCT_IMAGE_NAME: string = environment.DEFAULT_IMAGE_PRODUCT_NAME;
 
   constructor(
@@ -73,7 +76,7 @@ export class CartComponent implements OnInit {
   }
 
   findUserId() {
-    this.userId = this.sessionService.getUserId();
+    this.userId = this.session()?.userId ?? -1;
   }
 
   validateCategoriesError() {

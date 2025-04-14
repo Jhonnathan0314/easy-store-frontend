@@ -49,7 +49,7 @@ export class CategoryService {
 
   private findAllByAccount() {
     this.loadingService.push('category findAllByAccount');
-    const accountId = this.sessionService.getAccountId();
+    const accountId = this.session()?.accountId ?? -1;
     this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/category/account/${accountId}`).pipe(
       map(response => response.data),
       tap(categories => {
@@ -124,13 +124,11 @@ export class CategoryService {
   create(category: Category, file: S3File | null): Observable<Category> {
     this.workingService.push('category create');
 
-    const userId = this.sessionService.getUserId();
-    const accountId = this.sessionService.getAccountId();
-    category.userId = userId;
-    category.accountId = accountId;
+    category.userId = this.session()?.userId ?? -1;
+    category.accountId = this.session()?.userId ?? -1;
 
     return this.http.post<ApiResponse<Category>>(`${this.apiUrl}/category`, category, {
-      headers: { 'Create-By': `${userId}` }
+      headers: { 'Create-By': `${category.userId}` }
     }).pipe(
       map(response => response.data),
       tap(categoryCreated => {
@@ -164,10 +162,8 @@ export class CategoryService {
   update(category: Category, file: S3File | null): Observable<Category> {
     this.workingService.push('category update');
 
-    const userId = this.sessionService.getUserId();
-    const accountId = this.sessionService.getAccountId();
-    category.userId = userId;
-    category.accountId = accountId;
+    category.userId = this.session()?.userId ?? -1;
+    category.accountId = this.session()?.accountId ?? -1;
 
     if(file != null && category.imageName == environment.DEFAULT_IMAGE_CATEGORY_NAME) {
       category.imageName = `${category.id}.png`;
@@ -175,7 +171,7 @@ export class CategoryService {
 
     return this.http.put<ApiResponse<Category>>(`${this.apiUrl}/category`, category, {
       headers: {
-        'Update-By': `${userId}`
+        'Update-By': `${category.userId}`
       }
     }).pipe(
       map(response => response.data),

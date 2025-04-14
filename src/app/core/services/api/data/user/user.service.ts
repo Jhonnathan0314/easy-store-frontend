@@ -6,6 +6,7 @@ import { SessionService } from '../../../utils/session/session.service';
 import { environment } from 'src/environments/environment';
 import { ApiResponse, ErrorMessage } from '@models/data/general.model';
 import { LoadingService } from '../../../utils/loading/loading.service';
+import { SessionData } from '@models/security/security-data.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,8 @@ export class UserService {
   users = signal<User[]>([]);
   usersError = signal<ErrorMessage | null>(null);
   
+  session: Signal<SessionData | null> = computed(() => this.sessionService.session());
+
   constructor(
     private http: HttpClient, 
     private loadingService: LoadingService,
@@ -28,7 +31,7 @@ export class UserService {
   private findAllByAccount() {
     this.loadingService.push('user findAllByAccount');
 
-    const accountId = this.sessionService.getUserId();
+    const accountId = this.session()?.accountId ?? -1;
 
     this.http.get<ApiResponse<User[]>>(`${this.apiUrl}/user/account/${accountId}`).pipe(
       map(response => response.data),

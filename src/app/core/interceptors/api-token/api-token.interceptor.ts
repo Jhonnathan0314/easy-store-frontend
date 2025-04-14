@@ -8,7 +8,7 @@ export const apiToken: HttpInterceptorFn = (req: HttpRequest<unknown>, next: Htt
 
     const sessionService = inject(SessionService);
 
-    const token = sessionService.getToken();
+    const token = sessionService.session()?.token ?? '';
     if(token === '') return next(req.clone());
 
     const authReq = req.clone({

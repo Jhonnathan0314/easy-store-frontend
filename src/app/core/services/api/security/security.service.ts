@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, signal } from '@angular/core';
+import { computed, Injectable, Signal, signal } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { LoginRequest, RegisterRequest, ResetPasswordRequest } from '../../../models/data-types/security/security-request.model';
 import { catchError, finalize, map, Observable, tap, throwError } from 'rxjs';
@@ -8,6 +8,7 @@ import { ApiResponse, ErrorMessage } from 'src/app/core/models/data-types/data/g
 import { SessionService } from '../../utils/session/session.service';
 import { TokenService } from '../../utils/token/token.service';
 import { WorkingService } from '../../utils/working/working.service';
+import { SessionData } from '@models/security/security-data.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,13 +20,15 @@ export class SecurityService {
   security = signal<string>('');
   securityError = signal<ErrorMessage | null>(null);
 
+  session: Signal<SessionData | null> = computed(() => this.sessionService.session());
+
   constructor(
     private http: HttpClient,
     private workingService: WorkingService,
     private sessionService: SessionService,
     private tokenService: TokenService
   ) {
-    this.security.set(sessionService.isLogged() ? sessionService.getToken() : '');
+    this.security.set(sessionService.isLogged() ? this.session()?.token ?? '' : '');
     this.securityError.set(null);
   }
 

@@ -14,6 +14,7 @@ import { SessionService } from 'src/app/core/services/utils/session/session.serv
 import { ProductDetailComponent } from "../product-detail/product-detail.component";
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
+import { SessionData } from '@models/security/security-data.model';
 
 @Component({
   selector: 'app-products',
@@ -44,6 +45,8 @@ export class ProductsComponent implements OnInit {
   isLoading: Signal<boolean> = computed(() => this.loadingService.loading().length > 0);
   isWorking: Signal<boolean> = computed(() => this.workingService.working().length > 0);
 
+  session: Signal<SessionData | null> = computed(() => this.sessionService.session());
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -67,7 +70,7 @@ export class ProductsComponent implements OnInit {
   }
 
   extractCart() {
-    const isAdmin = this.sessionService.getRole() === 'admin';
+    const isAdmin = this.session()?.role === 'admin';
     effect(() => {
       if(!this.category()) return;
       if(!isAdmin && this.products().length == 0) {

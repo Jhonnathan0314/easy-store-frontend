@@ -42,7 +42,7 @@ export class SubcategoryService {
 
   private findAllByAccountId() {
     this.loadingService.push('subcategory findAllByAccountId');
-    const accountId = this.sessionService.getAccountId();
+    const accountId = this.session()?.accountId ?? -1;
     this.http.get<ApiResponse<Subcategory[]>>(`${this.apiUrl}/subcategory/account/${accountId}`).pipe(
       map(response => response.data),
       tap(subcategories => {
@@ -65,7 +65,7 @@ export class SubcategoryService {
   create(subcategory: Subcategory): Observable<Subcategory> {
     this.workingService.push('subcategory create');
 
-    const userId = this.sessionService.getUserId();
+    const userId = this.session()?.userId ?? -1;
 
     return this.http.post<ApiResponse<Subcategory>>(`${this.apiUrl}/subcategory`, subcategory, {
       headers: {
@@ -83,7 +83,7 @@ export class SubcategoryService {
   update(subcategory: Subcategory): Observable<Subcategory> {
     this.workingService.push('subcategory update');
 
-    const userId = this.sessionService.getUserId();
+    const userId = this.session()?.userId ?? -1;
 
     return this.http.put<ApiResponse<Subcategory>>(`${this.apiUrl}/subcategory`, subcategory, {
       headers: {

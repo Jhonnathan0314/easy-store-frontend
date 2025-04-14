@@ -65,8 +65,8 @@ export class PaymentTypeService {
   create(paymentType: PaymentType): Observable<PaymentType> {
     this.workingService.push('payment-type create');
 
-    const userId = this.sessionService.getUserId();
-    paymentType.accountId = this.sessionService.getAccountId();
+    const userId = this.session()?.userId ?? -1;
+    paymentType.accountId = this.session()?.accountId ?? -1;
 
     return this.http.post<ApiResponse<PaymentType>>(`${this.apiUrl}/payment-type`, paymentType, {
       headers: {
@@ -85,8 +85,8 @@ export class PaymentTypeService {
   update(paymentType: PaymentType): Observable<PaymentType> {
     this.workingService.push('payment-type update');
 
-    const userId = this.sessionService.getUserId();
-    paymentType.accountId = this.sessionService.getAccountId();
+    const userId = this.session()?.userId ?? -1;
+    paymentType.accountId = this.session()?.accountId ?? -1;
 
     return this.http.put<ApiResponse<PaymentType>>(`${this.apiUrl}/payment-type`, paymentType, {
       headers: {

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { computed, Injectable, Signal } from '@angular/core';
 import { FileService } from '../file/file.service';
 import { S3File } from '@models/utils/file.model';
 import { concat, forkJoin, map, Observable, of } from 'rxjs';
@@ -7,6 +7,7 @@ import { ApiResponse } from '@models/data/general.model';
 import { HttpClient } from '@angular/common/http';
 import { SessionService } from '../../../utils/session/session.service';
 import { environment } from 'src/environments/environment';
+import { SessionData } from '@models/security/security-data.model';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class FileProductService {
 
   apiUrl: string = `${environment.BACKEND_URL}${environment.BACKEND_PATH}`;
 
-  accountId: number = this.sessionService.getAccountId();
+  session: Signal<SessionData | null> = computed(() => this.sessionService.session());
 
   constructor(
     private http: HttpClient, 
@@ -37,7 +38,7 @@ export class FileProductService {
     const file = new S3File();
     file.name = firstImageName;
     file.context = "product";
-    file.accountId = accountId ?? this.accountId;
+    file.accountId = accountId ?? this.session()?.accountId ?? -1;
     return this.fileService.getFile(file);
   }
 
@@ -51,7 +52,7 @@ export class FileProductService {
     if (product.imageNumber == 0 || !product.imageName || product.imageName == environment.DEFAULT_IMAGE_PRODUCT_NAME) return [];
 
     return product.imageName.split(",").map(imageName => {
-      return this.fileService.getFile({ name: imageName, context: "product", accountId: accountId ?? this.accountId } as S3File);
+      return this.fileService.getFile({ name: imageName, context: "product", accountId: accountId ?? this.session()?.accountId ?? -1 } as S3File);
     });
   }
 
@@ -66,7 +67,7 @@ export class FileProductService {
   }
 
   private putProductFile(file: S3File, productId: number): Observable<Product> {
-    file.accountId = this.accountId;
+    file.accountId = this.session()?.accountId ?? -1;
     return this.http.put<ApiResponse<Product>>(`${this.apiUrl}/s3/product/put/${productId}`, file)
       .pipe(
         map(response => response.data)
@@ -84,7 +85,7 @@ export class FileProductService {
   }
 
   private deleteProductFile(file: S3File, productId: number): Observable<Product> {
-    file.accountId = this.accountId;
+    file.accountId = this.session()?.accountId ?? -1;
     file.content = '';
     return this.http.put<ApiResponse<Product>>(`${this.apiUrl}/s3/product/delete/${productId}/account/${file.accountId}`, file)
       .pipe(
