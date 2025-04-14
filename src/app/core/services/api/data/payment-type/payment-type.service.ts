@@ -58,10 +58,6 @@ export class PaymentTypeService {
     ).subscribe()
   }
 
-  getById(id: number): Signal<PaymentType | undefined> {
-    return computed(() => this.paymentTypes().find(pay => pay.id === id));
-  }
-
   create(paymentType: PaymentType): Observable<PaymentType> {
     this.workingService.push('payment-type create');
 

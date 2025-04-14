@@ -95,7 +95,7 @@
             <app-input-file 
               class="w-4/5"
               [fileLimit]="5"
-              [filesUploaded]="product()?.images || []"
+              [filesUploaded]="product?.images || []"
               (uploadFilesEvent)="uploadFiles($event)"
               (deleteFileEvent)="deleteFile($event)"
             />

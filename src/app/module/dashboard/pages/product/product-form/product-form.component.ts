@@ -37,7 +37,7 @@ export class ProductFormComponent implements OnInit {
   formErrors: FormErrors;
 
   productId: number = 0;
-  product: Signal<Product | undefined> = computed(() => this.productService.products().find(prod => prod.id == this.productId));
+  product: Product | undefined = undefined;
   productImagesFinded: Signal<number[]> = computed(() => this.productService.productImagesFinded());
 
   subcategoriesError: Signal<ErrorMessage | null> = computed(() => this.subcategoryService.subcategoriesError());
@@ -132,18 +132,19 @@ export class ProductFormComponent implements OnInit {
 
   prepareUpdateForm() {
     effect(() => {
-      if(!this.product()) return;
-      if(this.product()?.imageName != environment.DEFAULT_IMAGE_CATEGORY_NAME && !this.productImagesFinded().includes(this.productId)) {
+      this.product = this.productService.getById(this.productId)();
+      if(!this.product) return;
+      if(this.product?.imageName != environment.DEFAULT_IMAGE_CATEGORY_NAME && !this.productImagesFinded().includes(this.productId)) {
         this.viewInputFile = false;
       }
       this.productForm.patchValue({
         id: this.productId,
-        name: this.product()?.name,
-        description: this.product()?.description,
-        price: this.product()?.price,
-        quantity: this.product()?.quantity,
-        qualification: this.product()?.qualification,
-        subcategoryId: `${this.product()?.subcategoryId}`
+        name: this.product?.name,
+        description: this.product?.description,
+        price: this.product?.price,
+        quantity: this.product?.quantity,
+        qualification: this.product?.qualification,
+        subcategoryId: `${this.product?.subcategoryId}`
       })
     }, {injector: this.injector})
   }
@@ -189,9 +190,9 @@ export class ProductFormComponent implements OnInit {
   getObject(): Product {
     return { 
       ...this.productForm.value,
-      imageNumber: this.product()?.imageNumber ?? 0,
-      imageLastNumber: this.product()?.imageLastNumber ?? 0,
-      imageName: this.product()?.imageName ?? environment.DEFAULT_IMAGE_PRODUCT_NAME
+      imageNumber: this.product?.imageNumber ?? 0,
+      imageLastNumber: this.product?.imageLastNumber ?? 0,
+      imageName: this.product?.imageName ?? environment.DEFAULT_IMAGE_PRODUCT_NAME
     };
   }
 

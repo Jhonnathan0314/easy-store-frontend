@@ -33,7 +33,7 @@ export class SubcategoryFormComponent implements OnInit {
   formErrors: FormErrors;
 
   subcategoryId: number = 0;
-  subcategory: Signal<Subcategory | undefined> = computed<Subcategory | undefined>(() => this.subcategoryService.subcategories().find(sub => sub.id == this.subcategoryId));
+  subcategory: Subcategory | undefined = undefined;
   
   categories: Signal<Category[]> = computed<Category[]>(() => this.categoryService.categories());
   categoriesError: Signal<ErrorMessage | null> = computed(() => this.categoryService.categoriesError());
@@ -116,11 +116,12 @@ export class SubcategoryFormComponent implements OnInit {
 
   prepareUpdateForm() {
     effect(() => {
-      if(!this.subcategory()) return;
+      this.subcategory = this.subcategoryService.getById(this.subcategoryId)();
+      if(!this.subcategory) return;
       this.subcategoryForm.patchValue({
         id: this.subcategoryId,
-        name: this.subcategory()?.name,
-        categoryId: `${this.subcategory()?.categoryId}`
+        name: this.subcategory?.name,
+        categoryId: `${this.subcategory?.categoryId}`
       })
     }, {injector: this.injector})
   }
