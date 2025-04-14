@@ -22,6 +22,7 @@ import { MessageModule } from 'primeng/message';
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 import { environment } from 'src/environments/environment';
+import { convertListToDataObjects } from 'src/app/core/utils/mapper/primeng-mapper.util';
 
 @Component({
   selector: 'app-product-form',
@@ -115,7 +116,7 @@ export class ProductFormComponent implements OnInit {
   extractMappedSubcategories() {
     effect(() => {
       if(this.subcategories().length === 0) return;
-      this.mappedSubcategories = this.subcategories().map(sub => ({ value: `${sub.id}`, name: sub.name }));
+      this.mappedSubcategories = convertListToDataObjects(this.subcategories());
     }, {injector: this.injector})
   }
 

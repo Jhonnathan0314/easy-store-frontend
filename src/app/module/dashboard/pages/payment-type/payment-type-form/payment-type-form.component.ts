@@ -17,6 +17,7 @@ import { InputSelectComponent } from "../../../../../shared/inputs/input-select/
 import { MessageModule } from 'primeng/message';
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
+import { convertListToDataObjects } from 'src/app/core/utils/mapper/primeng-mapper.util';
 
 @Component({
   selector: 'app-payment-type-form',
@@ -74,9 +75,7 @@ export class PaymentTypeFormComponent {
   validateCategories() {
     effect(() => {
       if(this.categories().length === 0) return;
-      this.mappedCategories = this.categories().map((category: Category) => {
-        return { name: category.name, value: `${category.id}` };
-      })
+      this.mappedCategories = convertListToDataObjects(this.categories());
       this.validateParams();
     }, {injector: this.injector})
   }
@@ -84,9 +83,7 @@ export class PaymentTypeFormComponent {
   validatePaymentTypes() {
     effect(() => {
       if(this.paymentTypes().length === 0) return;
-      this.mappedPaymentTypes = this.paymentTypes().map((paymentType: PaymentType) => {
-        return { name: paymentType.name, value: `${paymentType.id}` };
-      })
+      this.mappedPaymentTypes = convertListToDataObjects(this.paymentTypes());
       this.validateParams();
     }, {injector: this.injector})
   }

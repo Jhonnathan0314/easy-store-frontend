@@ -18,6 +18,7 @@ import { LoadingFormComponent } from "../../../../../shared/skeleton/loading-for
 import { MessageModule } from 'primeng/message';
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
+import { convertListToDataObjects } from 'src/app/core/utils/mapper/primeng-mapper.util';
 
 @Component({
   selector: 'app-subcategory-form',
@@ -99,7 +100,7 @@ export class SubcategoryFormComponent implements OnInit {
   extractMappedCategories() {
     effect(() => {
       if(this.categories().length == 0) return;
-      this.mappedCategories = this.categories().map(cat => ({ value: `${cat.id}`, name: cat.name }))
+      this.mappedCategories = convertListToDataObjects(this.categories());
     }, {injector: this.injector})
   }
 

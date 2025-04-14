@@ -16,18 +16,18 @@ import { MessageModule } from 'primeng/message';
 import { ErrorMessage } from '@models/data/general.model';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { WhatsappPipe } from 'src/app/core/pipes/whatsapp/whatsapp.pipe';
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 import { environment } from 'src/environments/environment';
 import { SessionData } from '@models/security/security-data.model';
+import { getProductsText } from 'src/app/core/utils/mapper/whatsapp-mapper.util';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
   imports: [RouterModule, AccordionModule, DividerModule, SkeletonModule, MessageModule, ToastModule, ButtonComponent],
   templateUrl: './cart.component.html',
-  providers: [MessageService, WhatsappPipe]
+  providers: [MessageService]
 })
 export class CartComponent implements OnInit {
 
@@ -58,7 +58,6 @@ export class CartComponent implements OnInit {
     private injector: Injector,
     private workingService: WorkingService,
     private loadingService: LoadingService,
-    public whatsappPipe: WhatsappPipe,
     public staticDataService: StaticDataService,
     private sessionService: SessionService,
     private messageService: MessageService,
@@ -151,7 +150,7 @@ export class CartComponent implements OnInit {
   }
 
   buyNow(cart: Purchase) {
-    const productText = this.whatsappPipe.getProductsText(cart);
+    const productText = getProductsText(cart);
     this.cartRedirect = this.staticDataService.getCartMessage(`${cart.id}`, productText, this.getPhoneNumber(cart));
     window.open(this.cartRedirect, '_blank');
   }
