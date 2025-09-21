@@ -5,51 +5,61 @@
         (clickEvent)="goBack()"
     />
     <h1 class="w-full text-center font-bold">Gestion de tipos de pago</h1>
-    <h2 class="w-full text-start text-2xl font-bold">Tipos de Pago</h2>
-    <app-button 
-        label="Adicionar"
-        icon="pi pi-plus"
-        (clickEvent)="goAddPaymentType()"
-    />
-    @if (isLoading()) {
-        <app-loading-table 
-            class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
+    <div class="w-full flex justify-center items-center">
+        <app-button 
+            label="Ver {{viewAssignedTable ? 'Tipos de Pago' : 'Tipos de Pago asignados'}}"
+            icon="pi pi-eye"
+            (clickEvent)="changeOpenTable()"
         />
-    } @else if (categories().length == 0 && !isLoading() && !hasUnexpectedError) {
-        <p-message icon="pi pi-exclamation-triangle" severity="warn">No tienes tipos de pago creados por el momento.</p-message>
-    } @else if (hasUnexpectedError) {
-        <p-message severity="error">Ha ocurrido un error inesperado, por favor, intentelo de nuevo más tarde.</p-message>
-    } @else {
-        <app-payment-type-table 
-            class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
-            [paymentTypes]="paymentTypes()"
-            [disableButtons]="isWorking()"
-            (updateEvent)="updatePaymentType($event)"
-            (changeStateEvent)="changeStatePaymentType($event)"
+    </div>
+    @if(viewAssignedTable) {
+        <h2 class="w-full text-start text-2xl font-bold">Tipos de Pago asignados</h2>
+        <app-button 
+            label="Vincular"
+            icon="pi pi-link"
+            (clickEvent)="goAddCategoryPaymentType()"
         />
-    }
-    <h2 class="w-full text-start text-2xl font-bold">Tipos de Pago asignados</h2>
-    <app-button 
-        label="Vincular"
-        icon="pi pi-link"
-        (clickEvent)="goAddCategoryPaymentType()"
-    />
-    @if (isLoading()) {
-        <app-loading-table 
-            class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
+        @if (isLoading()) {
+            <app-loading-table 
+                class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
+            />
+        } @else if (categories().length == 0 && !isLoading() && !hasUnexpectedError) {
+            <p-message icon="pi pi-exclamation-triangle" severity="warn">No tienes tipos de pago creados por el momento.</p-message>
+        } @else if (hasUnexpectedError) {
+            <p-message severity="error">Ha ocurrido un error inesperado, por favor, intentelo de nuevo más tarde.</p-message>
+        } @else {
+            <app-payment-type-assigned-table 
+                class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
+                [categories]="categories()"
+                [paymentTypes]="paymentTypes()"
+                [disableButtons]="isWorking()"
+                (updateEvent)="updateCategoryPaymentType($event)"
+                (changeStateEvent)="changeStateCategoryPaymentType($event)"
+            />
+        }
+    }@else {
+        <h2 class="w-full text-start text-2xl font-bold">Tipos de Pago</h2>
+        <app-button 
+            label="Adicionar"
+            icon="pi pi-plus"
+            (clickEvent)="goAddPaymentType()"
         />
-    } @else if (categories().length == 0 && !isLoading() && !hasUnexpectedError) {
-        <p-message icon="pi pi-exclamation-triangle" severity="warn">No tienes tipos de pago creados por el momento.</p-message>
-    } @else if (hasUnexpectedError) {
-        <p-message severity="error">Ha ocurrido un error inesperado, por favor, intentelo de nuevo más tarde.</p-message>
-    } @else {
-        <app-payment-type-assigned-table 
-            class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
-            [categories]="categories()"
-            [paymentTypes]="paymentTypes()"
-            [disableButtons]="isWorking()"
-            (updateEvent)="updateCategoryPaymentType($event)"
-            (changeStateEvent)="changeStateCategoryPaymentType($event)"
-        />
+        @if (isLoading()) {
+            <app-loading-table 
+                class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
+            />
+        } @else if (categories().length == 0 && !isLoading() && !hasUnexpectedError) {
+            <p-message icon="pi pi-exclamation-triangle" severity="warn">No tienes tipos de pago creados por el momento.</p-message>
+        } @else if (hasUnexpectedError) {
+            <p-message severity="error">Ha ocurrido un error inesperado, por favor, intentelo de nuevo más tarde.</p-message>
+        } @else {
+            <app-payment-type-table 
+                class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
+                [paymentTypes]="paymentTypes()"
+                [disableButtons]="isWorking()"
+                (updateEvent)="updatePaymentType($event)"
+                (changeStateEvent)="changeStatePaymentType($event)"
+            />
+        }
     }
 </section>

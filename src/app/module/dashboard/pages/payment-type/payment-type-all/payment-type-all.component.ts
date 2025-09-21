@@ -31,6 +31,8 @@ export class PaymentTypeAllComponent implements OnInit {
   isWorking: Signal<boolean> = computed(() => this.workingService.working().length > 0);
   hasUnexpectedError: boolean = false;
 
+  viewAssignedTable: boolean = false;
+
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -86,6 +88,10 @@ export class PaymentTypeAllComponent implements OnInit {
         this.hasUnexpectedError = true;
       }
     })
+  }
+
+  changeOpenTable() {
+    this.viewAssignedTable = !this.viewAssignedTable;
   }
 
   goBack() {
