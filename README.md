@@ -50,6 +50,7 @@ src/
 
 ### 🔹 **Roles de usuario**
 - **Admin**: CRUD completo de tiendas, categorías, productos y compras.
+- **Owner**: Acceso a sus propias tiendas, categorías, productos y compras.
 - **Client**: visualiza tiendas, usa carrito, finaliza compra vía WhatsApp.
 - **Ghost**: visualiza productos y compra directa sin login.
 
