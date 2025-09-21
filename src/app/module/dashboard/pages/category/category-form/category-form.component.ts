@@ -127,9 +127,9 @@ export class CategoryFormComponent implements OnInit {
   }
 
   createCategory() {
-    this.categoryService.create(this.getCreateObject(), this.filesToUpload[0] ?? null).subscribe({
+    this.categoryService.create(this.getCreateObject()).subscribe({
       next: (category) => {
-        this.router.navigateByUrl(`/dashboard/payment-type/form/category/${category.id}/payment-type/0`);
+        this.updateCategoryImage(category.id);
       },
       error: (error: ApiResponse<ErrorMessage>) => {
         this.handleCreateError(error);
@@ -160,12 +160,14 @@ export class CategoryFormComponent implements OnInit {
   }
 
   updateCategory() {
-    this.categoryService.update(this.getUpdateObject(), this.filesToUpload[0] ?? null).subscribe({
-      error: (error: ApiResponse<ErrorMessage>) => {
-        this.handleUpdateError(error);
+    this.categoryService.update(this.getUpdateObject()).subscribe({
+      next: (category) => {
+        this.updateCategoryImage(category.id);
       },
-      complete: () => {
-        this.router.navigateByUrl('/dashboard/category');
+      error: (error: ApiResponse<ErrorMessage>) => {
+        console.log(error);
+        this.handleUpdateError(error);
+        if(error.error.code === 400) this.updateCategoryImage(this.categoryId);
       }
     })
   }
@@ -183,15 +185,27 @@ export class CategoryFormComponent implements OnInit {
   }
 
   handleUpdateError(error: ApiResponse<ErrorMessage>) {
-    if(error.error){
-      if(error.error.code == 406 && this.filesToUpload.length == 0) {
-        this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.error.detail});
-      }else if (this.filesToUpload.length > 0){
-        this.router.navigateByUrl('/dashboard/category');
-      }
-      return;
+    const code = error.error?.code ?? 0;
+    if(code != 400) this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.detail});
+  }
+
+  updateCategoryImage(id: number) {
+    if(this.filesToUpload.length > 0) {
+      this.categoryService.updateImg(id, this.filesToUpload[0]).subscribe({
+        next: () => {
+          this.router.navigateByUrl('/dashboard/category');
+        },
+        error: (error: ApiResponse<ErrorMessage>) => {
+          this.handleError(error);
+        }
+      });
+    }else {
+      this.router.navigateByUrl('/dashboard/category');
     }
-    this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
+  }
+
+  handleError(error: ApiResponse<ErrorMessage>) {
+    this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.detail});
   }
 
   uploadFiles(files: S3File[]) {
