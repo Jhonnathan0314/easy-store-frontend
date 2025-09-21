@@ -11,11 +11,12 @@ import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/
 import { PaymentType, TablePaymentType } from '@models/data/payment-type.model';
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
+import { PaymentTypeAssignedTableComponent } from "../payment-type-assigned-table/payment-type-assigned-table.component";
 
 @Component({
   selector: 'app-payment-type-all',
   standalone: true,
-  imports: [RouterModule, MessageModule, ButtonComponent, LoadingTableComponent, PaymentTypeTableComponent],
+  imports: [RouterModule, MessageModule, ButtonComponent, LoadingTableComponent, PaymentTypeTableComponent, PaymentTypeAssignedTableComponent],
   templateUrl: './payment-type-all.component.html'
 })
 export class PaymentTypeAllComponent implements OnInit {
@@ -51,15 +52,31 @@ export class PaymentTypeAllComponent implements OnInit {
     }, {injector: this.injector})
   }
 
-  goAdd() {
+  goAddPaymentType() {
+    this.router.navigateByUrl('/dashboard/payment-type/form/0');
+  }
+
+  goAddCategoryPaymentType() {
     this.router.navigateByUrl('/dashboard/payment-type/form/category/0/payment-type/0');
   }
 
-  update(tablePaymentType: TablePaymentType) {
+  updatePaymentType(paymentType: PaymentType) {
+    this.router.navigateByUrl(`/dashboard/payment-type/form/${paymentType.id}`);
+  }
+
+  updateCategoryPaymentType(tablePaymentType: TablePaymentType) {
     this.router.navigateByUrl(`/dashboard/payment-type/form/category/${tablePaymentType.category.id}/payment-type/${tablePaymentType.paymentType.id}`);
   }
 
-  changeState(tablePaymentType: TablePaymentType) {
+  changeStatePaymentType(paymentType: PaymentType) {
+    this.paymentTypeService.changeStatePaymentType(paymentType.id).subscribe({
+      error: () => {
+        this.hasUnexpectedError = true;
+      }
+    });
+  }
+
+  changeStateCategoryPaymentType(tablePaymentType: TablePaymentType) {
     const id: CategoryHasPaymentTypeId = {
       categoryId: tablePaymentType.category.id,
       paymentTypeId: tablePaymentType.paymentType.id

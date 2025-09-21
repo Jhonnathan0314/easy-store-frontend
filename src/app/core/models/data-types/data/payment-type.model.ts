@@ -3,7 +3,7 @@ import { Category } from "./category.model";
 export class PaymentType {
     id: number;
     name: string;
-    accountId: number;
+    state: string;
 }
 
 export class TablePaymentType {

@@ -1,0 +1,103 @@
+<section class="w-full h-fit px-4 pt-4 flex flex-col gap-4 justify-center lg:flex-row lg:px-40 lg:pt-20">
+    <form class="py-8 w-full bg-section gap-8 grow-0 lg:w-8/12" [formGroup]="paymentTypeForm">
+      <app-button 
+        class="self-start"
+        icon="pi pi-arrow-left"
+        [rounded]="true"
+        (clickEvent)="goBack()"
+      />
+        <h1 class="w-full text-center">{{ title }}</h1>
+        
+        @if (showCategoryCreatedMessage) {
+          <p-message severity="info">Por favor, vincule al menos un medio de pago a la tienda que acabó de crear, para permitir su correcto funcionamiento.</p-message>
+        }
+    
+        <app-input-select
+          class="w-1/2"
+          [options]="mappedCategories"
+          [selectedOption]="paymentTypeForm.value.category"
+          label="Tienda"
+          [showClear]="true"
+          [classes]="paymentTypeForm.controls['category'].invalid && paymentTypeForm.controls['category'].touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Tienda inválida"
+          (valueEvent)="receiveValue('category', $event)"
+          formControlName="category"
+          ngDefaultControl
+        />
+
+        <app-input-select
+          class="w-1/2"
+          [options]="mappedPaymentTypes"
+          [selectedOption]="paymentTypeForm.value.paymentType"
+          label="Tipo de pago"
+          [showClear]="true"
+          [classes]="paymentTypeForm.controls['paymentType'].invalid && paymentTypeForm.controls['paymentType'].touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Tipo de pago inválido"
+          (valueEvent)="receiveValue('paymentType', $event)"
+          formControlName="paymentType"
+          ngDefaultControl
+        />
+        
+        <app-input-number
+          class="w-1/2"
+          [value]="paymentTypeForm.value.phone"
+          label="Celular"
+          [classes]="paymentTypeForm.controls['phone'].invalid && paymentTypeForm.controls['phone'].touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Celular inválido"
+          (valueEvent)="receiveValue('phone', $event)"
+          formControlName="phone"
+          ngDefaultControl
+        />
+        
+        <app-input-text
+          class="w-1/2"
+          [value]="paymentTypeForm.value.email"
+          label="Correo electrónico"
+          [classes]="paymentTypeForm.controls['email'].invalid && paymentTypeForm.controls['email'].touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Correo electrónico inválido"
+          (valueEvent)="receiveValue('email', $event)"
+          formControlName="email"
+          ngDefaultControl
+        />
+        
+        <app-input-text
+          class="w-1/2"
+          [value]="paymentTypeForm.value.accountNumber"
+          label="Número de cuenta"
+          [classes]="paymentTypeForm.controls['accountNumber'].invalid && paymentTypeForm.controls['accountNumber'].touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Número de cuenta inválido"
+          (valueEvent)="receiveValue('accountNumber', $event)"
+          formControlName="accountNumber"
+          ngDefaultControl
+        />
+        
+        <app-input-text
+          class="w-1/2"
+          [value]="paymentTypeForm.value.accountType"
+          label="Tipo de cuenta"
+          [classes]="paymentTypeForm.controls['accountType'].invalid && paymentTypeForm.controls['accountType'].touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Tipo de cuenta inválido"
+          (valueEvent)="receiveValue('accountType', $event)"
+          formControlName="accountType"
+          ngDefaultControl
+        />
+        
+        <app-input-text
+          class="w-1/2"
+          [value]="paymentTypeForm.value.accountBank"
+          label="Banco"
+          [classes]="paymentTypeForm.controls['accountBank'].invalid && paymentTypeForm.controls['accountBank'].touched ? 'ng-invalid ng-dirty' : ''"
+          errorMessage="Banco inválido"
+          (valueEvent)="receiveValue('accountBank', $event)"
+          formControlName="accountBank"
+          ngDefaultControl
+        />
+    
+        <app-button
+          [label]="buttonLabel"
+          [disabled]="isWorking()"
+          (clickEvent)="validateForm()"
+        />
+    </form>
+    <p-toast [life]="10000" />
+</section>

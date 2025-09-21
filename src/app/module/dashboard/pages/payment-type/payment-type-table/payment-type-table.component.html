@@ -1,6 +1,6 @@
-@if (tablePaymentTypes.length > 0) {
+@if (paymentTypes.length > 0) {
     <p-table
-        [value]="tablePaymentTypes"
+        [value]="paymentTypes"
         [paginator]="true"
         [rows]="20"
         paginatorPosition="both"
@@ -9,13 +9,8 @@
     >
         <ng-template pTemplate="header">
             <tr>
-                <th class="w-auto" pSortableColumn="category.name">Tienda</th>
-                <th class="w-auto" pSortableColumn="paymentType.name">Tipo de pago</th>
-                <th class="w-auto" pSortableColumn="phone">Celular</th>
-                <th class="w-auto" pSortableColumn="email">Correo</th>
-                <th class="w-auto" pSortableColumn="accountNumber">Numero de cuenta</th>
-                <th class="w-auto" pSortableColumn="accountType">Tipo de cuenta</th>
-                <th class="w-auto" pSortableColumn="accountBank">Banco</th>
+                <th class="w-auto" pSortableColumn="category.name">Id</th>
+                <th class="w-auto" pSortableColumn="paymentType.name">Nombre</th>
                 <th class="w-auto" pSortableColumn="state">Estado</th>
                 <th class="w-auto">Actualizar</th>
                 <th class="w-auto">Cambiar estado</th>
@@ -23,25 +18,20 @@
             <tr>
                 <th>
                     <p-columnFilter
-                        type="text"
-                        field="category.name"
-                        placeholder="Buscar por categoria"
-                        ariaLabel="Buscar por categoria"
+                        type="number"
+                        field="id"
+                        placeholder="Buscar por id"
+                        ariaLabel="Buscar por id"
                     ></p-columnFilter>
                 </th>
                 <th>
                     <p-columnFilter
                         type="text"
-                        field="paymentType.name"
-                        placeholder="Buscar por tipo de pago"
-                        ariaLabel="Buscar por tipo de pago"
+                        field="name"
+                        placeholder="Buscar por nombre"
+                        ariaLabel="Buscar por nombre"
                     ></p-columnFilter>
                 </th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
                 <th>
                     <p-columnFilter
                         type="text"
@@ -56,19 +46,14 @@
         </ng-template>
         <ng-template #body let-obj>
             <tr>
-                <td>{{ obj.category.name }}</td>
-                <td>{{ obj.paymentType.name }}</td>
-                <td>{{ !obj.phone || obj.phone === '' ? 'NA' : obj.phone }}</td>
-                <td>{{ !obj.email || obj.email === '' ? 'NA' : obj.email }}</td>
-                <td>{{ !obj.accountNumber || obj.accountNumber === '' ? 'NA' : obj.accountNumber }}</td>
-                <td>{{ !obj.accountType || obj.accountType === '' ? 'NA' : obj.accountType }}</td>
-                <td>{{ !obj.accountBank || obj.accountBank === '' ? 'NA' : obj.accountBank }}</td>
+                <td>{{ obj.id }}</td>
+                <td>{{ obj.name }}</td>
                 <td>{{ obj.state === 'active' ? 'Activo' : 'Inactivo' }}</td>
                 <td>
                     <app-button icon="pi pi-pencil" [rounded]="true" [disabled]="disableButtons" (clickEvent)="updateAction(obj)" />
                 </td>
                 <td>
-                    <app-button icon="pi pi-power-off" [severity]="obj.state === 'active' ? 'danger' : 'info'" [rounded]="true" [disabled]="disableButtons" [confirmClick]="true" (clickEvent)="changeStateAction(obj)" />
+                    <app-button icon="pi pi-power-off" [label]="obj.state === 'active' ? 'Desactivar' : 'Activar'" [severity]="obj.state === 'active' ? 'danger' : 'info'" [rounded]="true" [disabled]="disableButtons" [confirmClick]="true" (clickEvent)="changeStateAction(obj)" />
                 </td>
             </tr>
         </ng-template>

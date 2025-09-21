@@ -36,8 +36,25 @@ export class PaymentTypeService {
   validateRole() {
     effect(() => {
       if(!this.session() || this.session()?.role === '') return;
-      if(this.session()?.role === 'admin') this.findAllActive();
+      if(this.session()?.role === 'admin') this.findAll();
     }, {injector: this.injector, allowSignalWrites: true})
+  }
+
+  findAll() {
+    this.loadingService.push('payment-type findAll');
+
+    this.http.get<ApiResponse<PaymentType[]>>(`${this.apiUrl}/payment-type`).pipe(
+      map(response => response.data),
+      tap(paymentTypes => {
+        this.paymentTypes.update(() => paymentTypes);
+      }),
+      catchError((error: {error: ApiResponse<ErrorMessage>}) => {
+        this.paymentTypesError.update(() => error.error.error);
+        this.paymentTypes.update(() => []);
+        return throwError(() => error)
+      }),
+      finalize(() => this.loadingService.drop('payment-type findAll'))
+    ).subscribe()
   }
 
   findAllActive() {
@@ -58,11 +75,14 @@ export class PaymentTypeService {
     ).subscribe()
   }
 
+  getById(id: number): Signal<PaymentType | undefined> {
+    return computed(() => this.paymentTypes().find(pt => pt.id === id));
+  }
+
   create(paymentType: PaymentType): Observable<PaymentType> {
     this.workingService.push('payment-type create');
 
     const userId = this.session()?.userId ?? -1;
-    paymentType.accountId = this.session()?.accountId ?? -1;
 
     return this.http.post<ApiResponse<PaymentType>>(`${this.apiUrl}/payment-type`, paymentType, {
       headers: {
@@ -82,7 +102,6 @@ export class PaymentTypeService {
     this.workingService.push('payment-type update');
 
     const userId = this.session()?.userId ?? -1;
-    paymentType.accountId = this.session()?.accountId ?? -1;
 
     return this.http.put<ApiResponse<PaymentType>>(`${this.apiUrl}/payment-type`, paymentType, {
       headers: {
@@ -101,24 +120,21 @@ export class PaymentTypeService {
     )
   }
 
-  deleteById(id: number) {
-    this.workingService.push('payment-type deleteById');
+  changeStatePaymentType(id: number): Observable<PaymentType> {
+    this.workingService.push('payment-type changeStatePaymentType');
 
-    this.http.delete<ApiResponse<object>>(`${this.apiUrl}/payment-type/delete/${id}`).pipe(
-      tap(() => {
-        this.paymentTypes.update(types => types.filter(type => type.id != id));
-        if(this.paymentTypes().length == 0) {
-          const error: ErrorMessage = {
-            code: 404,
-            title: 'No hay tipos de pago.',
-            detail: 'No se encontraron tipos de pago.'
-          };
-          this.paymentTypesError.update(() => error)
-        }
-      }),
+    const userId = this.session()?.userId ?? -1;
+
+    return this.http.delete<ApiResponse<PaymentType>>(`${this.apiUrl}/payment-type/change-state/${id}`, {
+      headers: {
+        'Update-By': `${userId}`
+      }
+    }).pipe(
+      map((response) =>  response.data),
+      tap((paymentType) => this.paymentTypes.update(types => types.map(type => type.id === paymentType.id ? paymentType : type))),
       catchError((error) => throwError(() => error.error)),
-      finalize(() => this.workingService.drop('payment-type deleteById'))
-    ).subscribe()
+      finalize(() => this.workingService.drop('payment-type changeStatePaymentType'))
+    )
   }
 
 }

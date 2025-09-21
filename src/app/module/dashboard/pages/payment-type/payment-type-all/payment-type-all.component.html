@@ -5,10 +5,11 @@
         (clickEvent)="goBack()"
     />
     <h1 class="w-full text-center font-bold">Gestion de tipos de pago</h1>
+    <h2 class="w-full text-start text-2xl font-bold">Tipos de Pago</h2>
     <app-button 
         label="Adicionar"
         icon="pi pi-plus"
-        (clickEvent)="goAdd()"
+        (clickEvent)="goAddPaymentType()"
     />
     @if (isLoading()) {
         <app-loading-table 
@@ -21,11 +22,34 @@
     } @else {
         <app-payment-type-table 
             class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
+            [paymentTypes]="paymentTypes()"
+            [disableButtons]="isWorking()"
+            (updateEvent)="updatePaymentType($event)"
+            (changeStateEvent)="changeStatePaymentType($event)"
+        />
+    }
+    <h2 class="w-full text-start text-2xl font-bold">Tipos de Pago asignados</h2>
+    <app-button 
+        label="Vincular"
+        icon="pi pi-link"
+        (clickEvent)="goAddCategoryPaymentType()"
+    />
+    @if (isLoading()) {
+        <app-loading-table 
+            class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
+        />
+    } @else if (categories().length == 0 && !isLoading() && !hasUnexpectedError) {
+        <p-message icon="pi pi-exclamation-triangle" severity="warn">No tienes tipos de pago creados por el momento.</p-message>
+    } @else if (hasUnexpectedError) {
+        <p-message severity="error">Ha ocurrido un error inesperado, por favor, intentelo de nuevo más tarde.</p-message>
+    } @else {
+        <app-payment-type-assigned-table 
+            class="w-full max-h-[calc(100vh-23rem)] overflow-y-auto overflow-x-hidden"
             [categories]="categories()"
             [paymentTypes]="paymentTypes()"
             [disableButtons]="isWorking()"
-            (updateEvent)="update($event)"
-            (changeStateEvent)="changeState($event)"
+            (updateEvent)="updateCategoryPaymentType($event)"
+            (changeStateEvent)="changeStateCategoryPaymentType($event)"
         />
     }
 </section>
