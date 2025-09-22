@@ -40,7 +40,6 @@ export class ProductFormComponent implements OnInit {
 
   productId: number = 0;
   product: Product | undefined = undefined;
-  productImagesFinded: Signal<number[]> = computed(() => this.productService.productImagesFinded());
 
   subcategoriesError: Signal<ErrorMessage | null> = computed(() => this.subcategoryService.subcategoriesError());
   subcategories: Signal<Subcategory[]> = computed(() => this.subcategoryService.subcategories());
@@ -136,7 +135,7 @@ export class ProductFormComponent implements OnInit {
     effect(() => {
       this.product = this.productService.getById(this.productId)();
       if(!this.product) return;
-      if(this.product?.imageName != environment.DEFAULT_IMAGE_CATEGORY_NAME && !this.productImagesFinded().includes(this.productId)) {
+      if(this.product?.imageName != environment.DEFAULT_IMAGE_CATEGORY_NAME && this.product?.imageNumber !== this.product?.images.length) {
         this.viewInputFile = false;
       }
       this.productForm.patchValue({
@@ -164,29 +163,54 @@ export class ProductFormComponent implements OnInit {
   }
 
   createProduct() {
-    this.productService.create(this.getObject(), this.filesToUpload).subscribe({
-      next: (product) => {
-        this.productService.findProductImages(product.id).subscribe();
+    this.productService.create(this.getObject()).subscribe({
+      next: () => {
+        this.validateProductFiles();
       },
-      error: () => {
-        this.messageService.add({severity: 'error', summary: 'Error desconocido', detail: 'Por favor, intentelo de nuevo más tarde.'});
-      },
-      complete: () => {
-        this.router.navigateByUrl('/dashboard/product');
+      error: (error: ApiResponse<ErrorMessage>) => {
+        if(error.error.code === 400) this.validateProductFiles();
+        else this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.detail});
       }
     })
   }
 
   updateProduct() {
-    this.productService.update(this.getObject(), this.filesToUpload, this.filesToDelete).subscribe({
+    this.productService.update(this.getObject()).subscribe({
+      next: () => {
+        this.validateProductFiles();
+      },
+      error: (error) => {
+        if(error.error.code === 400) this.validateProductFiles();
+        else this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.detail});
+      }
+    })
+  }
+
+  validateProductFiles() {
+    if(this.filesToDelete.length > 0) this.deleteProductFiles();
+    else if(this.filesToUpload.length > 0) this.uploadProductFiles();
+    else this.router.navigateByUrl('/dashboard/product');
+  }
+
+  deleteProductFiles() {
+    this.productService.deleteProductFiles(this.productId, this.filesToDelete).subscribe({
+      next: () => {
+        if(this.filesToUpload.length > 0) this.uploadProductFiles();
+        else this.router.navigateByUrl('/dashboard/product');
+      },
+      error: (error) => {
+        this.handleUpdateError(error);
+      }
+    });
+  }
+
+  uploadProductFiles() {
+    this.productService.uploadProductFiles(this.productId, this.filesToUpload).subscribe({
       error: (error) => {
         this.handleUpdateError(error);
       },
-      complete: () => {
-        this.productService.findProductImages(this.productId).subscribe();
-        this.router.navigateByUrl('/dashboard/product');
-      }
-    })
+      complete: () => this.router.navigateByUrl('/dashboard/product')
+    });
   }
 
   getObject(): Product {
@@ -200,7 +224,7 @@ export class ProductFormComponent implements OnInit {
 
   handleUpdateError(error: ApiResponse<ErrorMessage>) {
     if(error.error) {
-      if(error.error.code == 406) {
+      if(error.error.code == 406 || error.error.code == 409) {
         this.messageService.add({severity: 'warn', summary: 'Alerta', detail: error.error.detail});
         return;
       }
@@ -221,10 +245,11 @@ export class ProductFormComponent implements OnInit {
   }
 
   setViewInputFile(value: boolean) {
-    if(!this.productImagesFinded().includes(this.productId)) {
-      this.productService.findProductImages(this.productId).subscribe({
+    if(this.product?.imageNumber !== this.product?.images.length) {
+      this.productService.findById(this.productId).subscribe({
         complete: () => {
           this.viewInputFile = value;
+          console.log("viewInputFile", this.viewInputFile);
         }
       });
     }else {

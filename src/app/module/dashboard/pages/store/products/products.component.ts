@@ -150,8 +150,8 @@ export class ProductsComponent implements OnInit {
   }
 
   viewProduct(product: Product) {
-    if(!this.productImagesFinded().includes(product.id)) {
-      this.productService.findProductImages(product.id, this.category()?.accountId).subscribe({
+    if(product.imageNumber !== product.images.length) {
+      this.productService.findById(product.id).subscribe({
         complete: () => {
           this.showDetailProduct(product.id);
         }
