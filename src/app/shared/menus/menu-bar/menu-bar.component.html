@@ -13,7 +13,7 @@
                         icon="pi "
                         (clickEvent)="goToRegister()"
                     />
-                } @else if (session()?.role === 'admin' || session()?.role === 'client') {
+                } @else if (session()?.role === 'admin' || session()?.role === 'owner' || session()?.role === 'client') {
                     <app-button 
                         label="Cerrar sesión"
                         icon="pi "
