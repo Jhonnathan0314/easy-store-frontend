@@ -36,8 +36,20 @@ export class SubcategoryService {
   validateRole() {
     effect(() => {
       if(!this.session() || this.session()?.role === '') return;
-      this.findAllByAccountId();
+      if(this.session()?.role === 'owner') this.findAllByAccountId();
+      if(this.session()?.role === 'admin') this.findAll();
     }, {injector: this.injector, allowSignalWrites: true})
+  }
+
+  private findAll() {
+    this.loadingService.push('subcategory findAll');
+    this.http.get<ApiResponse<Subcategory[]>>(`${this.apiUrl}/subcategory`).pipe(
+      map(response => response.data),
+      tap(subcategories => {
+        this.subcategories.update(() => subcategories);
+      }),
+      finalize(() => this.loadingService.drop('subcategory findAll'))
+    ).subscribe();
   }
 
   private findAllByAccountId() {

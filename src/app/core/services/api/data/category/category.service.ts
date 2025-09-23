@@ -37,9 +37,9 @@ export class CategoryService {
   validateRole() {
     effect(() => {
       if(!this.session() || this.session()?.role === '') return;
-      if (this.session()?.role === 'admin') {
+      if(this.session()?.role === 'owner') {
         this.findAllByAccount();
-      }else if (this.session()?.role === 'client' || this.session()?.role === 'ghost') {
+      } else if (this.session()?.role === 'admin' || this.session()?.role === 'client' || this.session()?.role === 'ghost') {
         this.findAll();
       }
     }, {injector: this.injector, allowSignalWrites: true})

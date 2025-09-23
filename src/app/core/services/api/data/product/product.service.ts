@@ -42,8 +42,20 @@ export class ProductService {
   validateRole() {
     effect(() => {
       if(!this.session() || this.session()?.role === '') return;
-      if(this.session()?.role === 'admin') this.findByAccount();
+      if(this.session()?.role === 'admin') this.findAll();
+      if(this.session()?.role === 'owner') this.findByAccount();
     }, {injector: this.injector, allowSignalWrites: true})
+  }
+
+  private findAll() {
+    this.loadingService.push('product findAll');
+    this.http.get<ApiResponse<Product[]>>(`${this.apiUrl}/product?allImages=false`).pipe(
+      map(response => response.data),
+      tap(products => {
+        this.products.update(() => products);
+      }),
+      finalize(() => this.loadingService.drop('product findAll'))
+    ).subscribe();
   }
 
   private findByAccount() {

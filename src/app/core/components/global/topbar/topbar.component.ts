@@ -34,6 +34,8 @@ export class TopbarComponent {
     effect(() => {
       if(this.session()?.role === 'admin') {
         this.buildItemsObjectAdmin();
+      } else if(this.session()?.role === 'owner') {
+        this.buildItemsObjectOwner();
       } else if(this.session()?.role === 'client') {
         this.buildItemsObjectClient();
       } else if(this.session()?.role === 'ghost') {
@@ -105,9 +107,112 @@ export class TopbarComponent {
         ]
       },
       { 
+        label: 'Tipos de pago asignados', 
+        icon: 'pi pi-credit-card',
+        items: [
+          {
+            label: 'Gestionar',
+            icon: 'pi pi-list',
+            command: () => this.router.navigateByUrl('/dashboard/payment-type-assigned')
+          }
+        ]
+      },
+      { 
         label: 'Mis carritos', 
         icon: 'pi pi-shopping-cart',
         command: () => this.router.navigateByUrl('/dashboard/store/cart')
+      },
+      {
+        label: 'Temas',
+        icon: 'pi pi-fw pi-palette',
+        items: [
+          {
+            label: 'Verde',
+            command: () => { 
+              this.themeService.switchTheme('green');
+            }
+          },
+          {
+            label: 'Azul',
+            command: () => { 
+              this.themeService.switchTheme('sky');
+            }
+          },
+          {
+            label: 'Naranja',
+            command: () => { 
+              this.themeService.switchTheme('amber');
+            }
+          },
+          {
+            label: 'Rosado',
+            command: () => { 
+              this.themeService.switchTheme('pink');
+            }
+          },
+          {
+            label: 'Violeta',
+            command: () => { 
+              this.themeService.switchTheme('violet');
+            }
+          }
+        ],
+      },
+      {
+        label: 'Modo ' + this.mode,
+        icon: `pi ${this.mode === 'claro' ? 'pi-sun' : 'pi-moon'}`,
+        command: () => { 
+          this.themeService.switchMode(this.mode);
+          this.configMenuItems();
+        }
+      }
+    ];
+  }
+
+  buildItemsObjectOwner() {
+    this.items = [
+      { 
+        label: 'Categorias', 
+        icon: 'pi pi-objects-column',
+        items: [
+          {
+            label: 'Gestionar',
+            icon: 'pi pi-list',
+            command: () => this.router.navigateByUrl('/dashboard/subcategory')
+          },
+          {
+            label: 'Crear',
+            icon: 'pi pi-plus',
+            command: () => this.router.navigateByUrl('/dashboard/subcategory/form/0')
+          }
+        ]
+      },
+      { 
+        label: 'Productos', 
+        icon: 'pi pi-box',
+        items: [
+          {
+            label: 'Gestionar',
+            icon: 'pi pi-list',
+            command: () => this.router.navigateByUrl('/dashboard/product')
+          },
+          {
+            label: 'Crear',
+            icon: 'pi pi-plus',
+            command: () => this.router.navigateByUrl('/dashboard/product/form/0')
+          }
+        ]
+      },
+      { 
+        label: 'Tipos de pago asignados', 
+        icon: 'pi pi-credit-card',
+        items: [
+          {
+            label: 'Gestionar',
+            icon: 'pi pi-list',
+            command: () => this.router.navigateByUrl('/dashboard/payment-type-assigned')
+          }
+        ]
       },
       {
         label: 'Temas',

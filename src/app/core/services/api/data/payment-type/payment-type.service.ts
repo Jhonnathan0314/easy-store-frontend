@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { computed, effect, Injectable, Injector, Signal, signal } from '@angular/core';
+import { computed, Injectable, Injector, Signal, signal } from '@angular/core';
 import { PaymentType } from '@models/data/payment-type.model';
 import { catchError, finalize, map, Observable, tap, throwError } from 'rxjs';
 import { SessionService } from '../../../utils/session/session.service';
@@ -34,10 +34,7 @@ export class PaymentTypeService {
   }
   
   validateRole() {
-    effect(() => {
-      if(!this.session() || this.session()?.role === '') return;
-      if(this.session()?.role === 'admin') this.findAll();
-    }, {injector: this.injector, allowSignalWrites: true})
+    this.findAll();
   }
 
   findAll() {
