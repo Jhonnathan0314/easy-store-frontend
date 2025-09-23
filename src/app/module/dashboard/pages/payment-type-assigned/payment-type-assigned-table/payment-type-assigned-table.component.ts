@@ -1,10 +1,8 @@
-import { TablePaymentType } from '../../../../../core/models/data-types/data/payment-type.model';
 import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
-import { Category } from '@models/data/category.model';
+import { Category, CategoryHasPaymentType } from '@models/data/category.model';
 import { TableModule } from 'primeng/table';
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
 import { PaymentType } from '@models/data/payment-type.model';
-import { convertToTablePaymentType } from 'src/app/core/utils/mapper/payment-type-mapper.util';
 
 @Component({
   selector: 'app-payment-type-assigned-table',
@@ -19,28 +17,32 @@ export class PaymentTypeAssignedTableComponent implements OnChanges {
 
   @Input() disableButtons: boolean = false;
 
-  tablePaymentTypes: TablePaymentType[] = [];
+  categoryHasPaymentTypes: CategoryHasPaymentType[] = [];
 
-  @Output() changeStateEvent: EventEmitter<TablePaymentType> = new EventEmitter<TablePaymentType>();
-  @Output() updateEvent: EventEmitter<TablePaymentType> = new EventEmitter<TablePaymentType>();
+  @Output() changeStateEvent: EventEmitter<CategoryHasPaymentType> = new EventEmitter<CategoryHasPaymentType>();
+  @Output() updateEvent: EventEmitter<CategoryHasPaymentType> = new EventEmitter<CategoryHasPaymentType>();
 
   ngOnChanges(): void {
     this.categories.forEach(category => {
       if(category.paymentTypes == null || category.paymentTypes == undefined) return;
       if(category.paymentTypes.length == 0) return;
-      this.tablePaymentTypes = [];
+      this.categoryHasPaymentTypes = [];
       const paymentType = this.paymentTypes.find(paymentType => paymentType.id === category.paymentTypes![0].id.paymentTypeId) ?? new PaymentType();
       this.categories.forEach(category => {
-        this.tablePaymentTypes = this.tablePaymentTypes.concat(convertToTablePaymentType(paymentType, category));
+        this.categoryHasPaymentTypes = category.paymentTypes?.map(hasPaymentType => ({
+          ...hasPaymentType,
+          category,
+          paymentType
+        })) ?? [];
       })
     })
   }
 
-  updateAction(tablePaymentType: TablePaymentType) {
+  updateAction(tablePaymentType: CategoryHasPaymentType) {
     this.updateEvent.emit(tablePaymentType);
   }
 
-  changeStateAction(tablePaymentType: TablePaymentType) {
+  changeStateAction(tablePaymentType: CategoryHasPaymentType) {
     this.changeStateEvent.emit(tablePaymentType);
   }
 

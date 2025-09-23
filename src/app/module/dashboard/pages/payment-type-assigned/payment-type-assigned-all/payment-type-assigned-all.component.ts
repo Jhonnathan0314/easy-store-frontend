@@ -4,10 +4,10 @@ import { ButtonComponent } from "../../../../../shared/inputs/button/button.comp
 import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
 import { ErrorMessage } from '@models/data/general.model';
 import { MessageModule } from 'primeng/message';
-import { Category, CategoryHasPaymentTypeId } from '@models/data/category.model';
+import { Category, CategoryHasPaymentType, CategoryHasPaymentTypeId } from '@models/data/category.model';
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
 import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/payment-type.service';
-import { PaymentType, TablePaymentType } from '@models/data/payment-type.model';
+import { PaymentType } from '@models/data/payment-type.model';
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 import { PaymentTypeAssignedTableComponent } from "../../payment-type-assigned/payment-type-assigned-table/payment-type-assigned-table.component";
@@ -41,10 +41,10 @@ export class PaymentTypeAssignedAllComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.validatePaymentTypesError();
+    this.validateErrors();
   }
 
-  validatePaymentTypesError() {
+  validateErrors() {
     effect(() => {
       if(this.categoriesError() == null || this.paymentTypesError() == null) return;
       if(this.categoriesError()?.code !== 404 || this.paymentTypesError()?.code !== 404) this.hasUnexpectedError = true;
@@ -55,14 +55,14 @@ export class PaymentTypeAssignedAllComponent implements OnInit {
     this.router.navigateByUrl('/dashboard/payment-type-assigned/form/category/0/payment-type/0');
   }
 
-  updateCategoryPaymentType(tablePaymentType: TablePaymentType) {
-    this.router.navigateByUrl(`/dashboard/payment-type-assigned/form/category/${tablePaymentType.category.id}/payment-type/${tablePaymentType.paymentType.id}`);
+  updateCategoryPaymentType(catHasPaymentType: CategoryHasPaymentType) {
+    this.router.navigateByUrl(`/dashboard/payment-type-assigned/form/category/${catHasPaymentType.id.categoryId}/payment-type/${catHasPaymentType.id.paymentTypeId}`);
   }
 
-  changeStateCategoryPaymentType(tablePaymentType: TablePaymentType) {
+  changeStateCategoryPaymentType(catHasPaymentType: CategoryHasPaymentType) {
     const id: CategoryHasPaymentTypeId = {
-      categoryId: tablePaymentType.category.id,
-      paymentTypeId: tablePaymentType.paymentType.id
+      categoryId: catHasPaymentType.id.categoryId,
+      paymentTypeId: catHasPaymentType.id.paymentTypeId
     }
     this.categoryService.changeStateCategoryHasPaymentType(id).subscribe({
       error: () => {

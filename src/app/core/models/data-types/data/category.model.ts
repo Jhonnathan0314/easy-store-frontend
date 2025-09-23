@@ -1,4 +1,5 @@
 import { S3File } from "@models/utils/file.model";
+import { PaymentType } from "./payment-type.model";
 
 export class Category {
     id: number;
@@ -19,6 +20,8 @@ export class CategoryHasPaymentType {
     accountType: string;
     accountBank: string;
     state: string;
+    category?: Category;
+    paymentType?: PaymentType;
 }
 
 export class CategoryHasPaymentTypeId {
