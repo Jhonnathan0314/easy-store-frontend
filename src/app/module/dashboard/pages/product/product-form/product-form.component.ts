@@ -135,8 +135,8 @@ export class ProductFormComponent implements OnInit {
     effect(() => {
       this.product = this.productService.getById(this.productId)();
       if(!this.product) return;
-      if(this.product?.imageName != environment.DEFAULT_IMAGE_CATEGORY_NAME && this.product?.imageNumber !== this.product?.images.length) {
-        this.viewInputFile = false;
+      if(this.product?.imageName != environment.DEFAULT_IMAGE_CATEGORY_NAME && this.product.images) {
+        if(this.product?.imageNumber !== this.product?.images.length) this.viewInputFile = false;
       }
       this.productForm.patchValue({
         id: this.productId,
