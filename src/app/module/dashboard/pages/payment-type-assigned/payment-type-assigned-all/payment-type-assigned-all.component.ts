@@ -4,21 +4,21 @@ import { ButtonComponent } from "../../../../../shared/inputs/button/button.comp
 import { LoadingTableComponent } from '@component/shared/skeleton/loading-table/loading-table.component';
 import { ErrorMessage } from '@models/data/general.model';
 import { MessageModule } from 'primeng/message';
-import { Category } from '@models/data/category.model';
+import { Category, CategoryHasPaymentTypeId } from '@models/data/category.model';
 import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
-import { PaymentTypeTableComponent } from "../payment-type-table/payment-type-table.component";
 import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/payment-type.service';
-import { PaymentType } from '@models/data/payment-type.model';
+import { PaymentType, TablePaymentType } from '@models/data/payment-type.model';
 import { WorkingService } from 'src/app/core/services/utils/working/working.service';
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
+import { PaymentTypeAssignedTableComponent } from "../../payment-type-assigned/payment-type-assigned-table/payment-type-assigned-table.component";
 
 @Component({
-  selector: 'app-payment-type-all',
+  selector: 'app-payment-type-assigned-all',
   standalone: true,
-  imports: [RouterModule, MessageModule, ButtonComponent, LoadingTableComponent, PaymentTypeTableComponent],
-  templateUrl: './payment-type-all.component.html'
+  imports: [RouterModule, MessageModule, ButtonComponent, LoadingTableComponent, PaymentTypeAssignedTableComponent],
+  templateUrl: './payment-type-assigned-all.component.html',
 })
-export class PaymentTypeAllComponent implements OnInit {
+export class PaymentTypeAssignedAllComponent implements OnInit {
 
   categoriesError: Signal<ErrorMessage | null> = computed(() => this.categoryService.categoriesError());
   categories: Signal<Category[]> = computed(() => this.categoryService.categories());
@@ -51,20 +51,24 @@ export class PaymentTypeAllComponent implements OnInit {
     }, {injector: this.injector})
   }
 
-  goAddPaymentType() {
-    this.router.navigateByUrl('/dashboard/payment-type/form/0');
+  goAddCategoryPaymentType() {
+    this.router.navigateByUrl('/dashboard/payment-type-assigned/form/category/0/payment-type/0');
   }
 
-  updatePaymentType(paymentType: PaymentType) {
-    this.router.navigateByUrl(`/dashboard/payment-type/form/${paymentType.id}`);
+  updateCategoryPaymentType(tablePaymentType: TablePaymentType) {
+    this.router.navigateByUrl(`/dashboard/payment-type-assigned/form/category/${tablePaymentType.category.id}/payment-type/${tablePaymentType.paymentType.id}`);
   }
 
-  changeStatePaymentType(paymentType: PaymentType) {
-    this.paymentTypeService.changeStatePaymentType(paymentType.id).subscribe({
+  changeStateCategoryPaymentType(tablePaymentType: TablePaymentType) {
+    const id: CategoryHasPaymentTypeId = {
+      categoryId: tablePaymentType.category.id,
+      paymentTypeId: tablePaymentType.paymentType.id
+    }
+    this.categoryService.changeStateCategoryHasPaymentType(id).subscribe({
       error: () => {
         this.hasUnexpectedError = true;
       }
-    });
+    })
   }
 
   goBack() {

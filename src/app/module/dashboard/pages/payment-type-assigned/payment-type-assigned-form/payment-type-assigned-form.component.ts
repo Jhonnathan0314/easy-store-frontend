@@ -170,7 +170,7 @@ export class PaymentTypeAssignedFormComponent {
       this.paymentTypeForm.markAllAsTouched();
       return;
     }
-    if(this.buttonLabel === 'Agregar') {
+    if(this.buttonLabel === 'Vincular') {
       this.create();
     }else {
       this.update();
@@ -183,7 +183,7 @@ export class PaymentTypeAssignedFormComponent {
         this.handleCreateError(error);
       },
       complete: () => {
-        this.router.navigateByUrl('/dashboard/payment-type');
+        this.router.navigateByUrl('/dashboard/payment-type-assigned');
       }
     })
   }
@@ -194,7 +194,7 @@ export class PaymentTypeAssignedFormComponent {
         this.handleUpdateError(error);
       },
       complete: () => {
-        this.router.navigateByUrl('/dashboard/payment-type');
+        this.router.navigateByUrl('/dashboard/payment-type-assigned');
       }
     })
   }

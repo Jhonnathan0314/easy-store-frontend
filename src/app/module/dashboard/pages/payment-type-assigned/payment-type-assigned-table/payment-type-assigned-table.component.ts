@@ -1,4 +1,4 @@
-import { TablePaymentType } from './../../../../../core/models/data-types/data/payment-type.model';
+import { TablePaymentType } from '../../../../../core/models/data-types/data/payment-type.model';
 import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { Category } from '@models/data/category.model';
 import { TableModule } from 'primeng/table';
