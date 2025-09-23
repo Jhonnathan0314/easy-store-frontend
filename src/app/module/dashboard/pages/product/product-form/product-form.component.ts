@@ -164,7 +164,8 @@ export class ProductFormComponent implements OnInit {
 
   createProduct() {
     this.productService.create(this.getObject()).subscribe({
-      next: () => {
+      next: (product: Product) => {
+        this.productId = product.id;
         this.validateProductFiles();
       },
       error: (error: ApiResponse<ErrorMessage>) => {
