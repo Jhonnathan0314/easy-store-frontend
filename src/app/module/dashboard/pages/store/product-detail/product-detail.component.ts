@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, computed, EventEmitter, Input, Output, Signal } from '@angular/core';
 import { Product } from '@models/data/product.model';
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
 import { GalleriaModule } from 'primeng/galleria';
@@ -8,6 +8,12 @@ import { Purchase } from '@models/data/purchase.model';
 import { environment } from 'src/environments/environment';
 import { cartHasProduct } from 'src/app/core/utils/validation/cart-validation.util';
 import { ImagePipe } from 'src/app/core/pipes/image/image.pipe';
+import { getProductText } from 'src/app/core/utils/mapper/whatsapp-mapper.util';
+import { Category } from '@models/data/category.model';
+import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
+import { PaymentType } from '@models/data/payment-type.model';
+import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/payment-type.service';
+import { StaticDataService } from 'src/app/core/services/utils/data/static-data/static-data.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -26,6 +32,9 @@ export class ProductDetailComponent {
   @Input() cart: Purchase = new Purchase();
   @Input() product: Product | undefined = undefined;
   @Input() disableButtons: boolean = false;
+
+  category: Category | undefined = undefined;
+  paymentTypes: Signal<PaymentType[]> = computed(() => this.paymentTypeService.paymentTypes());
 
   PRODUCT_IMAGE_NAME: string = environment.DEFAULT_IMAGE_PRODUCT_NAME;
 
@@ -47,7 +56,11 @@ export class ProductDetailComponent {
     }
   ];
 
-  constructor() {}
+  constructor(
+    private categoryService: CategoryService,
+    private paymentTypeService: PaymentTypeService,
+    private staticDataService: StaticDataService
+  ) {}
   
   onImagesChange(event: S3File[]): void {
     if (this.product) {
@@ -73,7 +86,12 @@ export class ProductDetailComponent {
 
   buyNow(product: Product | undefined) {
     if(product == undefined) return;
-    window.open(`https://wa.me/+573202778890?text=Hola!%20%0A%0AVi%20el%20producto%20${product.name}%2E%20%0A%0AQuiero%20realizar%20la%20compra%2E%20%28id%20${product.id}%29`)
+    this.category = this.categoryService.getById(product.categoryId ?? 0)() ?? new Category();
+    const paymentType = this.paymentTypes().find(pt => pt.name.toUpperCase() === 'WHATSAPP') ?? new PaymentType();
+    const phoneNumber = this.category.paymentTypes?.find(pta => pta.id.paymentTypeId == paymentType.id)?.phone ?? '3125543042';
+    const productText = getProductText(product);
+    const cartRedirect = this.staticDataService.getCartMessage('0', productText, `${phoneNumber}`);
+    window.open(cartRedirect, '_blank');
   }
 
   goBackStore() {

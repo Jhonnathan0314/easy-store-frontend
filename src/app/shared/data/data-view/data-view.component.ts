@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Component, computed, EventEmitter, Input, OnChanges, OnInit, Output, Signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '@component/shared/inputs/button/button.component';
 import { InputSelectComponent } from '@component/shared/inputs/input-select/input-select.component';
@@ -14,6 +14,12 @@ import { Purchase } from '@models/data/purchase.model';
 import { environment } from 'src/environments/environment';
 import { cartHasProduct } from 'src/app/core/utils/validation/cart-validation.util';
 import { ImagePipe } from 'src/app/core/pipes/image/image.pipe';
+import { getProductText } from 'src/app/core/utils/mapper/whatsapp-mapper.util';
+import { Category } from '@models/data/category.model';
+import { PaymentType } from '@models/data/payment-type.model';
+import { CategoryService } from 'src/app/core/services/api/data/category/category.service';
+import { PaymentTypeService } from 'src/app/core/services/api/data/payment-type/payment-type.service';
+import { StaticDataService } from 'src/app/core/services/utils/data/static-data/static-data.service';
 
 @Component({
   selector: 'app-data-view',
@@ -34,6 +40,9 @@ export class DataViewComponent implements OnInit, OnChanges {
 
   @Input() objects: Product[] = [];
   originalObjects: Product[] = [];
+
+  category: Category | undefined = undefined;
+  paymentTypes: Signal<PaymentType[]> = computed(() => this.paymentTypeService.paymentTypes());
 
   layout: 'list' | 'grid' = 'list';
   layoutOptions = ['list', 'grid'];
@@ -72,9 +81,13 @@ export class DataViewComponent implements OnInit, OnChanges {
 
   selectedSortOption = this.sortOptions[0].value;
 
-  phoneNumber: string = '3125543042';
-
   PRODUCT_IMAGE_NAME: string = environment.DEFAULT_IMAGE_PRODUCT_NAME;
+
+  constructor(
+    private categoryService: CategoryService,
+    private paymentTypeService: PaymentTypeService,
+    private staticDataService: StaticDataService
+  ) {}
 
   ngOnInit(): void {
     if(!this.cart.products)
@@ -148,7 +161,13 @@ export class DataViewComponent implements OnInit, OnChanges {
   }
 
   buyNow(product: Product) {
-    window.open(`https://wa.me/+573202778890?text=Hola!%20%0A%0AVi%20el%20producto%20${product.name}%2E%20%0A%0AQuiero%20realizar%20la%20compra%2E%20%28id%20${product.id}%29`)
+      this.category = this.categoryService.getById(product.categoryId ?? 0)() ?? new Category();
+      const paymentType = this.paymentTypes().find(pt => pt.name.toUpperCase() === 'WHATSAPP') ?? new PaymentType();
+      const phoneNumber = this.category.paymentTypes?.find(pta => pta.id.paymentTypeId == paymentType.id)?.phone ?? '3125543042';
+      const productText = getProductText(product);
+      const cartRedirect = this.staticDataService.getCartMessage('0', productText, `${phoneNumber}`);
+      console.log({category: this.category, phoneNumber, productText, pt: paymentType});
+      window.open(cartRedirect, '_blank');
   }
 
 }

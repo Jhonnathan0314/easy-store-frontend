@@ -85,14 +85,13 @@
                                         class="flex-auto md:flex-initial whitespace-nowrap"
                                         (clickEvent)="addToCart(item)"
                                     ></app-button>
-                                    <a [href]="'https://wa.me/+573202778890?text=Hola!%20%0A%0AVi%20el%20producto%20' + item.name + '%2E%20%0A%0AQuiero%20realizar%20la%20compra%2E%20%28id%20' + item.id + '%29'" target="_blank">
-                                        <app-button 
-                                            icon="pi pi-shopping-cart"
-                                            label="Comprar ahora"
-                                            [disabled]="item.quantity == 0 || disableButtons"
-                                            class="flex-auto md:flex-initial whitespace-nowrap"
-                                        />
-                                    </a>
+                                    <app-button 
+                                        icon="pi pi-shopping-cart"
+                                        label="Comprar ahora"
+                                        [disabled]="item.quantity == 0 || disableButtons"
+                                        class="flex-auto md:flex-initial whitespace-nowrap"
+                                        (clickEvent)="buyNow(item)"
+                                    />
                                 }
                             </div>
                         </div>
