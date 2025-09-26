@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
-import { Category, CategoryHasPaymentType } from '@models/data/category.model';
+import { Category, CategoryHasPaymentType, CategoryHasPaymentTypeId } from '@models/data/category.model';
 import { TableModule } from 'primeng/table';
 import { ButtonComponent } from "../../../../../shared/inputs/button/button.component";
 import { PaymentType } from '@models/data/payment-type.model';
@@ -21,20 +21,20 @@ export class PaymentTypeAssignedTableComponent implements OnChanges {
 
   @Output() changeStateEvent: EventEmitter<CategoryHasPaymentType> = new EventEmitter<CategoryHasPaymentType>();
   @Output() updateEvent: EventEmitter<CategoryHasPaymentType> = new EventEmitter<CategoryHasPaymentType>();
+  @Output() deleteEvent: EventEmitter<CategoryHasPaymentTypeId> = new EventEmitter<CategoryHasPaymentTypeId>();
 
   ngOnChanges(): void {
+    this.categoryHasPaymentTypes = [];
     this.categories.forEach(category => {
       if(category.paymentTypes == null || category.paymentTypes == undefined) return;
       if(category.paymentTypes.length == 0) return;
-      this.categoryHasPaymentTypes = [];
       const paymentType = this.paymentTypes.find(paymentType => paymentType.id === category.paymentTypes![0].id.paymentTypeId) ?? new PaymentType();
-      this.categories.forEach(category => {
-        this.categoryHasPaymentTypes = category.paymentTypes?.map(hasPaymentType => ({
-          ...hasPaymentType,
-          category,
-          paymentType
-        })) ?? [];
-      })
+      const categoryHasPaymentType: CategoryHasPaymentType | undefined = category.paymentTypes?.find(cpt => cpt.id.paymentTypeId === paymentType.id && cpt.id.categoryId === category.id) ?? undefined;
+      if(categoryHasPaymentType) {
+        categoryHasPaymentType.paymentType = paymentType;
+        categoryHasPaymentType.category = category;
+        this.categoryHasPaymentTypes.push(categoryHasPaymentType);
+      }
     })
   }
 
@@ -44,6 +44,10 @@ export class PaymentTypeAssignedTableComponent implements OnChanges {
 
   changeStateAction(tablePaymentType: CategoryHasPaymentType) {
     this.changeStateEvent.emit(tablePaymentType);
+  }
+
+  deleteAction(tablePaymentType: CategoryHasPaymentType) {
+    this.deleteEvent.emit(tablePaymentType.id);
   }
 
 }

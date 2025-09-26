@@ -19,6 +19,7 @@
                 <th class="w-auto" pSortableColumn="state">Estado</th>
                 <th class="w-auto">Actualizar</th>
                 <th class="w-auto">Cambiar estado</th>
+                <th class="w-auto">Eliminar</th>
             </tr>
             <tr>
                 <th>
@@ -52,6 +53,7 @@
                 </th>
                 <th></th>
                 <th></th>
+                <th></th>
             </tr>
         </ng-template>
         <ng-template #body let-obj>
@@ -69,6 +71,9 @@
                 </td>
                 <td>
                     <app-button icon="pi pi-power-off" [severity]="obj.state === 'active' ? 'danger' : 'info'" [rounded]="true" [disabled]="disableButtons" [confirmClick]="true" (clickEvent)="changeStateAction(obj)" />
+                </td>
+                <td>
+                    <app-button icon="pi pi-trash" severity="danger" [rounded]="true" [disabled]="disableButtons" [confirmClick]="true" (clickEvent)="deleteAction(obj)" />
                 </td>
             </tr>
         </ng-template>

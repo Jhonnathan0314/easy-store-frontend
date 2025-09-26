@@ -71,6 +71,14 @@ export class PaymentTypeAssignedAllComponent implements OnInit {
     })
   }
 
+  deleteCategoryPaymentType(id: CategoryHasPaymentTypeId) {
+    this.categoryService.deleteCategoryHasPaymentType(id).subscribe({
+      error: () => {
+        this.hasUnexpectedError = true;
+      }
+    })
+  }
+
   goBack() {
     this.router.navigate(['../'], { relativeTo: this.activatedRoute });
   }

@@ -64,7 +64,6 @@ export class PurchaseMethodComponent implements OnInit {
       this.catPaymentTypes.forEach(cpt => {
         cpt.paymentType = this.paymentTypes().find(pt => pt.id == cpt.id.paymentTypeId) ?? new PaymentType();
       });
-      console.log("Guardo los datos", {purchase: this.purchase, category: this.category, catPaymentTypes: this.catPaymentTypes});
     }, {injector: this.injector});
   }
 

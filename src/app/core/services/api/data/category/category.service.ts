@@ -230,4 +230,19 @@ export class CategoryService {
       finalize(() => this.workingService.drop('category-has-payment-type changeState'))
     )
   }
+
+  deleteCategoryHasPaymentType(id: CategoryHasPaymentTypeId): Observable<void> {
+    this.workingService.push('category-has-payment-type delete');
+    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/category-has-payment-type/category/${id.categoryId}/payment-type/${id.paymentTypeId}`).pipe(
+      map(response => response.data),
+      tap(() => {
+        this.findById(id.categoryId);
+      }),
+      catchError((error: {error: ApiResponse<ErrorMessage>}) => {
+        return throwError(() => error.error);
+      }),
+      finalize(() => this.workingService.drop('category-has-payment-type delete'))
+    )
+  }
+
 }

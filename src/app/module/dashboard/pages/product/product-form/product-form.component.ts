@@ -250,7 +250,6 @@ export class ProductFormComponent implements OnInit {
       this.productService.findById(this.productId).subscribe({
         complete: () => {
           this.viewInputFile = value;
-          console.log("viewInputFile", this.viewInputFile);
         }
       });
     }else {
