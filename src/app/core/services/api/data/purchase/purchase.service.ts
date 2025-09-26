@@ -38,8 +38,32 @@ export class PurchaseService {
   validateRole() {
     effect(() => {
       if(!this.session() || this.session()?.role === '') return;
-      this.findAllByUser();
+      if(this.session()?.role === 'client' || this.session()?.role === 'ghost') this.findAllByUser();
+      if(this.session()?.role === 'admin' || this.session()?.role === 'owner') this.findByAccountId(this.session()?.accountId ?? -1);
     }, {injector: this.injector, allowSignalWrites: true})
+  }
+
+  findByAccountId(accountId: number): void {
+    this.loadingService.push('purchase findByAccountId');
+
+    this.http.get<ApiResponse<Purchase[]>>(`${this.apiUrl}/purchase/account/${accountId}`).pipe(
+      map(response => response.data),
+      tap(purchases => {
+        this.purchases.update(() => purchases);
+        this.purchasesError.update(() => null);
+      }),
+      tap((purchases) => {
+        purchases.forEach(purchase => {
+          this.productService.findByCategoryId(purchase.categoryId);
+        });
+      }),
+      catchError((error: {error: ApiResponse<ErrorMessage>}) => {
+        this.purchasesError.update(() => error.error.error);
+        this.purchases.update(() => []);
+        return throwError(() => error.error);
+      }),
+      finalize(() => this.loadingService.drop('purchase findByAccountId'))
+    ).subscribe();
   }
   
   private findAllByUser() {
