@@ -41,8 +41,12 @@ export const routes: Routes = [
       },
       { 
         path: 'purchase', 
-        loadChildren: () => import('./pages/purchase/purchase.routes').then(m => m.routes) ,
+        loadChildren: () => import('./pages/purchase/purchase.routes').then(m => m.routes),
         canActivate: [ownerGuard]
+      },
+      { 
+        path: 'purchase-client', 
+        loadChildren: () => import('./pages/purchase-client/purchase-client.routes').then(m => m.routes)
       },
       { path: '**', redirectTo: 'home', pathMatch: 'full' },
       { path: '', redirectTo: 'home', pathMatch: 'full' }

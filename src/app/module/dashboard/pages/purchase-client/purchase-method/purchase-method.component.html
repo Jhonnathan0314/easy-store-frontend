@@ -1,0 +1,20 @@
+<p-accordion>
+    @for(paymentType of catPaymentTypes; track $index) {
+        <p-accordion-panel [value]="paymentType.id.paymentTypeId">
+            <p-accordion-header>{{ paymentType.paymentType?.name ?? 'Error al consultar tipo de pago' }}</p-accordion-header>
+            <p-accordion-content>
+                @if(whatsappError) {
+                    <p-message severity="error" text="Error al redireccionar hacia WhatsApp"></p-message>
+                }
+                <app-button 
+                    label="Continuar con el pago"
+                    icon="pi pi-check"
+                    (clickEvent)="selectPaymentType(paymentType)"
+                    [confirmClick]="true"
+                    [disabled]="isWorking() || isLoading()"
+                    [loading]="isLoading()"
+                />
+            </p-accordion-content>
+        </p-accordion-panel>
+    }
+</p-accordion>

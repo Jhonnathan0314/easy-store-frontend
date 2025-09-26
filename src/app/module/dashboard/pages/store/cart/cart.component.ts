@@ -20,7 +20,6 @@ import { WorkingService } from 'src/app/core/services/utils/working/working.serv
 import { LoadingService } from 'src/app/core/services/utils/loading/loading.service';
 import { environment } from 'src/environments/environment';
 import { SessionData } from '@models/security/security-data.model';
-import { getProductsTextFromCart } from 'src/app/core/utils/mapper/whatsapp-mapper.util';
 import { ImagePipe } from 'src/app/core/pipes/image/image.pipe';
 
 @Component({
@@ -150,14 +149,8 @@ export class CartComponent implements OnInit {
     this.router.navigateByUrl(`/dashboard/store/products/${categoryId}`)
   }
 
-  buyNow(cart: Purchase) {
-    const productText = getProductsTextFromCart(cart);
-    this.cartRedirect = this.staticDataService.getCartMessage(`${cart.id}`, productText, this.getPhoneNumber(cart));
-    window.open(this.cartRedirect, '_blank');
-  }
-
-  getPhoneNumber(cart: Purchase) {
-    return `${cart.category?.paymentTypes?.find(paymentType => paymentType.phone)?.phone ?? '3125543042'}`;
+  goPurchaseMethod(cart: Purchase) {
+    this.router.navigateByUrl(`/dashboard/purchase-client/method/${cart.id}`);
   }
 
 }

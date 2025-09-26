@@ -5,7 +5,6 @@ import { Product } from '@models/data/product.model';
 import { catchError, finalize, map, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SessionService } from '../../../utils/session/session.service';
-import { Category } from '@models/data/category.model';
 import { WorkingService } from '../../../utils/working/working.service';
 import { LoadingService } from '../../../utils/loading/loading.service';
 import { SessionData } from '@models/security/security-data.model';
@@ -93,9 +92,9 @@ export class ProductService {
     )
   }
 
-  findByCategoryId(category: Category) {
+  findByCategoryId(categoryId: number) {
     this.loadingService.push('product findByCategoryId');
-    this.http.get<ApiResponse<Product[]>>(`${this.apiUrl}/product/category/${category.id}?allImages=false`).pipe(
+    this.http.get<ApiResponse<Product[]>>(`${this.apiUrl}/product/category/${categoryId}?allImages=false`).pipe(
       map(response => response.data),
       tap(products => {
         this.products.update(() => products);

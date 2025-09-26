@@ -90,7 +90,7 @@
                                         label="Comprar ahora"
                                         [disabled]="item.quantity == 0 || disableButtons"
                                         class="flex-auto md:flex-initial whitespace-nowrap"
-                                        (clickEvent)="buyNow(item)"
+                                        (clickEvent)="addToCartAndRedirect(item)"
                                     />
                                 }
                             </div>
@@ -172,7 +172,7 @@
                                                 label="Comprar ahora"
                                                 [disabled]="item.quantity == 0 || disableButtons"
                                                 class="flex-auto md:flex-initial whitespace-nowrap"
-                                                (clickEvent)="buyNow(item)"
+                                                (clickEvent)="addToCartAndRedirect(item)"
                                             />
                                         }
                                     </div>

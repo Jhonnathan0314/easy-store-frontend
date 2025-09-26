@@ -53,6 +53,11 @@ export class PurchaseService {
         this.purchases.update(() => purchases);
         this.purchasesError.update(() => null);
       }),
+      tap((purchases) => {
+        purchases.forEach(purchase => {
+          this.productService.findByCategoryId(purchase.categoryId);
+        });
+      }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
         this.purchasesError.update(() => error.error.error);
         this.purchases.update(() => []);

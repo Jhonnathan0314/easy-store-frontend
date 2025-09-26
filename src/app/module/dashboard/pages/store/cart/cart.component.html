@@ -72,10 +72,10 @@
                         <footer class="w-full flex items-center justify-between">
                             <label>Subtotal: $ {{cart.total}}</label>
                             <app-button 
-                                label="Continuar con el pago"
+                                label="Seleccionar método de pago"
                                 icon="pi pi-list-check"
                                 [disabled]="cart.products.length == 0"
-                                (clickEvent)="buyNow(cart)"
+                                (clickEvent)="goPurchaseMethod(cart)"
                             />
                         </footer>
                     </p-accordion-content>

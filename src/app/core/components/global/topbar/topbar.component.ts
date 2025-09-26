@@ -214,6 +214,11 @@ export class TopbarComponent {
           }
         ]
       },
+      { 
+        label: 'Mis carritos', 
+        icon: 'pi pi-shopping-cart',
+        command: () => this.router.navigateByUrl('/dashboard/store/cart')
+      },
       {
         label: 'Temas',
         icon: 'pi pi-fw pi-palette',

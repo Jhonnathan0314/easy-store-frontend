@@ -74,7 +74,7 @@ export class ProductsComponent implements OnInit {
     effect(() => {
       if(!this.category()) return;
       if(!isAdmin && this.products().length == 0) {
-        this.productService.findByCategoryId(this.category() ?? new Category());
+        this.productService.findByCategoryId(this.category()?.id ?? -1);
       }
       if(this.paymentTypes().length === 0) {
         this.paymentTypeService.findAllActive();
