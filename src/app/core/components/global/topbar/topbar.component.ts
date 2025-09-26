@@ -172,6 +172,22 @@ export class TopbarComponent {
   buildItemsObjectOwner() {
     this.items = [
       { 
+        label: 'Tiendas', 
+        icon: 'pi pi-shop',
+        items: [
+          {
+            label: 'Gestionar',
+            icon: 'pi pi-list',
+            command: () => this.router.navigateByUrl('/dashboard/category')
+          },
+          {
+            label: 'Crear',
+            icon: 'pi pi-plus',
+            command: () => this.router.navigateByUrl('/dashboard/category/form/0')
+          }
+        ]
+      },
+      { 
         label: 'Categorias', 
         icon: 'pi pi-objects-column',
         items: [

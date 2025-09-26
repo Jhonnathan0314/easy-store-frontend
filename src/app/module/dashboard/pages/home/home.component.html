@@ -4,7 +4,7 @@
         <h2 class="h2">Tiendas disponibles</h2>
         <app-carousel-home />
     </section>
-    @if (session()?.role === 'admin') {
+    @if (session()?.role === 'admin' || session()?.role === 'owner') {
         <section class="border-section px-4 flex flex-wrap justify-center items-center gap-4 md:justify-start">
             <h2 class="h2 w-full">Gestionar tiendas</h2>
             <p class="w-full">En este apartado usted podra ver, crear, actualizar y eliminar las tiendas creadas.</p>
