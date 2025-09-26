@@ -34,7 +34,8 @@ export class PaymentTypeService {
   }
   
   validateRole() {
-    this.findAll();
+    if(this.session()?.role === 'admin') this.findAll();
+    if(this.session()?.role === 'owner') this.findAllActive();
   }
 
   findAll() {
