@@ -24,6 +24,17 @@
           
           <app-input-text
             class="w-1/2"
+            [value]="productForm.value.code"
+            label="Código"
+            [classes]="productForm.controls['code'].invalid && productForm.controls['code'].touched ? 'ng-invalid ng-dirty' : ''"
+            errorMessage="Código inválido"
+            (valueEvent)="receiveValue('code', $event)"
+            formControlName="code"
+            ngDefaultControl
+          />
+          
+          <app-input-text
+            class="w-1/2"
             [value]="productForm.value.name"
             label="Nombre"
             [classes]="productForm.controls['name'].invalid && productForm.controls['name'].touched ? 'ng-invalid ng-dirty' : ''"

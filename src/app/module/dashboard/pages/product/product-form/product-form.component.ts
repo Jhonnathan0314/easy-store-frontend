@@ -82,6 +82,7 @@ export class ProductFormComponent implements OnInit {
   initializeForm() {
     this.productForm = this.formBuilder.group({
       id: [0],
+      code: [''],
       name: ['', [Validators.required, Validators.pattern(REGEX_TEXT_DEFAULT)]],
       description: ['', [Validators.required, Validators.pattern(REGEX_TEXT_DEFAULT)]],
       price: [null, [Validators.required, Validators.min(0)]],
@@ -140,6 +141,7 @@ export class ProductFormComponent implements OnInit {
       }
       this.productForm.patchValue({
         id: this.productId,
+        code: this.product?.code,
         name: this.product?.name,
         description: this.product?.description,
         price: this.product?.price,

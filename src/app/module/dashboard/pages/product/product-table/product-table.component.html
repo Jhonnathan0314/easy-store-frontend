@@ -9,7 +9,7 @@
     <ng-template pTemplate="header">
         <tr>
             <th class="w-auto">Imagen</th>
-            <th class="w-auto" pSortableColumn="id">Id</th>
+            <th class="w-auto" pSortableColumn="code">Código</th>
             <th class="w-auto" pSortableColumn="name">Nombre</th>
             <th class="w-auto" pSortableColumn="description">Descripción</th>
             <th class="w-auto" pSortableColumn="price">Precio</th>
@@ -23,10 +23,10 @@
             <th></th>
             <th>
                 <p-columnFilter
-                    type="numeric"
-                    field="id"
-                    placeholder="Buscar por id"
-                    ariaLabel="Buscar por id"
+                    type="text"
+                    field="code"
+                    placeholder="Buscar por código"
+                    ariaLabel="Buscar por código"
                 ></p-columnFilter>
             </th>
             <th>
@@ -91,7 +91,7 @@
                 }
                 
             </td> 
-            <td>{{ obj.id }}</td>
+            <td>{{ obj.code }}</td>
             <td>{{ obj.name }}</td>
             <td>{{ obj.description }}</td>
             <td>{{ obj.price }}</td>
