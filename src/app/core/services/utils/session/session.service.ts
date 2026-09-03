@@ -3,7 +3,6 @@ import { Inject, Injectable, signal } from '@angular/core';
 import { LoginRequest } from '../../../models/data-types/security/security-request.model';
 import { SessionData } from '../../../models/data-types/security/security-data.model';
 import { DOCUMENT } from '@angular/common';
-import { CryptoService } from '../crypto/crypto.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +16,6 @@ export class SessionService {
   session = signal<SessionData | null>(null);
 
   constructor(
-    private cryptoService: CryptoService, 
     private tokenService: TokenService,
     @Inject(DOCUMENT) private document: Document
   ) {
@@ -42,7 +40,14 @@ export class SessionService {
       userId: this.tokenService.getTokenAttribute(token, "user_id"),
       accountId: this.tokenService.getTokenAttribute(token, "account_id"),
     };
-    this.localStorage?.setItem("object", this.cryptoService.encryptObject(sessionData));
+    // Nota de seguridad: esto NO se cifra. Cifrar en el cliente con una clave
+    // que viaja en el propio bundle JS no aporta confidencialidad real (la
+    // clave es visible para cualquiera que inspeccione el codigo), asi que
+    // guardar el objeto en texto plano es equivalente en seguridad y evita
+    // dar una falsa sensacion de proteccion. La autorizacion real vive en el
+    // backend (ver PurchaseAuthorizationService y el resto de la API), no en
+    // lo que el cliente pueda o no leer de su propio localStorage.
+    this.localStorage?.setItem("object", JSON.stringify(sessionData));
     this.session.update(() => this.getSessionData());
   }
 
@@ -52,9 +57,14 @@ export class SessionService {
   }
 
   private getSessionData(): SessionData | null {
-    if(this.localStorage?.getItem("object")) {
-      return Object.assign(new SessionData(), this.cryptoService.decryptObject(this.localStorage?.getItem("object") ?? ""));
-    } else {
+    const raw = this.localStorage?.getItem("object");
+    if(!raw) return null;
+    try {
+      return Object.assign(new SessionData(), JSON.parse(raw));
+    } catch {
+      // localStorage corrupto o de un formato antiguo (versiones previas
+      // cifraban este valor): se descarta en vez de romper el arranque.
+      this.localStorage?.removeItem('object');
       return null;
     }
   }
