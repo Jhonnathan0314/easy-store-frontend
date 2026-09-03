@@ -15,7 +15,7 @@ import { SessionData } from '@models/security/security-data.model';
 })
 export class SecurityService {
 
-  apiUrl: string = environment.BACKEND_URL;
+  apiUrl: string = `${environment.BACKEND_URL}${environment.AUTH_PATH}`;
 
   security = signal<string>('');
   securityError = signal<ErrorMessage | null>(null);
@@ -34,7 +34,7 @@ export class SecurityService {
 
   login(loginRequest: LoginRequest) {
     this.workingService.push('login');
-    this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/auth/login`, loginRequest).pipe(
+    this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/login`, loginRequest).pipe(
       map(response => response.data.token),
       tap(token => {
         this.validateTokenReceived(loginRequest, token);
@@ -48,7 +48,7 @@ export class SecurityService {
   }
 
   loginGhost() {
-    this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/auth/login`, this.getGhostRequest()).pipe(
+    this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/login`, this.getGhostRequest()).pipe(
       map(response => response.data.token),
       tap(token => {
         this.validateTokenReceived(this.getGhostRequest(), token);
@@ -62,7 +62,7 @@ export class SecurityService {
 
   register(registerRequest: RegisterRequest) {
     this.workingService.push('register');
-    this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/auth/register`, registerRequest).pipe(
+    this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/register`, registerRequest).pipe(
       map(response => response.data.token),
       tap(token => {
         this.validateTokenReceived(this.getLoginFromRegisterRequest(registerRequest), token);
@@ -77,7 +77,7 @@ export class SecurityService {
 
   resetPassword(request: ResetPasswordRequest): Observable<ApiResponse<AuthResponse>> {
     this.workingService.push('resetPassword');
-    return this.http.put<ApiResponse<AuthResponse>>(`${this.apiUrl}/auth/reset-password`, request).pipe(
+    return this.http.put<ApiResponse<AuthResponse>>(`${this.apiUrl}/reset-password`, request).pipe(
       finalize(() => this.workingService.drop('resetPassword'))
     );
   }
