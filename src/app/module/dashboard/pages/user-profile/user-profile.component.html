@@ -1,1 +1,105 @@
-<p>user-profile works!</p>
+<section class="w-full h-fit px-4 pt-4 flex flex-col gap-8 justify-center lg:px-40 lg:pt-20">
+
+  <div class="w-full bg-section py-8 flex flex-col gap-4">
+    <h1 class="w-full text-center">Mi perfil</h1>
+
+    <div class="flex flex-col gap-2 lg:w-1/2 lg:self-center">
+      <p><strong>Usuario:</strong> {{ session()?.username }}</p>
+      <p><strong>Id de usuario:</strong> {{ session()?.userId }}</p>
+      <p><strong>Rol:</strong> {{ session()?.role }}</p>
+    </div>
+  </div>
+
+  @if (session()?.role === 'client') {
+    <div class="w-full bg-section py-8 flex flex-col gap-8">
+      <h2 class="w-full text-center">Solicitud de tienda</h2>
+
+      @if (isLoading()) {
+        <p-message severity="info">Cargando información de tu solicitud...</p-message>
+      } @else if (hasPendingRequest()) {
+        <p-message severity="info">
+          Tu solicitud para la tienda "{{ latestStoreRequest?.storeName }}" está pendiente de revisión.
+        </p-message>
+      } @else {
+        @if (isRejectedRequest()) {
+          <p-message severity="warn">
+            Tu solicitud anterior para la tienda "{{ latestStoreRequest?.storeName }}" fue rechazada. Puedes volver a intentarlo.
+          </p-message>
+        }
+
+        <form class="flex flex-col gap-8 lg:w-1/2 lg:self-center" [formGroup]="storeRequestForm">
+          <app-input-text
+            [value]="storeRequestForm.value.storeName"
+            label="Nombre de la tienda"
+            [classes]="storeRequestForm.controls['storeName'].invalid && storeRequestForm.controls['storeName'].touched ? 'ng-invalid ng-dirty' : ''"
+            errorMessage="Nombre de la tienda inválido"
+            (valueEvent)="receiveValue('storeName', $event)"
+            formControlName="storeName"
+            ngDefaultControl
+          />
+
+          <app-input-text
+            [value]="storeRequestForm.value.storeDescription"
+            label="Descripción de la tienda"
+            [classes]="storeRequestForm.controls['storeDescription'].invalid && storeRequestForm.controls['storeDescription'].touched ? 'ng-invalid ng-dirty' : ''"
+            errorMessage="Descripción de la tienda inválida"
+            (valueEvent)="receiveValue('storeDescription', $event)"
+            formControlName="storeDescription"
+            ngDefaultControl
+          />
+
+          <app-button
+            label="Solicitar tienda"
+            [disabled]="isWorking()"
+            (clickEvent)="validateForm()"
+          />
+        </form>
+      }
+    </div>
+  }
+
+  @if (session()?.role === 'admin') {
+    <div class="w-full bg-section py-8 flex flex-col gap-4">
+      <h2 class="w-full text-center">Solicitudes de tienda pendientes</h2>
+
+      @if (isLoading()) {
+        <p-message severity="info">Cargando solicitudes pendientes...</p-message>
+      } @else if (pendingStoreRequestsError()?.code === 404) {
+        <p-message severity="warn">No hay solicitudes pendientes por el momento.</p-message>
+      } @else if (pendingStoreRequestsError()) {
+        <p-message severity="error">Ha ocurrido un error inesperado, por favor, intentelo de nuevo más tarde.</p-message>
+      } @else {
+        <div class="flex flex-col gap-4">
+          @for (request of pendingStoreRequests(); track request.id) {
+            <div class="flex flex-col gap-2 border border-solid rounded p-4 lg:flex-row lg:items-center lg:justify-between">
+              <div class="flex flex-col gap-1">
+                <p><strong>Tienda:</strong> {{ request.storeName }}</p>
+                <p><strong>Descripción:</strong> {{ request.storeDescription }}</p>
+                <p><strong>Solicitante:</strong> {{ request.username }}</p>
+                <p-tag severity="info" value="Pendiente" />
+              </div>
+              <div class="flex gap-2">
+                <app-button
+                  label="Aprobar"
+                  severity="success"
+                  [disabled]="isWorking()"
+                  [confirmClick]="true"
+                  (clickEvent)="approveRequest(request)"
+                />
+                <app-button
+                  label="Rechazar"
+                  severity="danger"
+                  [disabled]="isWorking()"
+                  [confirmClick]="true"
+                  (clickEvent)="rejectRequest(request)"
+                />
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <p-toast [life]="10000" />
+</section>
