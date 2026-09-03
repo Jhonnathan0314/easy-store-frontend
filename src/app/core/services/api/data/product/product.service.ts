@@ -97,7 +97,16 @@ export class ProductService {
     this.http.get<ApiResponse<Product[]>>(`${this.apiUrl}/product/category/${categoryId}?allImages=false`).pipe(
       map(response => response.data),
       tap(products => {
-        this.products.update(() => products);
+        // Antes esto reemplazaba toda la señal (this.products.update(() =>
+        // products)): si se llamaba una vez por cada categoria distinta (ver
+        // PurchaseService), cada respuesta pisaba la anterior y solo
+        // sobrevivian los productos de la ultima categoria en resolver.
+        // Ahora se hace merge por id, igual que findById.
+        this.products.update(current => {
+          const byId = new Map(current.map(prod => [prod.id, prod]));
+          products.forEach(prod => byId.set(prod.id, prod));
+          return Array.from(byId.values());
+        });
       }),
       finalize(() => this.loadingService.drop('product findByCategoryId'))
     ).subscribe()

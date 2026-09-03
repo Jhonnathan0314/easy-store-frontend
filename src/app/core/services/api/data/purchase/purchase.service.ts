@@ -43,6 +43,10 @@ export class PurchaseService {
     }, {injector: this.injector, allowSignalWrites: true})
   }
 
+  private uniqueCategoryIds(purchases: Purchase[]): number[] {
+    return Array.from(new Set(purchases.map(purchase => purchase.categoryId)));
+  }
+
   findByAccountId(accountId: number): void {
     this.loadingService.push('purchase findByAccountId');
 
@@ -53,8 +57,12 @@ export class PurchaseService {
         this.purchasesError.update(() => null);
       }),
       tap((purchases) => {
-        purchases.forEach(purchase => {
-          this.productService.findByCategoryId(purchase.categoryId);
+        // Se pedian los productos de la categoria de CADA compra sin
+        // deduplicar: si dos compras compartian categoria, se disparaba la
+        // misma peticion HTTP dos veces. Ahora se pide una sola vez por
+        // categoria distinta.
+        this.uniqueCategoryIds(purchases).forEach(categoryId => {
+          this.productService.findByCategoryId(categoryId);
         });
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
@@ -78,8 +86,10 @@ export class PurchaseService {
         this.purchasesError.update(() => null);
       }),
       tap((purchases) => {
-        purchases.forEach(purchase => {
-          this.productService.findByCategoryId(purchase.categoryId);
+        // Ver comentario equivalente en findByAccountId: se deduplica por
+        // categoryId en vez de pedir una vez por cada compra.
+        this.uniqueCategoryIds(purchases).forEach(categoryId => {
+          this.productService.findByCategoryId(categoryId);
         });
       }),
       catchError((error: {error: ApiResponse<ErrorMessage>}) => {
